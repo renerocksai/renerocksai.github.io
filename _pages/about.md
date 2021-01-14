@@ -20,6 +20,6 @@ On my 2015 Pixelbook, I developed a [CPU](/projects/rrisc/) from scratch, a [net
 ![pixelbook](/assets/images/pixelbook.jpg)
 
 
-My professional background spans over more than two decades in the telecommunications and medical technology industries - current stop: research, data science; broadly speaking, in the market research / decisions research area.
+My professional background spans over more than two decades in the telecommunications and medical technology industries - current stop: research, artificial intelligence and data science; broadly speaking, in the market research / decisions research area. See what I am up to [here](https://www.nim.org/en/research/research-projects/artifical-voices-human-choices).
 
 Feel free to reach out to me on Twitter or checkout my GitHub.
