@@ -7,4 +7,6 @@ header:
 
 ---
 
+Easy encryption for everyone! With end to end encryption being under attack - if you have nothing else, try this one!
 
+Check it out on [GitHub](https://github.com/renerocksai/0xeefe) or just try it [here](https://renerocksai.github.io/0xeefe/).

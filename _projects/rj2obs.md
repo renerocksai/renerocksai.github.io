@@ -7,7 +7,7 @@ header:
 
 ---
 
-I [blogged about it here](/blog/roamexporttoobs).
+I [blogged about it here](/blog/roamexporttoobs) and [here](/blog/why-obsidian).
 
 For more information, check it out on [GitHub](https://github.com/renerocksai/rj2obs).
 

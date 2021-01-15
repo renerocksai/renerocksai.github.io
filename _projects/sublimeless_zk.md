@@ -6,3 +6,6 @@ header:
   teaser: https://raw.githubusercontent.com/renerocksai/sublimeless_zk/master/imgs/about2.png
 ---
 
+My Zettelkasten software.
+
+Check it out on [GitHub](https://github.com/renerocksai/sublimeless_zk)
