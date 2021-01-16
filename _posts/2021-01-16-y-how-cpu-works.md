@@ -83,7 +83,7 @@ When a CPU fetches instructions and operands, where does it store them? In the *
 | **instruction register 2** | holds the first part of the operand (LOW byte)   |
 | **instruction register 3** | holds the second part of the operand (HIGH byte) |
 
-The **opcode** is the actual machine code of the instruction, just a number. For the sake of simplicity, all instructions of the RRISC CPU are 3 bytes wide. That means that an instruction always consists of all 3 bytes for the 3 intruction registers, no matter if the operation needs an operand or not.
+The **opcode** is the actual machine code of the instruction, just a number. For the sake of simplicity, all instructions of the RRISC CPU are 3 bytes wide. That means that an instruction always consists of all 3 bytes for the 3 instruction registers, no matter if the operation needs an operand or not.
 
 #### The concept of HIGH byte and LOW byte
 
