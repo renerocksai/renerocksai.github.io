@@ -1,5 +1,5 @@
 ---
-title: "Why I switched from Roam to Obsidian"
+title: "Why I switched from Roam Research to Obsidian"
 categories:
   - Blog
 tags:
