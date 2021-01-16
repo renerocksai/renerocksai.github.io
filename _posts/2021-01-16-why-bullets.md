@@ -8,9 +8,9 @@ tags:
 classes: wide
 ---
 
-I created my favorite alternative to Powerpoint, a presentation software that satisfies my specific requirements, and even introduces an innovative feature dubbed **_"multiplayer presentations_**.
+I created my favorite alternative to Powerpoint, a presentation software that satisfies my specific requirements, and even introduces an innovative feature dubbed **_"multiplayer presentations_**".
 
-To better understand my motivation of ditching Powerpoint, I'll share some of the grievances I have with it before telling you all about this project.
+To better understand my motivation for ditching Powerpoint, I'll share some of the grievances I have with it before telling you all about this project.
 
 _"This is probably going to be a rant..."_
 
@@ -28,7 +28,7 @@ I hate the point-and-click, copy-and-paste style workflows, I strongly dislike s
 
 The way we present has collapsed into just one style of presentation: Slides with bullets, charts, and pictures, with the odd video. Hardly any interaction at all.
 
-As a programmer and researcher, I value precision. Powerpoint presentations still, in 2021, have a tendancy to change the way they look when opened on a different computer. Text positioning or text sizes are suddenly a bit off...
+As a programmer and researcher, I value precision. Powerpoint presentations still, in 2021, have a tendency to change the way they look when opened on a different computer. Text positioning or text sizes are suddenly a bit off...
 
 I also value support for multiple platforms. Microsoft currently offers many different versions of Powerpoint: The Windows app, the Android app, the iOS app, the web app - all come with a different set of features and if you don't have a Windows computer or Mac handy, you won't be able to access all the features you might need. 
 
@@ -37,7 +37,7 @@ I have spent countless hours trying to "fix the master slides" some creative per
 OK, let's stop ranting and start doing something about it. But **what** do I want?
 
 ## I want something different
-My basic uses case an needa - let's outline them with some bullet points:
+My basic uses case an needs - let's outline them with some bullet points:
 
 - simple slides with bullets
     - consistent formatting inside a presentation and across all platforms
@@ -176,7 +176,7 @@ Here is a video demoing multiplayer mode:
 This feature is a bit more involved, as it requires copying the server executable onto a server machine that's accessible over the internet. But you only have to deploy one server to run an unlimited number of "rooms".
 
 ## So, is this for everyone?
-Probably not. Most people shy away from using anything but Microsoft Office and might not have my specific needs or have a higher pain threshold than I have. Also, as with all new tools, there"s a bit of a learning curve involved with it, you'd have to learn to get arund in the Godot editor, and I cannot provide support for it.
+Probably not. Most people shy away from using anything but Microsoft Office and might not have my specific needs or have a higher pain threshold than I have. Also, as with all new tools, there's a bit of a learning curve involved with it, you'd have to learn to get arund in the Godot editor, and I cannot provide support for it.
 
 However, here is a video showing how simple it is to get started, if you're technically inclined:
 
