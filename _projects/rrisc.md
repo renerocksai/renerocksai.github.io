@@ -8,7 +8,9 @@ header:
 
 I created a CPU. From scratch.
 
-Check it out on [GitHub](https://github.com/renerocksai/rrisc) or read more about it [here](https://renerocksai.github.io/rrisc/).
+Check it out on [GitHub](https://github.com/renerocksai/rrisc) or read more about how I built it [here](https://renerocksai.github.io/rrisc/).
+
+My [article](/blog/y-how-cpu-works) explains how it works.
 
 
 
