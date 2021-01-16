@@ -31,6 +31,9 @@ paginate: 4 # amount of posts to show
 paginate_path: /page:num/
 timezone: # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 
+kramdown:
+  auto_ids: true
+
 include:
   - _pages
   - _projects
