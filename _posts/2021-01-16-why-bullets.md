@@ -8,8 +8,6 @@ tags:
 classes: wide
 ---
 
-link: [Bûllets](/projects/bullets) 
-
 I created my favorite alternative to Powerpoint, a presentation software that satisfies my specific requirements, and even introduces an innovative feature dubbed **_"multiplayer presentations_**.
 
 To better understand my motivation of ditching Powerpoint, I'll share some of the grievances I have with it before telling you all about this project.
