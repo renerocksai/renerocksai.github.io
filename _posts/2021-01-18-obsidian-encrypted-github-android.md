@@ -144,6 +144,7 @@ Here is my `.gitignore`, you may want to put the entire `.obsidian` directory in
 My `.gitignore`:
 ```
 .obsidian/workspace
+.obsidian/cache
 ```
 
 Alternatively, just copy back the ignore file from your backup if you had used git before:
