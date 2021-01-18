@@ -1,5 +1,5 @@
 ---
-title: "Syncing your Obsidian vault via an encrypted GitHub repository to Android"
+title: "Syncing your Obsidian vault to Android via an encrypted GitHub repository"
 categories:
   - Blog
 tags:
