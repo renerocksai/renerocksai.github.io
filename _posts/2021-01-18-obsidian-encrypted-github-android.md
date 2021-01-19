@@ -206,7 +206,7 @@ $ cd bare
 $ git init --bare
 ```
 
-We'll temporary add it as remote repo and push our zettelkasten there:
+We'll temporarily add it as remote repo and push our zettelkasten there:
 ```bash
 $ cd
 $ cd zettelkasten
