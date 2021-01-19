@@ -16,7 +16,7 @@ toc_label: "Table of Contents"
 
 Here I show you how I use an encrypted git repository on GitHub to sync my Zettelkasten to all my devices, including my Android smartphone.
 
-In case you're wondering: My digital Zettelkasten is a folder in my filesystem, containing plain text files with Markdown formatting (and images) that I manage with [Obsidian](https://obsidian.md) and sometimes with [Sublimeless_ZK](/projects/sublimeless_zk). This future-proof format lends itself perfectly to being version controlled and distributed with `git`.
+In case you're wondering: My digital Zettelkasten is a folder in my filesystem, containing plain text files with Markdown formatting (and images) that I manage with [Obsidian](https://obsidian.md) and sometimes with [Sublimeless_ZK](/projects/sublimeless_zk). This future-proof format lends itself perfectly to being version controlled and distributed with [git](https://git-scm.org).
 
 ## Front matter
 You will get the most out of this article when you know git and the command line does not put you off. Setting up my workflow requires both. While I will walk you through all steps necessary to get to an encrypted, GitHub-hosted Zettelkasten, it can appear intimidating if you're completely unfamiliar with the command line.
