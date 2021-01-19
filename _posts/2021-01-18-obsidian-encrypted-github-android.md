@@ -19,8 +19,6 @@ Here I show you how I use an encrypted git repository on GitHub to sync my Zette
 In case you're wondering: My digital Zettelkasten is a folder in my filesystem, containing plain text files with Markdown formatting (and images) that I manage with [Obsidian](https://obsidian.md) and sometimes with [Sublimeless_ZK](/projects/sublimeless_zk). This future-proof format lends itself perfectly to being version controlled and distributed with [git](https://git-scm.org).
 
 ## Front matter
-You will get the most out of this article when you know git and the command line does not put you off. Setting up my workflow requires both. While I will walk you through all steps necessary to get to an encrypted, GitHub-hosted Zettelkasten, it can appear intimidating if you're completely unfamiliar with the command line.
-
 I primarily work on Linux (or ChromeOS + Linux Shell), but all software involved is available for Windows and macOS, too.
 
 ## Motivation
@@ -103,7 +101,7 @@ Reverting back to previous versions, etc, is also possible with git. Since I use
 Before deciding to taking my Zettelkasten (back to) the cloud, I had used git to sync between my devices:
 - Chromebook
 - Linux desktop
-- work laptop
+- Work laptop
 - Android phone
 
 However, I had used my Linux box for keeping the central repository that all working copies push to, with my local IP address. Obviously this only works in my home network, so syncing on the go is not possible.
@@ -160,7 +158,7 @@ $ cp ../zettelkasten.bak/.gitignore .
 - all files in all subfolders 
     - this wil exclude dotfiles like `.gitattributes`
 
-You ned to store these attributes in a file called `.gitattributes`.
+You need to store these attributes in a file called `.gitattributes`.
 
 Here is my `.gitattributes`:
 ```
