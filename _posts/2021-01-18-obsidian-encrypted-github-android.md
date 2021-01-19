@@ -466,6 +466,7 @@ $ mkdir .shortcuts
 $ cd shortcuts
 $ ln -s ../push.sh
 $ ln -s ../pull.sh
+$ ln -s ../log.sh
 ```
 
 After that, **after exitting termux**, you can open your launcher's widget menu, select `Termux:Widget` and place it on your home screen.
