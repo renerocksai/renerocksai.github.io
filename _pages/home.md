@@ -17,7 +17,7 @@ author_profile: true
 # Hello, world!
 Hi, my name is Rene Schallner. 
 
-<p>You can read <b><a href="/about" style="color:#cd0f2d">more about me here</a></b>. See also <b><a href="/blog" style="color:#cd0f2d;">my blog</a></b>. Or <b><a href="/projects" style="color:#cd0f2d">check out my projects</a></b>.</p>  
+<p>You can read <b><a href="/about" style="color:#cd0f2d">more about me here</a></b>. See also <b><a href="/blog" style="color:#cd0f2d;">my blog</a></b>. Or check out <b><a href="/projects" style="color:#cd0f2d">my projects</a></b>.</p>  
 
 <div class="text-center text-small page__footer-follow"> <ul class="social-icons"> {% if site.data.ui-text[site.locale].follow_label %} <li><strong>{{ site.data.ui-text[site.locale].follow_label }}</strong></li> {% endif %} {% if site.footer.links %} {% for link in site.footer.links %} {% if link.label and link.url %} <li><a href="{{ link.url }}" rel="nofollow noopener noreferrer"><i class="{{ link.icon | default: 'fas fa-link' }}" aria-hidden="true"></i> {{ link.label }}</a></li> {% endif %} {% endfor %} {% endif %} <li><a href="{% if site.atom_feed.path %}{{ site.atom_feed.path }}{% else %}{{ '/feed.xml' | relative_url }}{% endif %}"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> {{ site.data.ui-text[site.locale].feed_label | default: "Feed" }}</a></li> </ul> </div>
 
