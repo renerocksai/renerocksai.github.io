@@ -6,6 +6,7 @@ tags:
   - roamresearch
   - obsidian
   - zettelkasten
+  - projects
 classes: wide
 ---
 
