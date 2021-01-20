@@ -1,6 +1,8 @@
 ---
 title: "Why and how I wrote my own slideshow presentation software"
+permalink: /blog/why-bullets
 categories:
+  - Articles
   - Blog
 tags:
   - projects

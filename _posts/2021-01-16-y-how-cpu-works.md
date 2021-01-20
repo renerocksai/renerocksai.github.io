@@ -1,6 +1,8 @@
 ---
 title: How a CPU works
+permalink: /blog/y-how-cpu-works
 categories:
+  - Articles
   - Blog
 tags:
   - projects

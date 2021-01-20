@@ -28,7 +28,7 @@ remote_theme: mmistakes/minimal-mistakes
 # Outputting
 permalink: /:categories/:title/
 paginate: 4 # amount of posts to show
-paginate_path: /page:num/
+paginate_path: /blog/page:num/
 timezone: # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 
 kramdown:
@@ -62,7 +62,7 @@ plugins:
 author:
   name   : "Rene Schallner"
   avatar : "/assets/images/reneglasses.png"
-  bio    : "Software engineer turned researcher, artificial intelligence heavy data scientist with strong computer science and electronics skills"
+  bio    : "Software engineer turned researcher, AI heavy data scientist with strong computer science and electronics skills"
   links:
       #    - label: "Website"
       #icon: "fas fa-fw fa-link"
@@ -100,6 +100,7 @@ defaults:
       comments: true
       share: true
       related: true
+      show_date: true
   # _pages
   - scope:
       path: "_pages"
