@@ -313,6 +313,9 @@ Now, every time you want to sync your changes, press `ctrl+p` and search for "Ob
 
 The plugin will automatically pull all remote changes when you start Obsidian. If you leave it running for days, you might want to pull recent changes manually: `ctrl+p` and search for "Obsidian Git: Pull". 
 
+**Update: If you implement this, please make sure you also follow along my post about [merges and conflicts](/blog/obsidian-gh-merges)!**
+{: .notice--danger :}
+
 ## Android
 Now on to the most hacky part of them all: syncing your repository on Android!
 
