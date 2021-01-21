@@ -492,6 +492,9 @@ And here is my output of `log.sh` on Android:
 
 Et voila! Now you have an encrypted GitHub repository for your Zettelkasten that you can use to sync all your devices!
 
+**Update: If you implement this, please make sure you also follow along my post about [merges and conflicts](/blog/obsidian-gh-merges)!**
+{: .notice--danger :}
+
 ---
 
 ## Research
