@@ -37,6 +37,8 @@ In addition to being a specialized Markdown text-editor and text-browser, Sublim
 
 Check it out on [GitHub](https://github.com/renerocksai/sublimeless_zk)
 
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">@reneschallner Amazing work on the sublime[less]_zk! New gold standard for Zettelkasten functions.</p>&mdash; Magnus (@svartfax) <a href="https://twitter.com/svartfax/status/1007958039884894209?ref_src=twsrc%5Etfw">June 16, 2018</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
 Or check out these demo screenshots:
 
 ![](/assets/images/slzkleftpanel.png)
