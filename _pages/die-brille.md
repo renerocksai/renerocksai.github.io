@@ -1,9 +1,9 @@
 ---
 title: "Mobile Logo Detection in the Wild"
-# permalink: /blog/brille-making-of
-categories:
-  - Articles
-  - Blog
+permalink: /93f54c5fcb2185d3413e6cf93bc97137/
+#categories:
+#  - Articles
+#  - Blog
 tags:
   - projects
   - artificial intelligence
