@@ -9,6 +9,8 @@ tags:
   - artificial intelligence
   - object detection
   - mobile
+  - computer-vision
+  - deep learning
 classes: wide
 ---
 
