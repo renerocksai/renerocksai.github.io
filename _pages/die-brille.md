@@ -275,7 +275,7 @@ Here are some snippets from the video:
 ![](/assets/images/dhl_compressed.gif){: .align-center}
 
 
-## The Case Study
+## Findings of the Case Study
 While the whole case study itself is outside the scope of this article about mobile logo detection, here are the key findings:
 
 ![](/assets/images/glassescasestudy.png)
