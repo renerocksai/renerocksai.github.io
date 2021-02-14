@@ -99,9 +99,9 @@ Since training and incorporating a MobileNet into our mobile app would have mean
 # CVPR, paradise, and mixed messages
 In July 2017, I was lucky to attend the CVPR conference, one of the biggest computer vision conferences in the world, in Honolulu, Hawaii. The conference was purely amazing and the most interesting, exciting, and inspiring one I have ever attended. The location was breathtakingly beautiful and idyllic, too. It felt like a week in paradise, for mind, body, and soul.
 
-I was fortunate and super proud to meet Met Fei-Fei Li, a superstar in the computer vision, deep learning, and artificial intelligence worlds. That called for a picture 😀!
+I was fortunate and super proud to meet Met Fei-Fei Li, a superstar in the computer vision, deep learning, and artificial intelligence worlds. That called for a picture 😀 (_which I will put here as soon as I get permission from her_).
 
-![](/assets/images/feifeili.jpg)
+<!-- ![](/assets/images/feifeili.jpg) -->
 
 Being very interested in Google's MobileNets, I was excited when I heard that Google was about to show them in action at their stand. They demonstrated object detection of little toy cars, toy giraffes, etc. So when demo time arrived, I went to the Google stand. 
 
