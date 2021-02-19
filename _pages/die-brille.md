@@ -52,7 +52,7 @@ Unfortunately, at that time, Google had discontinued selling Google Glasses to o
 
 ![](/assets/images/sonyglasses.jpg)
 
-Not wanting to wait for approval, I immediately ordered Sony Smart Glasses with my own money and got myself immersed in its API and Android programming in general. It's Java all the way down, which took a bit of getting used to.
+I immediately ordered Sony Smart Glasses and got myself immersed in its API and Android programming in general. It's Java all the way down, which took a bit of getting used to.
 
 There was a lot to learn and a lot to do. Still, gradually, I got it all to work in a prototype: The Smart Glasses were controlled by the smartphone, which consecutively took pictures via the glasses' camera, then wirelessly transferred them to the phone, converted them, and ran them through the image classifier. After that, it displayed the image and result on the phone. Just for giggles, I also implemented text-to-speech output and had the phone speak out whenever it "recognized" a brand logo.
 
