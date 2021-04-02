@@ -192,7 +192,7 @@ title = {Visual eWOM: Are Facebook Brand Photos a Sign of Brand Love?}
 }
 ```
 
-shows the same journal deficiency as my other examples:
+shows the same deficiency as my other examples:
 
 **The `booktitle=` is missing**.
 
