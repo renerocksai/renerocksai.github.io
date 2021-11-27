@@ -77,8 +77,9 @@ author:
       icon: "fab fa-fw fa-linkedin"
       url: "https://www.linkedin.com/in/rene-schallner-901701144/"
     - label: "Sponsor"
-      icon: "fab fa-fw fa-heart"
+      icon: "fab fa fa-heart"
       url: "https://github.com/sponsors/renerocksai"
+      style: "color:#cd0f2d"
 
 footer:
   links:
