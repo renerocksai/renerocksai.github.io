@@ -8,52 +8,44 @@
 >
   <style>
     #docs {
-        h1, h2, h3 {
+        h1, h2, h3, h4 {
             text-align: left;
+            a {
+                color: black;
+                text-decoration: none;
+            }
+        }
+        @media (prefers-color-scheme:dark) {
+          h1, h2, h3, h4 {
+            a {
+              color: white;
+            }
+          }
         }
 
         h2 {
             font-size: 1.5rem;
             border-bottom: 1px dashed #aaa;
             margin-top: 2em;
-
-            a {
-                color: white;
-                text-decoration: none;
-            }
-
             a:hover::after {
                 content: ' #';
-                color: white;
             }
         }
 
         h3 {
             font-size: 1.5rem;
-
-            a {
-                color: white;
-                text-decoration: none;
-            }
-
             a:hover::after {
                 content: ' ##';
-                color: white;
             }
         }
 
         h4 {
             font-size: 1rem;
-            a {
-                color: white;
-                text-decoration: none;
-            }
-
             a:hover::after {
                 content: ' ###';
-                color: white;
             }
         }
+
     }
 
     table {
