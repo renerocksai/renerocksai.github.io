@@ -8,13 +8,57 @@
 .tags = ["research"],
 ---
 
-![](/reneglasses.png)
+Mind you, the year was 2017. I trained a [deep convolutional neural
+network](https://en.wikipedia.org/wiki/Convolutional_neural_network) for brand
+logo detection using the darknet deep learning framework (now taken over by
+[hank.ai](https://github.com/hank-ai/darknet)), in C.
+
+For deployment of the model, I wrote an Android app that captures images from a
+USB webcam and feeds the images to the neural network.
+
+## Making Of
+
+### 1. Get Glasses
+
+![](/googleglassesinhand.jpg)
+
+### 2. Attach Webcam
+
+![](/makingglasses.jpg)
+
+### 3. Train, test, and select best model
+
+![](/mobilelogoshootout.png)
+
+![](/logodistance.png)
 
 Read the full story [at NIM.org](https://www.nim.org/forschung/mobile-logo-detection-in-the-wild), my former employer!
 
 ## Mobile logo detection in the wild
 
-![](/dataset5_startframe_sm.png)
+I created a video from everything the glasses "saw" during a stroll through the
+city of Nuremberg, Germany, with bounding boxes around all logos from our
+dataset.
+
+The bounding boxes are green when the glasses recognized a logo correctly, red
+when a logo was detected but got the brand wrong, and white when the glasses
+missed a logo.
+
+The ground truths were carefully annotated by our working student.
+
+Here is the start frame of the video, with details of the task.
+
+![](/dataset5_startframe.png)
+
+The results were pretty good:
+
+![](/dataset5_video.png)
+
+A small casestudy revealed the following:
+
+![](/glassescasestudy.png)
+
+Here are a few sample detections:
 
 ![](/dhl_compressed.gif)
 
