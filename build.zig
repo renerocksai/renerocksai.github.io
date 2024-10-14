@@ -50,6 +50,14 @@ pub fn build(b: *std.Build) !void {
             "fonts/jbm/JetBrainsMono-SemiBoldItalic.woff2",
             "fonts/jbm/JetBrainsMono-Thin.woff2",
             "fonts/jbm/JetBrainsMono-ThinItalic.woff2",
+
+            "favicon.svg",
+            "favicon-48x48.png",
+            "favicon.ico",
+            "apple-touch-icon.png",
+            "web-app-manifest-192x192.png",
+            "web-app-manifest-512x512.png",
+            "site.webmanifest",
         },
         .build_assets = &.{
             .{
