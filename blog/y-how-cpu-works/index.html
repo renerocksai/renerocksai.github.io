@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+  <head id="head">
+    <meta charset="UTF-8">
+    <meta name="description" content="@renerocksai - personal blog">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@renerocksai">
+    <meta name="twitter:author" content="@renerocksai">
+    <meta name="twitter:description" content="@renerocksai - personal blog">
+    <meta name="twitter:title" content="How a CPU works | @renerocksai">
+    <meta name="twitter:image" content="https://zine-ssg.io/preview.png">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="How a CPU works | @renerocksai">
+    <meta property="og:image" content="https://zine-ssg.io/preview.png">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title id="title">
+      How a CPU works
+      - @renerocksai
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/main.css">
+    <link rel="stylesheet" type="text/css" href="/highlight.css">
+    
+  <link type="text/css" rel="stylesheet" href="/term-highlight.css">
+  <style>
+    #docs {
+        h1, h2, h3 {
+            text-align: left;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            border-bottom: 1px dashed #aaa;
+            margin-top: 2em;
+
+            a {
+                color: white;
+                text-decoration: none;
+            }
+
+            a:hover::after {
+                content: ' #';
+                color: white;
+            }
+        }
+
+        h3 {
+            font-size: 1.5rem;
+
+            a {
+                color: white;
+                text-decoration: none;
+            }
+
+            a:hover::after {
+                content: ' ##';
+                color: white;
+            }
+        }
+
+        h4 {
+            font-size: 1rem;
+            a {
+                color: white;
+                text-decoration: none;
+            }
+
+            a:hover::after {
+                content: ' ###';
+                color: white;
+            }
+        }
+    }
+
+    table {
+        font-size: 0.9em;
+    }
+    table th {
+        font-size: 1em;
+    }
+    table td {
+        white-space: nowrap;
+    }
+  </style>
+
+  </head>
+  <body>
+    <div id="content">
+      
+  <div style="display:flex; flex-direction:column; align-items:center;">
+    <h1 id="header" class="noupper" style="color: #606060"><a class="reset-a" href="/">@renerocksai</a></h1>
+    <div class="menu-small" style="display:flex; justify-content:center; font-size:small;">
+      <a href="/">Home</a>
+      •
+      <a href="/blog/">Blog</a>
+      •
+      <a href="/projects/">Projects</a>
+      •
+      <a href="/about/">About</a>
+      •
+      <a href="https://github.com/renerocksai" target="_blank">
+        GitHub
+      </a>
+    </div>
+  </div>
+  <h1>How a CPU works</h1>
+  <p class="post-byline">
+    <span>January 16, 2021</span>
+    •
+    <span>18</span>
+    min read • by
+    <b>renerocksai</b>
+    <span></span>
+  </p>
+  <div id="post-description"></div>
+  <div>
+    <div class="toc block info">
+      <h1>&nbsp;Table of Contents</h1>
+      <div><ul>
+<li>
+<ul><li>
+<a href="#cpu-basics"><a href="#cpu-basics">CPU basics</a><ul><li>
+<a href="#rrisc"><a href="#rrisc">The example RRISC CPU</a><ul><li>
+<a href="#memory-pc"><a href="#memory-pc">Memory and Program Counter</a></li><li><a href="#instruction-registers"><a href="#instruction-registers">Instruction Registers</a></li><li><a href="#hi-lo"><a href="#hi-lo">The concept of HIGH byte and LOW byte</a></li></ul></li></ul></li><li><a href="#from-to"><a href="#from-to">From Combinatorial Logic to Control Unit</a><ul><li>
+<a href="#combi"><a href="#combi">Combinatorial Logic</a></li><li><a href="#state"><a href="#state">Introducing State</a></li><li><a href="#fsm"><a href="#fsm">Finite State Machines</a></li><li><a href="#control-unit"><a href="#control-unit">Control Unit</a></li></ul></li><li><a href="#rrisc-control"><a href="#rrisc-control">The RRISC Control Unit</a></li><li><a href="#exe"><a href="#exe">Executing a RRISC instruction</a></li></ul></ul></div>
+    </div>
+  </div>
+  <div id="docs">
+    <div id="post-body"><p>Modern CPUs are compicated beasts; however, the fundamental principles outlined in this article still hold true for them. Here is how they work.</p><p>If you want to know more about building a CPU from scratch, check out my project of a <a href="/projects/rrisc/">RRISC CPU</a> or the accompanying <a href="https://renerocksai.github.io/rrisc/bullets" target="_blank">presentation</a> (<a href="https://renerocksai.github.io/rrisc/rrisc_cpu_slides.pdf" target="_blank">PDF version</a>) of a talk I gave about it.</p><div id=cpu-basics><h2><a class="" href="#cpu-basics">CPU basics</a></h2><p>The acronym CPU stands for "central processing unit" which rather precisely describes its function in a computer system. As the core of a computer, it does all the real work: Its task is to fetch instructions of a program from memory and execute them.</p><p>CPU instructions are rather primitive and coded in <a href="https://en.wikipedia.org/wiki/Machine_code" target="_blank">machine code</a>, a numerical representation of those simple instructions. It usually takes many of them to do anything meaningful.</p><p>Since machine code is hard to work with for humans, a <em>mnemonic representation</em>, called <a href="https://en.wikipedia.org/wiki/Assembly_language" target="_blank">assembly language</a>, is used for writing low level software. Assembly language, as machine code, is always tied to a very specific CPU architecture, often called <a href="https://en.wikipedia.org/wiki/Instruction_set_architecture" target="_blank">Instruction Set Architecture</a> (ISA).</p><p>Without going into specifics, below is a comparison between human-friendly, symbolic assembly language (<code>lda #$ca</code>) and machine code (<code>0a ca 00</code>):</p><pre><code>LDA #$CA     ; load register A with hexadecimal value CA
+
+; machine code (hexadecimal): 0a ca 00
+</code></pre><p>In the rest of this article, we'll use the very simple <a href="/projects/rrisc/">RISC CPU</a> as an example to illustrate the concepts discussed.</p></div><div id=rrisc><h3><a class="" href="#rrisc">The example RRISC CPU</a></h3><p>The main essential building blocks of a CPU are:</p><table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Control Unit</strong></td>
+<td>does all the real work</td>
+</tr>
+<tr>
+<td>One or more <strong>registers</strong></td>
+<td>store values to operate on</td>
+</tr>
+</tbody>
+</table>
+<p>Real CPUs consist of more building blocks, most notably an <a href="https://en.wikipedia.org/wiki/Arithmetic_logic_unit" target="_blank">arithmetic logical unit</a> (ALU) for simple integer arithmetic and bitwise logical operations, or a <a href="https://en.wikipedia.org/wiki/Floating-point_unit" target="_blank">floating point unit</a> (FPU) for performing floating point arithmetics.</p><p>Now, if this feels cyclic or like cheating to you, defining a component that does all the work inside the description of the component that is supposed to do all the work, <a href="#from-combinatorial-logic-to-control-unit">further down</a> the road, this will be resolved.</p><p>So the way a CPU operates, simply speaking, is to load instructions and values from memory into registers, operate on them and then store the result into memory or react to the result of the operation by jumping to a different part of the program.</p><p>In fact, that's almost all the RRISC CPU ever does. In case you're wondering, <strong>RRISC</strong> stands for <em>Radically Reduced Instruction Set Computer</em>, leaning on the acronym for the well established family of <strong>RISC</strong> architectures, <em>Reduced Instruction Set Computers</em> - but that's a tangent for a seperate article.</p><p>With the above, we have introduced a few more relevant components:</p></div><div id=memory-pc><h4><a class="" href="#memory-pc">Memory and Program Counter</a></h4><table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Inside CPU?</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>memory</strong></td>
+<td>no</td>
+<td>stores program and data</td>
+</tr>
+<tr>
+<td><strong>instruction registers</strong></td>
+<td>yes</td>
+<td>hold the current instruction and associated data</td>
+</tr>
+<tr>
+<td><strong>program counter</strong></td>
+<td>yes</td>
+<td>points to memory location of next instruction</td>
+</tr>
+</tbody>
+</table>
+<p>First, there is memory: this is where the program and associated data resides. It is where the CPU reads instructions from and where instructions can make the CPU load operands from and store results to.</p><p>But the CPU needs to know where to load instructions from, more specifically, their memory location, referred to as the <strong>address</strong>. For that reason, the CPU contains a special counting register, the so-called <strong>program counter</strong> (PC), sometimes also called <strong>instruction pointer</strong> (IP). Every time the CPU fetches an instruction, it uses the PC to provide the address. For instructions consisting of multiple parts (bytes in our case), the CPU increments the PC in between fetches. More on that later.</p><p>The following illustration depicts a block diagram of our CPU (don't worry about the details): <img src="https://github.com/renerocksai/rrisc/blob/main/bullets/imgs/tinycore.png?raw=true"></p><p>As you can see, the RRISC CPU sports 7 registers.</p><p>An a bit more generic illustration can be found on Wikipedia:</p><p><img src="https://upload.wikimedia.org/wikipedia/commons/d/d8/ABasicComputer.gif"></p><p>Note that in the illustration above, there is no notion of a program counter, it's probably meant to be one of the registers. Also, some combinatorial logic is seen as not being part of the control unit.</p></div><div id=instruction-registers><h4><a class="" href="#instruction-registers">Instruction Registers</a></h4><p>When a CPU fetches instructions and operands, where does it store them? In the <strong>instruction registers</strong>. Our CPU has 3 instruction registers, which we consider to be part of the control unit:</p><table>
+<thead>
+<tr>
+<th>instruction register</th>
+<th>purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>instruction register 1</strong></td>
+<td>holds the <strong>opcode</strong> of the instruction</td>
+</tr>
+<tr>
+<td><strong>instruction register 2</strong></td>
+<td>holds the first part of the operand (LOW byte)</td>
+</tr>
+<tr>
+<td><strong>instruction register 3</strong></td>
+<td>holds the second part of the operand (HIGH byte)</td>
+</tr>
+</tbody>
+</table>
+<p>The <strong>opcode</strong> is the actual machine code of the instruction, just a number. For the sake of simplicity, all instructions of the RRISC CPU are 3 bytes wide. That means that an instruction always consists of all 3 bytes for the 3 instruction registers, no matter if the operation needs an operand or not.</p></div><div id=hi-lo><h4><a class="" href="#hi-lo">The concept of HIGH byte and LOW byte</a></h4><p>A byte consists of 8 bits, each of which can take a value of either 0 or 1. 8 bits together can be interpreted as a <strong>binary number</strong>.  8-bit numbers (bytes) give us a permutation of 256 different values ranging from <code>00000000</code> to <code>11111111</code> in binary notation, which correspond to the decimal values ranging from <code>0</code> to <code>255</code>.</p><p>Sometimes, however, 8 bits are not enough. Consider the memory for example. If we want to load a value from memory, we have to provide an <strong>address</strong> (location in memory). It would be a shame if we could only access 256 different addresses in memory. Most of our programs will be larger than that.</p><p>So, to address more memory, we simply add a second byte. With two bytes combined, we can have 16-bit binary numbers, ranging from <code>0</code> to <code>65535</code>. We call the upper, leftmost, half of the 16-bit number the <strong>HIGH byte</strong> and the lower, rightmost half the <strong>LOW byte</strong>.</p><p>Without digging deeply into binary arithmetic, the formula to calculate the value from a value split into low and high bytes, is:</p><pre><code>value = HIGH_byte * 256 + LOW_byte
+</code></pre><p>With the basics out of the way, we can now move on to how the control unit works.</p></div><div id=from-to><h2><a class="" href="#from-to">From Combinatorial Logic to Control Unit</a></h2><p>To understand how a control unit works, we have to start with the basics.</p></div><div id=combi><h3><a class="" href="#combi">Combinatorial Logic</a></h3><p>We start with combinatorial logic circuits. A combinatorial logic circuit, in <a href="https://en.wikipedia.org/wiki/Digital_electronics" target="_blank">digital electronics</a>, is a very basic digital logic circuit (only 0s and 1s) whose output only depends on its inputs.</p><p>As such, they can be seen as implementing a pure function (inputs --> output). Since all inputs and the output are digital and can only have discrete values, the entire function can be described with a function table, listing the desired output for all possible combinations of the input.</p><p>Example:</p><table>
+<thead>
+<tr>
+<th>Input A</th>
+<th>Input B</th>
+<th>Output X</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0</td>
+<td><strong>1</strong></td>
+</tr>
+<tr>
+<td>0</td>
+<td>1</td>
+<td><strong>0</strong></td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td><strong>0</strong></td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td><strong>1</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Combinatorial logic circuits are built from fundamental components, the so-called <a href="https://en.wikipedia.org/wiki/Logic_gate" target="_blank">logic gates</a>. A logic gate is a little electronic circuit that implements a <a href="https://en.wikipedia.org/wiki/Boolean_algebra" target="_blank">boolean function</a>. Without going into details, fundamental logic gates to describe any function table are:</p><ul><li><strong>AND:</strong> output is 1 if all inputs are 1, else 0</li><li><strong>OR:</strong> output is 1 if any input is 1, else 0</li><li><strong>NOT:</strong> output is 1 if input is 0, else 0</li></ul><p>The clue about logic gates is that they are easily translated into physical form by implementing them using <a href="https://en.wikipedia.org/wiki/Transistor" target="_blank">transistors</a>.</p><p>So, our function table above can be described using boolean algebra directly translating to logic gates like this:</p><p>X = ( {<strong>NOT</strong> A} <strong>AND</strong> {<strong>NOT</strong> B} )  <strong>OR</strong>  (A <strong>AND</strong> B)</p><p>Above function can also be depicted in schematic form using logic gates: <figure><img src="/combi.png" alt="">
+<figcaption>combi</figcaption></figure></p><p>Cunningly, <strong>AND gates</strong> are depicted containing an <code>&</code> symbol and <strong>OR gates</strong> contain <code>&gt;=1</code>. The little circles at the A and B inputs of the top left AND gate are shorthand notation for <strong>NOT</strong>, saving us from drawing two NOT gates, which are more common-sensically called inverters.</p><p>One critical observation can be made about combinatorial logic circuits: they are stateless or asynchronous, meaning, any change of the inputs is reflected at the output immediately. Without a concept of timing, how shall our control unit ever execute one step at a time?</p></div><div id=state><h3><a class="" href="#state">Introducing State</a></h3><p>It is time to introduce the concept of state to our growing control unit.</p><p>We achieve that by introducing a so-called <strong><a href="https://en.wikipedia.org/wiki/Flip-flop_(electronics)#D_flip-flop" target="_blank">D-Flipflop</a></strong> at the output of our circuit. A D-flipflop can be seen as a 1-bit memory and can be built using basic logic gates.</p><p>It works like this:</p><ul><li>when a CLOCK signal arrives <em>(rising edge)</em>:<ul><li>its output is set to the value of its input</li><li>the output does not change anymore, even if the input changes</li><li>this state is kept until the next CLOCK signal arrives</li></ul></li></ul><p>With <em>rising edge</em> we mean the CLOCK signal changing from 0 to 1.</p><p>So, when we add the D-flipflop, we get time-dependent, stateful or synchronous behavior:</p><p><figure><img src="/stateful2.png" alt="">
+<figcaption>stateful</figcaption></figure></p><p>Let's examine our new circuit and look at a timing diagram:</p><p><img src="https://github.com/renerocksai/rrisc/blob/main/bullets/imgs/statefultiming.png?raw=true"></p><ul><li>In the beginning, A is 0, B is 0, CLOCK is 0. Output Q is also 0.</li><li>A little later, B becomes 1 but nothing else changes. The flipflop keeps its state and Q remains 0.</li><li>Next, indicated by the first red dotted line, CLOCK changes from 0 to 1. A rising edge! So this time, the D-flipflop captures the result of the combinatorial logic. According to the function table, X(0, 1)=0, so Q remains 0.</li><li>Q goes down to 0 and shortly afterwards A becomes 1. Now we have A=1 and B=1, so our combinatorial logic outputs a 1 - but since the D-flipflop is not triggered yet, Q remains 0.</li><li>However, next we see a rising edge at the CLOCK signal! Now the output of the combinatorial logic (A=1, B=1 --> X=1) is captured by the D-flipflop and the output Q changes from 0 to 1.</li><li>... I leave the rest as an excercise for the reader</li></ul><p>Great, now we are on step further: our circuit only reacts to input when it sees a clock signal. It has state. But how can we make it go from one step to the next?</p></div><div id=fsm><h3><a class="" href="#fsm">Finite State Machines</a></h3><p>In order to achieve that, we <strong>feed back the state output</strong> into the inputs of the combinatorial logic. By doing that, we create a so-called <strong><a href="https://en.wikipedia.org/wiki/Finite-state_machine" target="_blank">Finite State Machine</a></strong> (FSM).</p><p><img src="https://github.com/renerocksai/rrisc/blob/main/bullets/imgs/fsmschem.png?raw=true"></p><p>Now our output (at rising clock edge) is dependent on both:</p><ul><li>the inputs</li><li>the current state</li></ul><p>We could also say that the <strong>next state Q</strong> depends on:</p><ul><li>the <strong>condition</strong> (inputs A, B)</li><li>the <strong>current state</strong></li></ul><p>Which means, we can jump from state to state given certain conditions, expressed by the inputs.</p><p>Consider the following function table of the combinatorial logic:</p><p><img src="https://github.com/renerocksai/rrisc/blob/main/bullets/imgs/fsmtable.png?raw=true"></p><p>With every clock signal, the circuit can now change its state but it only does so when certain conditions are met.</p><p>In the illustration below, the state transition conditions are marked in blue:</p><p><img src="https://github.com/renerocksai/rrisc/blob/main/bullets/imgs/fsmstate.png?raw=true"></p><p>And with that we can design complex state machines that execute one step at a time and react to inputs, such as instruction opcodes.</p></div><div id=control-unit><h3><a class="" href="#control-unit">Control Unit</a></h3><p>It is common practice though, when designing a control unit, to separate concerns a bit:</p><ul><li>we use a finite state machine to define the state of the CPU</li><li>we then use an additional combinatorial logic to decode both CPU state and input signals into the output signals</li></ul><p><img src="https://github.com/renerocksai/rrisc/blob/main/bullets/imgs/ctrlunitschem.png?raw=true"></p><p>This makes for a cleaner design that is more easy to maintain.</p></div><div id=rrisc-control><h2><a class="" href="#rrisc-control">The RRISC Control Unit</a></h2><p>With all that knowledge under our belt we have a basic understanding that a Control Unit can be built from a state machine and combinatorial logic. But what should the control unit do? What states should it have?</p><p>So, back to the example of the RRISC CPU, the control unit knows the following states that it executes in order:</p><table>
+<thead>
+<tr>
+<th>state</th>
+<th>function</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>wakeup</td>
+<td>only ever present immediately after a reset, sets everything up so that an instruction can be fetched</td>
+</tr>
+<tr>
+<td>ram_wait_1</td>
+<td>a wait state giving the RAM (memory) time to output the instruction of the program counter</td>
+</tr>
+<tr>
+<td>fetch_1</td>
+<td>the RAM's output is loaded into intruction register 1 and the program counter is incremented by one</td>
+</tr>
+<tr>
+<td>ram_wait_2</td>
+<td>wait state for the RAM</td>
+</tr>
+<tr>
+<td>fetch_2</td>
+<td>the first operand byte is loaded into instruction register 2 and the program counter is incremented</td>
+</tr>
+<tr>
+<td>ram_wait_3</td>
+<td>wait state for the RAM</td>
+</tr>
+<tr>
+<td>fetch_3</td>
+<td>the second operand byte is loaded into instruction register 3</td>
+</tr>
+<tr>
+<td>decode</td>
+<td>preparing for a potential load/store operation, the RAM address is set to operand HIGH and LOW bytes</td>
+</tr>
+<tr>
+<td>execute</td>
+<td>depending on opcode, load/store + PC increment or jump = PC load is performed</td>
+</tr>
+</tbody>
+</table>
+<p>The next state after <code>execute</code> is <code>ram_wait_1</code> again.</p><p>When you consider that all CPU registers are D-flipflops, just with 8 inputs and outputs each instead of the 1-bit variants we saw before, and that the RAM also behaves a bit like a D-flipflop, you can see how easy writing to registers is: you just have to "clock" the right one.</p></div><div id=exe><h2><a class="" href="#exe">Executing a RRISC instruction</a></h2><p>Let's look more deeply into what happens when we execute an instruction:</p><pre><code>lda # $CA    ; load register A with immediate value 0xCA
+</code></pre><p>The instruction <code>lda # $CA</code> does the following:</p><ul><li>it takes the value <em>$CA</em> (<em>202</em> in hexadecimal)</li><li>it stores this value in register A</li></ul><p>The image below shows the CPU going out of reset (<code>wakeup</code>) and then executing the instruction in 8 clock cycles.</p><p>The thin red vertical line to the right in the image is placed at ca. 90 nanoseconds, right after the <code>execute</code> phase of the instruction. In the last, blue line of the diagram you can see <em>cpureg_a</em> (register A) receiving the value <code>CA</code> at the end of <code>execute</code>.</p><p>If you look carefully, you can see that value travel from <em>ram_out</em> (the output of the RAM) via <em>debug_inr2</em> (instruction register 2 containing the operand, the value <code>CA</code> in our case) to register A.</p><p><img src="https://user-images.githubusercontent.com/30892199/103280947-e4c46200-49d1-11eb-9e5f-1e69fb49baaf.png"></p><table>
+<thead>
+<tr>
+<th>time</th>
+<th>clock cycle</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0 .. 10ns</td>
+<td>-</td>
+<td>- <em>ram_addr</em> is reset to 0, so execution will start from there<!-- raw HTML omitted -->- the cpu is prepared to start with state <em>wakeup</em><!-- raw HTML omitted -->- the RAM is in reset mode, too, outputting zeros</td>
+</tr>
+<tr>
+<td>10 .. 15ns</td>
+<td>0</td>
+<td>- cpu is active in <em>wakeup</em>, doing nothing until the next clock cycle</td>
+</tr>
+<tr>
+<td>15 .. 25ns</td>
+<td>1</td>
+<td>- cpu enters <em>ram_wait_1</em> state, giving the RAM time to output the opcode<!-- raw HTML omitted -->- cpu is active in <em>wakeup</em>, doing nothing until the next clock cycle<!-- raw HTML omitted -->- ram outputs the opcode at address 0, ready for the cpu to grab it in the next cycle</td>
+</tr>
+<tr>
+<td>25 .. 35ns</td>
+<td>2</td>
+<td>- now in <em>fetch_1</em>, the cpu loads <em>ram_out</em> into instruction register 1, shown as <em>debug_inr1</em><!-- raw HTML omitted -->- it also sets <em>pc_clock</em> to 1, so the program counter will be incremented in the next cycle<!-- raw HTML omitted -->- program counter increments <em>ram_addr</em> to 1</td>
+</tr>
+<tr>
+<td>35 .. 45ns</td>
+<td>3</td>
+<td>- cpu in <em>ram_wait_2</em><!-- raw HTML omitted -->- ram output is valid at the end of the cycle: <em>$CA</em></td>
+</tr>
+<tr>
+<td>45 .. 55ns</td>
+<td>4</td>
+<td>- now in <em>fetch_2</em>, the cpu loads <em>ram_out</em> into instruction register 2, shown as <em>debug_inr2</em><!-- raw HTML omitted -->- it also sets <em>pc_clock</em> to 1, so the program counter will be incremented in the next cycle<!-- raw HTML omitted -->- program counter increments <em>ram_addr</em> to 2</td>
+</tr>
+<tr>
+<td>55 .. 65ns</td>
+<td>5</td>
+<td>- cpu in <em>ram_wait_3</em><!-- raw HTML omitted -->- ram output is valid at the end of the cycle: <em>$00</em></td>
+</tr>
+<tr>
+<td>65 .. 75ns</td>
+<td>6</td>
+<td>- now in <em>fetch_3</em>, the cpu loads <em>ram_out</em> into instruction register 3, shown as <em>debug_inr3</em><!-- raw HTML omitted -->- <em>(no program counter increment here)</em></td>
+</tr>
+<tr>
+<td>75 .. 85ns</td>
+<td>7</td>
+<td>- cpu enters <em>decode</em> stage<!-- raw HTML omitted -->- it proactively disconnects <em>ram_addr</em> from the program counter and sets it to instruction registers 3 (00) and 2 (0A), just in case a ram load / store or jump operation is executed<!-- raw HTML omitted -->- hence, <em>ram_addr</em> changes to 0a<!-- raw HTML omitted -->- now the ram would have time to output the contents of address 0a in case it's needed</td>
+</tr>
+<tr>
+<td>85 .. 95ns</td>
+<td>8</td>
+<td>- in <em>execute</em>, the contents of instruction register 1 are loaded into register A<!-- raw HTML omitted -->    - note: register A captures the value at the beginning of the next cycle<!-- raw HTML omitted -->- since it is not a jump instruction, <em>pc_clock</em> is raised again to increment the program counter to 3, where the next instruction will start<!-- raw HTML omitted -->- <em>ram_addr</em> is switched back to the program counter</td>
+</tr>
+<tr>
+<td>95 .. 100ns</td>
+<td>9</td>
+<td>- the cpu goes into <em>ram_wait_1</em> again, to give the ram time to output the next instruction</td>
+</tr>
+</tbody>
+</table>
+<p>And voila! This is how a CPU works! That's all there is to it! Well, by example of a super simplified CPU.</p><div class="block warning"><h1>Please note:</h1><p>Some concepts in this article have been simplified or reduced to their core. Many details have been omitted like going into binary, decimal and hexadecimal number systems, just to name some. If you find this article inaccurate, lacking, or if you find errors, please let me know - dm me on twitter and I will fix it.</p></div><hr><p>If you want to learn more, check out:</p><ul><li>the project webpage of my <a href="https://renerocksai.github.io/rrisc" target="_blank">RRISC CPU</a></li><li>the accompanying <a href="https://renerocksai.github.io/rrisc/bullets" target="_blank">presentation</a> (<a href="https://renerocksai.github.io/rrisc/rrisc_cpu_slides.pdf" target="_blank">PDF version</a>) of a talk I gave about it.</li><li>the RRISC CPU on <a href="https://github.com/renerocksai/rrisc" target="_blank">GitHub</a></li></ul></div></div>
+  </div>
+  <hr>
+  <div id="prev-next">
+    <span>
+      <a href="/blog/why-bullets/">←
+        <span>Why and how I wrote my own slideshow presentation software</span></a>
+    </span>
+    <span>&nbsp; • &nbsp;</span>
+    <span>
+      <a href="/blog/android-sync-obsidian-encrypted-github/"><span>Syncing your Obsidian vault to Android via an encrypted GitHub repository</span>
+        →</a>
+    </span>
+    <small>&nbsp; or &nbsp;</small>
+    <small>
+      <a href="/">Back to the Homepage</a>
+    </small>
+  </div>
+
+    </div>
+    <footer id="footer">
+      
+    </footer>
+  </body>
+</html>
