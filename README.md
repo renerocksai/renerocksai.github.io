@@ -1,1 +1,3 @@
-sources for [renerocksai.github.io](https://renerocksai.github.io)
+# renerocks.ai
+
+built with zine
