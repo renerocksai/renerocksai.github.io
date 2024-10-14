@@ -1,7 +1,7 @@
 ---
 .title = "Sublimeless_ZK",
 .description = "Zettelkasten Software with support for academic writing",
-.date = @date("2021-01-16T00:00:00"),
+.date = @date("2018-04-18T00:00:00"),
 .author = "renerocksai",
 .layout = "post.shtml",
 .draft = false,

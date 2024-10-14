@@ -19,6 +19,8 @@ employer](https://www.nim.org/en/research/projects-overview/detail-research-proj
 Simulating hundreds of virtual online meetings in parallel brought our server
 to its limits and sparked the creation of [Zap](/projects/zap).
 
+We created a really cool video for this project:
+
 ```=html
 <iframe width="560" height="315" src="https://www.youtube.com/embed/_wawv6vzrJA?si=6uEDsTj3at5ntA3c" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 ```

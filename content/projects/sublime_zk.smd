@@ -1,7 +1,7 @@
 ---
 .title = "Sublime_ZK",
 .description = "A Zettelkasten plugin for SublimeText",
-.date = @date("2021-01-16T00:00:00"),
+.date = @date("2017-10-28T00:00:00"),
 .author = "renerocksai",
 .layout = "post.shtml",
 .draft = false,
