@@ -127,6 +127,21 @@ blockquote p {
   margin-bottom: 15px;
 }
 
+
+.warning h1 {
+  color: white;
+  border-color: #0292ca !important;
+  background-color: #0292ca !important;
+}
+
+.info h1 {
+  color: white;
+  border-color: orange !important;
+  background-color: orange !important;
+}
+
+
+
 @media (prefers-color-scheme:dark) {
   code {
     color: white;
@@ -188,6 +203,21 @@ blockquote p {
   }
 
 
+  .warning h1 {
+    color: white;
+    border-color: #0292ca !important;
+    background-color: #0292ca !important;
+  }
+
+  .info h1 {
+    color: white;
+    border-color: orange !important;
+    background-color: orange !important;
+  }
+
+  .toc a {
+    color: #bbb
+  }
 }
 
 .highlight {
@@ -287,15 +317,15 @@ iframe {
   overflow: hidden;
 }
 
- .video-container iframe,
- .video-container object,
- .video-container embed {
-   position: absolute;
-   top: 0;
-   left: 0;
-   width: 100%;
-   height: 100%;
- }
+.video-container iframe,
+.video-container object,
+.video-container embed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
 
 
 
@@ -329,9 +359,9 @@ iframe {
 }
 
 
- .block.info {
-   margin-bottom: 1.5rem;
- }
+.block.info {
+  margin-bottom: 1.5rem;
+}
 
 .warning {
   border-color: #0292ca !important;
@@ -346,23 +376,14 @@ iframe {
   padding-left: 2rem;
 }
 
-.warning h1 {
-   color: white;
-  border-color: #0292ca !important;
-  background-color: #0292ca !important;
-}
+
 .warning p {
-   padding-top: 1rem;
-   /*color: blue;*/
+  padding-top: 1rem;
+  /*color: blue;*/
 }
 
 .info {
   border-color: orange !important;
-}
-.info h1 {
-   color: white;
-  border-color: orange !important;
-  background-color: orange !important;
 }
 
 .info ul {
@@ -375,8 +396,8 @@ iframe {
 }
 
 .info p {
-   padding-top: 1rem;
-   /*color: blue;*/
+  padding-top: 1rem;
+  /*color: blue;*/
 }
 
 .nopara p {
@@ -441,23 +462,19 @@ video {
 }
 
 .menu a {
-   padding-left: 1rem;
-   padding-right: 1rem;
- }
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
 
 .menu-small a {
-   padding-left: 0.5rem;
-   padding-right: 0.5rem;
- }
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
 
 
 .noupper {
   font-family: 'Merriweather', serif;
-  font-family: -apple-system,BlinkMacSystemFont,"Roboto","Segoe UI","Helvetica Neue","Lucida Grande",Arial,sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", Arial, sans-serif;
   font-style: normal;
   font-weight: bold;
-}
-
-.toc a {
-    color: #bbb
 }
