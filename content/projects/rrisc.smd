@@ -1,0 +1,20 @@
+---
+.title = "RRISC",
+.description = "I built my own CPU!",
+.date = @date("2021-01-16T00:00:00"),
+.author = "renerocksai",
+.layout = "post.shtml",
+.draft = false,
+---
+
+![](/cpu.png)
+
+I created a CPU. From scratch.
+
+Check it out on [GitHub](https://github.com/renerocksai/rrisc) or read more
+about how I built it [here](https://renerocksai.github.io/rrisc/).
+
+My [article](/blog/y-how-cpu-works) explains how it works.
+
+
+

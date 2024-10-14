@@ -1,0 +1,23 @@
+---
+.title = "Slides",
+.description = "Slideshows at 16,000 FPS",
+.date = @date("2021-02-27T00:00:00"),
+.author = "renerocksai",
+.layout = "post.shtml",
+.draft = false,
+---
+
+![](/16000fps.png)
+
+My first real Zig project. I used this for so many presentations at NIM 😊.
+It's on [GitHub](https://github.com/renerocksai/slides).
+
+Watch the talk I gave at the very first [SYCL](https://sycl.it) in Milan:
+
+```=html
+<iframe width="560" height="315" src="https://www.youtube.com/embed/YKYNVAwaMik?si=Acdh3_UjaedTlJBR" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+```
+
+See also my [article](/blog/why-bullets) about [Bullets](/projects/bullets),
+where I built slideshows on top of the [Godot](https://godotengine.org) game
+engine, to learn more about why I create slideshow software for myself.

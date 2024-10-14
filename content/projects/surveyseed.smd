@@ -1,0 +1,28 @@
+---
+.title = "SurveySeed.AI",
+.description = "AI-utomating an entire industry with a GPT-4-based market research agent",
+.date = @date("2023-11-29T00:00:00"),
+.author = "renerocksai",
+.layout = "post.shtml",
+.draft = false,
+---
+
+
+Are AI Agents the future of Market Research? At [NIM](https://nim.org), I
+developed a fully automated prototype agent with a GPT brain that produces
+insights and concrete, actionable results from a single query by designing and
+running online surveys with real participants, and then analyzing the data,
+incl. open-ended survey responses.
+
+There's also a "how it works" at the end of the video below.
+
+This is one of the research projects where I used a [Zap](/projects/zap)
+backend, to much success. It featured endpoints for survey creation and
+monitoring by the agent, the frontend web app for interfacing with the agent,
+and hosted all the surveys conducted by the agent.
+
+![](/surveyseed_beta.jpeg)
+
+```=html
+<div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/889480046?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="mopr-speedrun-plus-nachspann"></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
+```

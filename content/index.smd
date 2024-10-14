@@ -1,0 +1,37 @@
+---
+.title = "Home",
+.date = @date("2020-07-06T00:00:00"),
+.author = "@renerocksai",
+.layout = "index.shtml",
+.draft = false,
+---
+
+Hi, my name is Rene Schallner.
+
+># [Socials]($block.attrs('warning'))
+>- [renerocksai@𝕏](https://twitter.com/renerocksai)
+>- [renerocksai@github](https://github.com/renerocksai)
+>- [renerocksai@LinkedIn](https://linkedin.com/in/rene-schallner)
+
+I am a software engineer, programmer, researcher with a strong background in
+computer science and electronics. My areas of interest are manifold but tend to
+center around science and technology.
+
+I love programming, mostly in [Zig](https://ziglang.org) and
+[Python](https://python.org), artificial intelligence, and I might
+[blog](/blog) occasionally.
+
+My most well-known open source projects are:
+- **⚡ZAP⚡:**
+  [blazingly fast backends in zig](https://zigzap.org)
+- **Telekasten.nvim:**
+  [Note-taking in Neovim](https://github.com/nvim-telekasten/telekasten.nvim)
+
+My professional background spans over more than two decades in the
+telecommunications, medical technology, market research, and artificial
+intelligence industries.
+
+Feel free to reach out to me on [X](https://twitter.com/renerocksai) or
+check out my [GitHub](https://github.com/renerocksai).
+
+

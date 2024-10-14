@@ -1,0 +1,16 @@
+---
+.title = "0xeefe",
+.description = "Easy encryption for everyone",
+.date = @date("2021-01-16T00:00:00"),
+.author = "renerocksai",
+.layout = "post.shtml",
+.draft = false,
+---
+
+![](/0xeefe.png)
+
+Easy encryption for everyone! With end to end encryption being under attack - if
+you have nothing else, try this one!
+
+Check it out on [GitHub](https://github.com/renerocksai/0xeefe) or just try it
+[here](https://renerocksai.github.io/0xeefe/).

@@ -1,0 +1,22 @@
+---
+.title = "gpt4all.zig",
+.description = "terminal-based chat client in zig, for an assistant-style large language model",
+.date = @date("2023-04-08T00:00:00"),
+.author = "renerocksai",
+.layout = "post.shtml",
+.draft = false,
+---
+
+It's another C and Zig conglomerate.
+
+Here it runs inside of neovim:
+
+[]($image.url("https://github.com/renerocksai/gpt4all.zig/raw/master/img/2023-04-14_13-29.png"))
+
+And here is how it runs on my Linux box:
+
+[]($image.url("https://github.com/renerocksai/gpt4all.zig/raw/master/img/gpt4all.zig.GIF"))
+
+Check it out on [GitHub](https://github.com/renerocksai/gpt4all.zig).
+
+

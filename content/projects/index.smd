@@ -1,0 +1,12 @@
+---
+.title = "Projects",
+.date = @date("2024-10-08T00:00:00"),
+.author = "renerocksai",
+.layout = "collection.shtml",
+.draft = false,
+---
+
+># [Please note]($block.attrs('info'))
+>_This is just a selection of mostly older projects, I hope to catch up adding a few more recent and noteworthy ones, soon._
+
+

@@ -1,0 +1,13 @@
+---
+.title = "Telekasten.nvim",
+.description = "Markdown Zettelkasten / Wiki with a journal in neovim",
+.date = @date("2021-11-21T00:00:00"),
+.author = "renerocksai",
+.layout = "post.shtml",
+.draft = false,
+.tags = ["research"],
+---
+
+![](/telekasten.png)
+
+More on [GitHub](https://github.com/nvim-telekasten/telekasten.nvim).

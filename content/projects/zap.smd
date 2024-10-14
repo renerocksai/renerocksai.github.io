@@ -1,0 +1,18 @@
+---
+.title = "ZAP",
+.description = "blazingly fast backends in zig",
+.date = @date("2023-11-11T00:00:00"),
+.author = "renerocksai",
+.layout = "post.shtml",
+.draft = false,
+---
+
+[Zig](https://ziglang.org) was just what I needed for my work at [NIM](https://nim.org), after having run into performance issues with Flask-based Python backends for our demanding online research experiments. A bigger server was not the answer 😊.
+
+The rest is history. See the SYCL 2023 talk below. More information is
+available on [GitHub](https://github.com/zigzap/zap) or on the [Zap
+Webpage](https://zigzap.org).
+
+```=html
+<iframe width="560" height="315" src="https://www.youtube.com/embed/-GyLWrDF8ss?si=mHDYY_2hw_ACQiX4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+```
