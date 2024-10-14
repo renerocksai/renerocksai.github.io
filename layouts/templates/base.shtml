@@ -8,10 +8,10 @@
     <meta name="twitter:author" content="@renerocksai">
     <meta name="twitter:description" content="@renerocksai - personal blog">
     <meta name="twitter:title" content="$page.title.suffix(' | @renerocksai')">
-    <meta name="twitter:image" content="$site.host_url.addPath($site.asset('glasses1.png').link())">
+    <meta name="twitter:image" content="$site.host_url.addPath($site.asset('reneglasses.png').link())">
     <meta property="og:type" content="website">
     <meta property="og:title" content="$page.title.suffix(' | @renerocksai')">
-    <meta property="og:image" content="$site.host_url.addPath($site.asset('glasses1.png').link())">
+    <meta property="og:image" content="$site.host_url.addPath($site.asset('reneglasses.png').link())">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title id="title">
