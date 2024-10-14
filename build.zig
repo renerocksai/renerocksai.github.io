@@ -10,10 +10,6 @@ pub fn build(b: *std.Build) !void {
         .assets_dir_path = "assets",
         .static_assets = &.{
             "CNAME",
-            // This asset is referenced in some inlined HTML in markdown
-            // which Zine is not yet able to analyze so as a temporary
-            // hack we mark it as a static asset.
-            "vscode-autoformatting.mp4",
 
             // Fonts referenced in CSS files
             "fonts/BebasNeue-Regular.ttf",
@@ -54,6 +50,20 @@ pub fn build(b: *std.Build) !void {
             "fonts/jbm/JetBrainsMono-SemiBoldItalic.woff2",
             "fonts/jbm/JetBrainsMono-Thin.woff2",
             "fonts/jbm/JetBrainsMono-ThinItalic.woff2",
+            "bullets/bullets.js",
+            "bullets/bullets-start.png",
+            "bullets/bullets.png",
+            "bullets/favicon.png",
+            "bullets/drawmode.png",
+            "bullets/bullets.html",
+            "bullets/bullets.pck",
+            "bullets/bullets.wasm",
+            "bullets/jspdf.min.js",
+            "bullets/gametime.png",
+            "bullets/edittext.png",
+            "bullets/convert.png",
+            "bullets/pdfexport.js",
+            "bullets/laserpoint.png",
         },
         .build_assets = &.{
             .{
@@ -69,14 +79,4 @@ pub fn build(b: *std.Build) !void {
         },
         .debug = true,
     });
-
-    // This line creates a build step that generates an updated
-    // Scripty reference file. Other sites will not need this
-    // most probably, but at least it's an example of how Zine
-    // can integrate neatly with other Zig build steps.
-    zine.scriptyReferenceDocs(
-        b,
-        "content/docs/superhtml/scripty.smd",
-        "content/docs/supermd/scripty.smd",
-    );
 }
