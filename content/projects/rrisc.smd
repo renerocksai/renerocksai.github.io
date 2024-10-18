@@ -11,7 +11,7 @@
 
 I created a CPU. From scratch.
 
-Check it out on [SourceHut](https://sr.ht/~renerocksai/rrisc/) or read the
+Check it out on [GitHub](https://github.com/renerocksai/rrisc/) or read the
 sub-blog about how I built it [here](https://renerocksai.github.io/rrisc/).
 
 My [article](/blog/y-how-cpu-works) explains how it works.
