@@ -1,0 +1,261 @@
+---
+.title = "Jujutsu (version control) - one week in",
+.date = @date("2024-11-29:00:00"),
+.author = "renerocksai",
+.layout = "post.shtml",
+.draft = false,
+.tags = [ "JJ", "jujutsu", "version-control", "git", "GitHub"],
+.custom = {"toc": false},
+---
+
+![](/jj.png)
+
+# Jujutsu
+
+...
+
+- can be used as a _frontend_ for git
+- has a very smooth CLI UI and workflow
+- I can confirm it is a joy to use
+
+I **highly recommend** watching the first video from the list below.
+
+## Resources
+
+- Official
+    - [Jujutsu on GitHub](https://github.com/martinvonz/jj)
+    - [Jujutsu Documentation](https://martinvonz.github.io/jj/latest/)
+
+- Recommended tools:
+    - [lazyjj](https://github.com/Cretezy/lazyjj) - a great CLI UI frontend for
+      JJ
+
+- Introductory materials:
+    -  **[What if version control was
+      AWESOME?](https://www.youtube.com/watch?v=2otjrTzRfVk)** `[VIDEO]` -- **highly
+      recommended**
+    - [jj init](https://v5.chriskrycho.com/essays/jj-init/) -- great article,
+      see also the video above
+    - [Jujutsu | Ep. 5 Bits and
+      Booze](https://www.youtube.com/watch?v=dwyMlLYIrPk) `[VIDEO]` -- a nice intro and
+      walkthrough by GitButler
+    - [Jujutsu: a new, Git-compatible version control
+      system](https://lwn.net/Articles/958468/) - a bit dated but still good,
+      from LWN.net
+
+## My Experience with JJ
+
+### Why I like it after working with it for about a week
+
+I haven't touched git since using JJ in a few repos. JJ makes my daily "git"
+use really effortless, it never gets in the way. Pulling in work from other
+branches, quickly peeking into just-fetched PR branches, splitting commits,
+anonymous temp branches, squashing and pushing - have become really effortless.
+That's not to say that git is necessarily cumbersome. But in comparison, JJ
+_feels_ more "right" most of the times.
+
+I expected to miss the time I spent in `vim-fugitive`, staging, committing, and
+pushing directly from inside Neovim—a workflow I was very accustomed to—but
+surprisingly, I didn’t. Now, I’ve gotten lazy and often use `lazyjj` for most
+tasks, except for editing multi-line commit messages, where I still prefer
+Neovim over `lazyjj`’s built-in editor.
+
+One thing I hadn’t anticipated: since your working copy is always
+committed—essentially functioning as an ever-amending commit—you can freely
+switch to past commits or other Git branches. This includes actions like
+“checking out” newly fetched PRs, viewing their diffs, and so on, all without
+any issues. No conflicts, no need to stash away changes temporarily!
+
+**I can keep using git!** I always work in _colocated_ JJ repositories. That
+means, if I feel like it, I can switch to git / vim-fugitive for a while, and
+return to my old workflow. The next time I run `jj`, it will sync the changes.
+That really works like a charm.
+
+### What I had to change
+
+TEMPORARY FILES! In some repositories, I collected quite an amount of temp
+files, artifacts like generated output files when quickly testing something,
+which I just kept ignoring when staging. Since JJ always snapshots the working
+copy, I had to `.gitignore` those.
+
+Shoutout to Tom Lord, original author of [Tom Lord's then GNU
+arch](https://www.gnu.org/software/gnu-arch/), which I had switched to after
+`CVS` - and probably _the_ VCS that had the most influence on me, before
+eventually migrating to mercurial, and a long time later, eventually to git.
+To this day I still miss _some_ of TLA's features.
+
+Anyway, I digress. Tom introduced me to prefixing filenames of "temporary" files
+with a comma: `,forgetme.txt`. I now returned to this practice, and put `,*` in
+my `.gitignore`. Yes, `jj` respects gitignore files!
+
+
+
+## BASIC Main workflow
+
+```bash
+# we start with git (and show how it's done BETTER with jj a few lines below)
+git clone git@github.com...
+
+# init jj alongside git - you do that only in existing git repos
+jj git init --colocate
+
+# start tracking your branches
+#    jj can do that automatically, see jj git clone below
+jj bookmark track master@origin
+jj bookmark track whatever_branch@origin
+
+
+
+# instead of all of the above, we can let jj do the git work, incl. tracking
+jj git clone --colocate git@github.com...
+
+
+
+# work:
+# you `jj new`, `jj describe` for each change
+# everytime you run jj after a save, the current change is updated
+# you can `jj describe` at any time!
+jj new      # new change: introduces a new commit to work on
+
+# keep editing files ...
+jj st       # show status of changed files etc
+jj diff     # show diff
+
+jj          # show log
+jj log      # same
+
+
+jj describe # change commit message at any time.
+
+# change a commit message from a past change, identified by shortcut xx
+# you see the shortcuts in jj log
+# this works even with commits that have been pushed already!
+jj desc -r xx
+
+# pushing : catch up bookmark of git branch name to the (second-) most-recent change
+#   - jj does not move the (git branch name) bookmark along with every change
+#   - so you need to tell it to update the bookmark to the latest commit
+#   - but if you `jj new`ed, you're on an empty commit.
+#     so you want to update to the second-latest commit in that usual case.
+#   @   denotes the current change
+#   @-  denotes the change before the current change
+jj bookmark set master -r @-             # provided we jj new'ed before
+jj bookmark set master -r @              # provided we did not jj new yet
+jj bookmark set whatever_branch -r @-    # just a non-master example
+
+jj git push # push the current commit's bookmark if there is one
+
+jj undo # if you think you messed up
+```
+
+## BASIC Lazyjj workflow
+
+It's even easier. j/k to look at commits, d to run describe, n to create a new
+change, b to open the bookmark menu where you j/k to the bookmark you want to
+assign to the selected (second-latest/latest) change, p to push.
+
+
+## Advanced Workflows
+
+You can get really advanced, without jj feeling complicated.
+
+For example, when applying above commands like new, describe, etc to a change
+from the past. You can introduce changes/commits in-between earlier commits,
+branch off by inserting a series of changes "in the past", merge, split changes
+into multiple ones, ... etc. etc.
+
+The displayed shortcuts for change and commit IDs are really helpful for the CLI.
+
+And I haven't even mentioned the `jj operation log` !!!
+
+The YT videos go into some more advanced uses of jj.
+
+See below for an example from me.
+
+
+### Creating a branch, pulling in another branch
+
+So I decide to work on a branch & GitHub PR. In jj, we use bookmarks to work
+with named git branches.
+
+```bash
+# I am on the master branch
+jj new # to make a new change
+jj bookmark create rene/feature_A
+
+# yayyy!
+```
+
+I work on my branch:
+
+```bash
+jj new
+
+# edit files
+
+jj describe -m "blah"
+
+# repeat (editing and describing)...
+# ...
+
+# time to push
+jj new
+jj bookmark set rene/feature_A @-
+jj git push
+# or lazyjj this effortlessly and press p to push
+```
+
+At some stage, a colleague of mine informs me that they made changes in a PR
+that you want in your branch/PR as well. So first, you fetch to get your
+colleague's branch:
+
+```bash
+jj git fetch
+```
+
+You then jj log to see the branch or, if you just want the change ID of the PR,
+you can check out the list of bookmarks:
+
+```bash
+jj bookmark list
+
+friend/feature_B: ypvwxzwo db1c5ccb fix comment
+master: xxqnkzkt 6443fef5 use correct path (#35)
+rene/feature_A: mwlxnqmm efb96bea great progress
+```
+
+In `jj log` you also see that master has moved on with more commits but that
+doesn't bother you because you want to keep working on your branch.
+
+So, we see the following. Our branch is at change **mw**lxnqmm and our friend's
+branch is at change **yp**vwxzwo. Perfect!
+
+_Optional: Because our working copy is clean, we can check out the new branch and
+have a look at it in our editor / IDE: `jj edit yp`. When done checking it out,
+we just return to where we left off: `jj edit mw`. One tip though: in order to
+not change past commits by accident, do a `jj new` right after switching to
+`yp`. You can abandon that change later if you like: `jj abandon`. When done, we
+switch back to where we were: `jj edit mw`._
+
+To bring in the changes from our friend's PR, we just create a new change that's
+based on **two parents**: our last commit and the last commit from our friend's
+PR:
+
+```bash
+jj new mw yp
+```
+
+DONE!
+
+We now describe and push to GitHub:
+
+```bash
+jj describe -m "pulled in PR #xx"
+jj bookmark set rene/feature_A @
+jj git push
+
+jj new
+```
+
+And we keep on working ...
+
