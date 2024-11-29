@@ -49,10 +49,10 @@ I **highly recommend** watching the first video from the list below.
 
 I haven't touched git since using JJ in a few repos. JJ makes my daily "git"
 use really effortless, it never gets in the way. Pulling in work from other
-branches, quickly peeking into just-fetched PR branches, splitting commits,
-anonymous temp branches, squashing and pushing - have become really effortless.
-That's not to say that git is necessarily cumbersome. But in comparison, JJ
-_feels_ more "right" most of the times.
+branches, quickly peeking into just-fetched PR branches via editor, splitting
+commits, anonymous temp branches, squashing and pushing - have become really
+effortless. That's not to say that git is necessarily too cumbersome for these
+tasks. But in comparison, JJ _feels_ more "right" and easy most of the time.
 
 I expected to miss the time I spent in `vim-fugitive`, staging, committing, and
 pushing directly from inside Neovim—a workflow I was very accustomed to—but
@@ -205,16 +205,16 @@ jj git push
 # or lazyjj this effortlessly and press p to push
 ```
 
-At some stage, a colleague of mine informs me that they made changes in a PR
-that you want in your branch/PR as well. So first, you fetch to get your
+At some stage, a colleague of mine informs us that they made changes in a PR
+that we want in our branch/PR as well. So first, we fetch to get your
 colleague's branch:
 
 ```bash
 jj git fetch
 ```
 
-You then jj log to see the branch or, if you just want the change ID of the PR,
-you can check out the list of bookmarks:
+We then jj log to see the branch or, if we just want the change ID of the PR,
+we can check out the list of bookmarks:
 
 ```bash
 jj bookmark list
@@ -224,8 +224,8 @@ master: xxqnkzkt 6443fef5 use correct path (#35)
 rene/feature_A: mwlxnqmm efb96bea great progress
 ```
 
-In `jj log` you also see that master has moved on with more commits but that
-doesn't bother you because you want to keep working on your branch.
+In `jj log` we also see that master has moved on with more commits, but that
+doesn't bother us because we want to keep working on our branch.
 
 So, we see the following. Our branch is at change **mw**lxnqmm and our friend's
 branch is at change **yp**vwxzwo. Perfect!
