@@ -1,0 +1,197 @@
+---
+.title = "Recovering Clean History in Jujutsu (jj)",
+.date = @date("2024-12-04:00:00"),
+.author = "renerocksai",
+.layout = "post.shtml",
+.draft = false,
+.tags = [ "JJ", "jujutsu", "version-control", "git", "GitHub"],
+.custom = {"toc": false},
+---
+
+
+## Fixing Accidental Amendments with Splits and Evolution Logs
+
+
+Yes, something like this happened to me. I changed an already-pushed commit by accident. I believe it happened by using `lazyjj` to push, which does not create a new, empty commit automatically. In contrast, the command-line `jj git push` behaves more nicely:
+
+```bash
+jj git push
+Changes to push to origin:
+  Move forward bookmark master from f5f200a0c577 to 980383609075
+Warning: The working-copy commit in workspace 'default' became immutable, so a new commit has been created on top of it.
+Working copy now at: pqoollns 32a643f2 (empty) (no description set)
+Parent commit      : sywonovy 98038360 master | my super change
+
+```
+
+Note the "**Warning: The working-copy commit in workspace 'default' became immutable, so a new commit has been created on top of it.**"
+
+So, be careful with `lazyjj`!
+
+# Introduction
+
+Imagine this scenario: You’re working on a feature branch called `feature-A`. In Jujutsu (jj), this branch is represented by the bookmark `feature-A` (local) and `feature-A@origin` (remote). To ensure you’re up-to-date, you run `jj git fetch`, which pulls in the latest remote changes and advances the bookmarks (`feature-A` and `feature-A@origin`) to the most recent commits.
+
+After fetching, you continue your work, but then it happens: you accidentally add a new file, `notes.txt`, and modify the working copy. You forget to create a new commit first and only realize later that these changes have been implicitly added to the `feature-A` bookmark. Now, the bookmark no longer reflects the clean state of the fetched changes, and the branch history has evolved unexpectedly.
+
+How do you recover? This post will guide you through a practical example of using Jujutsu’s tools like `jj split` and `jj evolog` to recover clean history, often without requiring a force-push.
+
+# Recreating the Problem
+
+Let’s say you just fetched the latest changes from the remote.
+
+```bash
+jj git fetch
+```
+
+This fetch updates your local `feature-A` bookmark to include the newly pulled commit. To avoid accidentally modifying the fetched commit, you decide to create a new, empty commit immediately:
+
+```bash
+jj new feature-A
+Working copy now at: powtnvyo 1d7e19fb (empty) (no description set)
+Parent commit      : wkmuoqnv e33c6025 feature-A | server: fix output length
+Added 46 files, modified 8 files, removed 0 files
+```
+
+However, for some reason, you intentionally switch back to the parent commit (the fetched commit) to make edits:
+
+```bash
+jj edit @-    # note how @- marks the change before the most recent change
+Working copy now at: wkmuoqnv e33c6025 feature-A | server: fix output length
+Parent commit      : mppkovuv 626c67f2 server: close connection
+```
+
+Now you’re back at the fetched commit (`wkmuoqnv`) to inspect and edit.
+
+# Accidental Amendment
+
+While inspecting the fetched changes, you accidentally add a new file:
+
+```bash
+echo "a note" > notes.txt
+```
+
+Running `jj st` shows:
+
+```bash
+jj st
+Working copy changes:
+M server.zig
+A notes.txt
+Working copy : wkmuoqnv cbd58b07 feature-A* | server: fix output length
+Parent commit: mppkovuv 626c67f2 server: close connection
+```
+
+Notice:
+- The working copy now has a new Git hash (`cbd58b07`), replacing the original (`e33c6025`).
+- **The asterisk (`*`) next to `feature-A`** indicates the bookmark has been modified.
+
+# Using jj evolog to Identify the Problem
+
+The `jj evolog` command is a crucial tool for understanding how your branch’s history has evolved. It shows all previous Git commit hashes associated with a change. We can use it to inspect what happened to the change `wkmuoqnv` that now has an asterisk next to its bookmark.
+
+Run:
+
+```bash
+jj evolog -r feature-A
+```
+
+This might produce:
+
+```bash
+○  ymwzwypn bot@zml.ai 2024-12-06 12:58:57 feature-A* cbd58b07
+│  server: fix output length
+○  wkmuoqnv hidden bot@zml.ai 2024-12-06 12:58:51 git_head() 33ea9c76
+│  server: fix output length
+○  mppkovuv bot@zml.ai 2024-12-06 12:40:22 feature-A@origin 626c67f2
+│  server: close connection
+```
+
+## Analysis
+
+- Current Commit (`cbd58b07`): Contains the changes, including the accidental addition of notes.txt.
+- Previous Commit (`33ea9c76`): The original commit before the accidental changes, verified with `git_head()`.
+- Origin Commit (`626c67f2`): The state of `feature-A@origin` after the fetch.
+
+This helps identify exactly which changes have been made locally (`notes.txt`) and confirms the Git hash of the original commit that should remain unchanged.
+
+# Solution: Splitting the Commit to Recover Clean History
+
+## Step 1: Use jj split
+
+Since the accidental file addition (`notes.txt`) should not be part of the original commit, you can split the `@` change into two commits:
+
+```bash
+jj split   # -r @
+```
+
+The interactive editor launches, showing the files modified in this commit:
+
+1. First, select `server.zig` and confirm with the original commit message:
+`server: fix output length`.
+Keeping the original message ensures the Git hash of this commit remains unchanged (`33ea9c76`).
+
+2. Next, select `notes.txt` for the second commit. Confirm and provide a meaningful commit message:
+`Add notes.txt`.
+
+After splitting, the log looks like this:
+
+```bash
+jj log
+@  ymwzwypn bot@zml.ai 2024-12-06 12:58:57 feature-A* c533dfd4
+│  Add notes.txt
+○  wkmuoqnv bot@zml.ai 2024-12-06 12:58:51 git_head() 33ea9c76
+│  server: fix output length
+```
+
+## Step 2: Verify the Original Commit
+
+To confirm the original commit remains intact, check its Git hash:
+
+```bash
+jj show wkmuoqnv
+```
+Output:
+
+```bash
+Commit ID: 33ea9c76
+Change ID: wkmuoqnvx...
+Bookmarks: feature-A
+Author: User <user@example.com>
+Committer: User <user@example.com>
+
+    server: fix output length
+```
+
+Since the Git hash matches the original state (`33ea9c76`), no force-push is required.
+
+## Step 3: Push the Updated History
+
+Finally, push the corrected history:
+
+```bash
+jj bookmark feature-A set -r @
+jj git push
+```
+
+Because the original commit hash (`33ea9c76`) is preserved, this push does not require a force-push. The remote remains compatible with the local changes.
+
+# Key Learnings
+
+- Interactive Splitting:
+    - Use `jj split` to separate accidental changes into distinct commits.
+    - Ensure the original commit message remains identical to avoid altering the Git hash.
+- Evolution Log (jj evolog):
+    - Provides a detailed history of all commits associated with a branch.
+    - Helps identify which changes were part of the original commit versus newly introduced changes.
+- Bookmark Indicators:
+    - The asterisk (*) next to the bookmark in the log or status output helps identify if the working copy has diverged.
+- Force-Push Avoidance:
+    - Keeping the original commit message and content unchanged ensures compatibility with the remote history.
+
+# Conclusion
+
+Recovering clean history in Jujutsu is straightforward with tools like `jj split`, `jj evolog`, and bookmark indicators. By carefully managing commit messages and using interactive splitting, you can recover from accidental amendments without needing a force-push.
+
+_yes, part of this blog post is authored by ChatGPT, in case you were wondering 😄_
+
