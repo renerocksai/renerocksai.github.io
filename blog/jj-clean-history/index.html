@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+  <head id="head">
+    <meta charset="UTF-8">
+    <meta name="description" content="@renerocksai - personal website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@renerocksai">
+    <meta name="twitter:author" content="@renerocksai">
+    <meta name="twitter:description" content="@renerocksai - personal website">
+    <meta name="twitter:title" content="Recovering Clean History in Jujutsu (jj) | @renerocksai">
+    <meta name="twitter:image" content="https://renerocks.ai/reneglasses.png">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Recovering Clean History in Jujutsu (jj) | @renerocksai">
+    <meta property="og:image" content="https://renerocks.ai/reneglasses.png">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title id="title">
+      Recovering Clean History in Jujutsu (jj)
+      - @renerocksai
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/main.css">
+    <link rel="stylesheet" type="text/css" href="/highlight.css">
+    
+  <link type="text/css" rel="stylesheet" href="/term-highlight.css">
+  <style>
+    #docs {
+        h1, h2, h3, h4 {
+            text-align: left;
+            a {
+                color: black;
+                text-decoration: none;
+            }
+        }
+        @media (prefers-color-scheme:dark) {
+          h1, h2, h3, h4 {
+            a {
+              color: white;
+            }
+          }
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            border-bottom: 1px dashed #aaa;
+            margin-top: 2em;
+            a:hover::after {
+                content: ' #';
+            }
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            a:hover::after {
+                content: ' ##';
+            }
+        }
+
+        h4 {
+            font-size: 1rem;
+            a:hover::after {
+                content: ' ###';
+            }
+        }
+
+    }
+
+    table {
+        font-size: 0.9em;
+    }
+    table th {
+        font-size: 1em;
+    }
+    table td {
+        white-space: nowrap;
+    }
+  </style>
+
+  </head>
+  <body>
+    <div id="content">
+      
+  <div style="display:flex; flex-direction:column; align-items:center;">
+    <h1 id="header" class="noupper" style="color: #606060"><a class="reset-a" href="/">@renerocksai</a></h1>
+    <div class="menu-small" style="display:flex; justify-content:center; font-size:small;">
+      <a href="/">Home</a>
+      •
+      <a href="/blog/">Blog</a>
+      •
+      <a href="/projects/">Projects</a>
+      •
+      <a href="/about/">About</a>
+      •
+      <a href="https://github.com/renerocksai" target="_blank">
+        GitHub
+      </a>
+    </div>
+  </div>
+  <h1>Recovering Clean History in Jujutsu (jj)</h1>
+  <p class="post-byline">
+    <span>December 04, 2024</span>
+    •
+    <span>6</span>
+    min read • by
+    <b>renerocksai</b>
+    <span></span>
+  </p>
+  <div id="post-description"></div>
+  <div>
+    <div class="toc block info">
+      <h1>&nbsp;Table of Contents</h1>
+      <div><ul>
+<li>
+<ul><li>
+Fixing Accidental Amendments with Splits and Evolution Logs</li></ul></li><li>Introduction</li><li>Recreating the Problem</li><li>Accidental Amendment</li><li>Using jj evolog to Identify the Problem<ul><li>
+Analysis</li></ul></li><li>Solution: Splitting the Commit to Recover Clean History<ul><li>
+Step 1: Use jj split</li><li>Step 2: Verify the Original Commit</li><li>Step 3: Push the Updated History</li></ul></li><li>Key Learnings</li><li>Conclusion</ul></div>
+    </div>
+  </div>
+  <div id="docs">
+    <div id="post-body"><h2>Fixing Accidental Amendments with Splits and Evolution Logs</h2><p>Yes, something like this happened to me. I changed an already-pushed commit by accident. I believe it happened by using <code>lazyjj</code> to push, which does not create a new, empty commit automatically. In contrast, the command-line <code>jj git push</code> behaves more nicely:</p><pre><code class="bash"><span class="constant">jj</span> <span class="constant">git</span> <span class="constant">push</span>
+<span class="constant">Changes</span> <span class="constant">to</span> <span class="constant">push</span> <span class="constant">to</span> <span class="constant">origin:</span>
+  <span class="constant">Move</span> <span class="constant">forward</span> <span class="constant">bookmark</span> <span class="constant">master</span> <span class="constant">from</span> <span class="constant">f5f200a0c577</span> <span class="constant">to</span> <span class="constant">980383609075</span>
+<span class="constant">Warning:</span> <span class="constant">The</span> <span class="constant">working-copy</span> <span class="constant">commit</span> <span class="constant">in</span> <span class="constant">workspace</span> <span class="constant">&apos;default&apos;</span> <span class="constant">became</span> <span class="constant">immutable,</span> <span class="constant">so</span> <span class="constant">a</span> <span class="constant">new</span> <span class="constant">commit</span> <span class="constant">has</span> <span class="constant">been</span> <span class="constant">created</span> <span class="constant">on</span> <span class="constant">top</span> <span class="constant">of</span> <span class="constant">it.</span>
+<span class="constant">Working</span> <span class="constant">copy</span> <span class="constant">now</span> <span class="constant">at:</span> <span class="constant">pqoollns</span> <span class="constant">32a643f2</span> (<span class="constant">empty</span>) (<span class="constant">no</span> <span class="constant">description</span> <span class="constant">set</span>)
+<span class="constant">Parent</span> <span class="constant">commit</span>      <span class="constant">:</span> <span class="constant">sywonovy</span> <span class="constant">98038360</span> <span class="constant">master</span> <span class="operator">|</span> <span class="constant">my</span> <span class="constant">super</span> <span class="constant">change</span>
+
+</code></pre>
+<p>Note the "<strong>Warning: The working-copy commit in workspace 'default' became immutable, so a new commit has been created on top of it.</strong>"</p><p>So, be careful with <code>lazyjj</code>!</p><h1>Introduction</h1><p>Imagine this scenario: You’re working on a feature branch called <code>feature-A</code>. In Jujutsu (jj), this branch is represented by the bookmark <code>feature-A</code> (local) and <code>feature-A@origin</code> (remote). To ensure you’re up-to-date, you run <code>jj git fetch</code>, which pulls in the latest remote changes and advances the bookmarks (<code>feature-A</code> and <code>feature-A@origin</code>) to the most recent commits.</p><p>After fetching, you continue your work, but then it happens: you accidentally add a new file, <code>notes.txt</code>, and modify the working copy. You forget to create a new commit first and only realize later that these changes have been implicitly added to the <code>feature-A</code> bookmark. Now, the bookmark no longer reflects the clean state of the fetched changes, and the branch history has evolved unexpectedly.</p><p>How do you recover? This post will guide you through a practical example of using Jujutsu’s tools like <code>jj split</code> and <code>jj evolog</code> to recover clean history, often without requiring a force-push.</p><h1>Recreating the Problem</h1><p>Let’s say you just fetched the latest changes from the remote.</p><pre><code class="bash"><span class="constant">jj</span> <span class="constant">git</span> <span class="constant">fetch</span>
+</code></pre>
+<p>This fetch updates your local <code>feature-A</code> bookmark to include the newly pulled commit. To avoid accidentally modifying the fetched commit, you decide to create a new, empty commit immediately:</p><pre><code class="bash"><span class="constant">jj</span> <span class="constant">new</span> <span class="constant">feature-A</span>
+<span class="constant">Working</span> <span class="constant">copy</span> <span class="constant">now</span> <span class="constant">at:</span> <span class="constant">powtnvyo</span> <span class="constant">1d7e19fb</span> (<span class="constant">empty</span>) (<span class="constant">no</span> <span class="constant">description</span> <span class="constant">set</span>)
+<span class="constant">Parent</span> <span class="constant">commit</span>      <span class="constant">:</span> <span class="constant">wkmuoqnv</span> <span class="constant">e33c6025</span> <span class="constant">feature-A</span> <span class="operator">|</span> <span class="constant">server:</span> <span class="constant">fix</span> <span class="constant">output</span> <span class="constant">length</span>
+<span class="constant">Added</span> <span class="constant">46</span> <span class="constant">files,</span> <span class="constant">modified</span> <span class="constant">8</span> <span class="constant">files,</span> <span class="constant">removed</span> <span class="constant">0</span> <span class="constant">files</span>
+</code></pre>
+<p>However, for some reason, you intentionally switch back to the parent commit (the fetched commit) to make edits:</p><pre><code class="bash"><span class="constant">jj</span> <span class="constant">edit</span> <span class="constant">@-</span>    <span class="comment"># note how @- marks the change before the most recent change</span>
+<span class="constant">Working</span> <span class="constant">copy</span> <span class="constant">now</span> <span class="constant">at:</span> <span class="constant">wkmuoqnv</span> <span class="constant">e33c6025</span> <span class="constant">feature-A</span> <span class="operator">|</span> <span class="constant">server:</span> <span class="constant">fix</span> <span class="constant">output</span> <span class="constant">length</span>
+<span class="constant">Parent</span> <span class="constant">commit</span>      <span class="constant">:</span> <span class="constant">mppkovuv</span> <span class="constant">626c67f2</span> <span class="constant">server:</span> <span class="constant">close</span> <span class="constant">connection</span>
+</code></pre>
+<p>Now you’re back at the fetched commit (<code>wkmuoqnv</code>) to inspect and edit.</p><h1>Accidental Amendment</h1><p>While inspecting the fetched changes, you accidentally add a new file:</p><pre><code class="bash"><span class="constant">echo</span> <span class="constant">&quot;a note&quot;</span> <span class="operator">&gt;</span> notes.txt
+</code></pre>
+<p>Running <code>jj st</code> shows:</p><pre><code class="bash"><span class="constant">jj</span> <span class="constant">st</span>
+<span class="constant">Working</span> <span class="constant">copy</span> <span class="constant">changes:</span>
+<span class="constant">M</span> <span class="constant">server.zig</span>
+<span class="constant">A</span> <span class="constant">notes.txt</span>
+<span class="constant">Working</span> <span class="constant">copy</span> <span class="constant">:</span> <span class="constant">wkmuoqnv</span> <span class="constant">cbd58b07</span> <span class="constant">feature-A*</span> <span class="operator">|</span> <span class="constant">server:</span> <span class="constant">fix</span> <span class="constant">output</span> <span class="constant">length</span>
+<span class="constant">Parent</span> <span class="constant">commit:</span> <span class="constant">mppkovuv</span> <span class="constant">626c67f2</span> <span class="constant">server:</span> <span class="constant">close</span> <span class="constant">connection</span>
+</code></pre>
+<p>Notice:</p><ul><li>The working copy now has a new Git hash (<code>cbd58b07</code>), replacing the original (<code>e33c6025</code>).</li><li><strong>The asterisk (<code>*</code>) next to <code>feature-A</code></strong> indicates the bookmark has been modified.</li></ul><h1>Using jj evolog to Identify the Problem</h1><p>The <code>jj evolog</code> command is a crucial tool for understanding how your branch’s history has evolved. It shows all previous Git commit hashes associated with a change. We can use it to inspect what happened to the change <code>wkmuoqnv</code> that now has an asterisk next to its bookmark.</p><p>Run:</p><pre><code class="bash"><span class="constant">jj</span> <span class="constant">evolog</span> <span class="constant">-r</span> <span class="constant">feature-A</span>
+</code></pre>
+<p>This might produce:</p><pre><code class="bash"><span class="constant">○</span>  <span class="constant">ymwzwypn</span> <span class="constant">bot@zml.ai</span> <span class="constant">2024-12-06</span> <span class="constant">12:58:57</span> <span class="constant">feature-A*</span> <span class="constant">cbd58b07</span>
+<span class="constant">│</span>  <span class="constant">server:</span> <span class="constant">fix</span> <span class="constant">output</span> <span class="constant">length</span>
+<span class="constant">○</span>  <span class="constant">wkmuoqnv</span> <span class="constant">hidden</span> <span class="constant">bot@zml.ai</span> <span class="constant">2024-12-06</span> <span class="constant">12:58:51</span> <span class="constant">git_head</span>() <span class="constant">33ea9c76</span>
+<span class="constant">│</span>  <span class="constant">server:</span> <span class="constant">fix</span> <span class="constant">output</span> <span class="constant">length</span>
+<span class="constant">○</span>  <span class="constant">mppkovuv</span> <span class="constant">bot@zml.ai</span> <span class="constant">2024-12-06</span> <span class="constant">12:40:22</span> <span class="constant">feature-A@origin</span> <span class="constant">626c67f2</span>
+<span class="constant">│</span>  <span class="constant">server:</span> <span class="constant">close</span> <span class="constant">connection</span>
+</code></pre>
+<h2>Analysis</h2><ul><li>Current Commit (<code>cbd58b07</code>): Contains the changes, including the accidental addition of notes.txt.</li><li>Previous Commit (<code>33ea9c76</code>): The original commit before the accidental changes, verified with <code>git_head()</code>.</li><li>Origin Commit (<code>626c67f2</code>): The state of <code>feature-A@origin</code> after the fetch.</li></ul><p>This helps identify exactly which changes have been made locally (<code>notes.txt</code>) and confirms the Git hash of the original commit that should remain unchanged.</p><h1>Solution: Splitting the Commit to Recover Clean History</h1><h2>Step 1: Use jj split</h2><p>Since the accidental file addition (<code>notes.txt</code>) should not be part of the original commit, you can split the <code>@</code> change into two commits:</p><pre><code class="bash"><span class="constant">jj</span> <span class="constant">split</span>   <span class="comment"># -r @</span>
+</code></pre>
+<p>The interactive editor launches, showing the files modified in this commit:</p><ol><li><p>First, select <code>server.zig</code> and confirm with the original commit message: <code>server: fix output length</code>. Keeping the original message ensures the Git hash of this commit remains unchanged (<code>33ea9c76</code>).</p></li><li><p>Next, select <code>notes.txt</code> for the second commit. Confirm and provide a meaningful commit message: <code>Add notes.txt</code>.</p></li></ol><p>After splitting, the log looks like this:</p><pre><code class="bash"><span class="constant">jj</span> <span class="constant">log</span>
+<span class="constant">@</span>  <span class="constant">ymwzwypn</span> <span class="constant">bot@zml.ai</span> <span class="constant">2024-12-06</span> <span class="constant">12:58:57</span> <span class="constant">feature-A*</span> <span class="constant">c533dfd4</span>
+<span class="constant">│</span>  <span class="constant">Add</span> <span class="constant">notes.txt</span>
+<span class="constant">○</span>  <span class="constant">wkmuoqnv</span> <span class="constant">bot@zml.ai</span> <span class="constant">2024-12-06</span> <span class="constant">12:58:51</span> <span class="constant">git_head</span>() <span class="constant">33ea9c76</span>
+<span class="constant">│</span>  <span class="constant">server:</span> <span class="constant">fix</span> <span class="constant">output</span> <span class="constant">length</span>
+</code></pre>
+<h2>Step 2: Verify the Original Commit</h2><p>To confirm the original commit remains intact, check its Git hash:</p><pre><code class="bash"><span class="constant">jj</span> <span class="constant">show</span> <span class="constant">wkmuoqnv</span>
+</code></pre>
+<p>Output:</p><pre><code class="bash"><span class="constant">Commit</span> <span class="constant">ID:</span> <span class="constant">33ea9c76</span>
+<span class="constant">Change</span> <span class="constant">ID:</span> <span class="constant">wkmuoqnvx...</span>
+<span class="constant">Bookmarks:</span> <span class="constant">feature-A</span>
+<span class="constant">Author:</span> <span class="constant">User</span> <span class="operator">&lt;</span>user@example.com<span class="operator">&gt;</span>
+Committer: User <span class="operator">&lt;</span>user@example.com<span class="operator">&gt;</span>
+
+    server: fix output length
+</code></pre>
+<p>Since the Git hash matches the original state (<code>33ea9c76</code>), no force-push is required.</p><h2>Step 3: Push the Updated History</h2><p>Finally, push the corrected history:</p><pre><code class="bash"><span class="constant">jj</span> <span class="constant">bookmark</span> <span class="constant">feature-A</span> <span class="constant">set</span> <span class="constant">-r</span> <span class="constant">@</span>
+<span class="constant">jj</span> <span class="constant">git</span> <span class="constant">push</span>
+</code></pre>
+<p>Because the original commit hash (<code>33ea9c76</code>) is preserved, this push does not require a force-push. The remote remains compatible with the local changes.</p><h1>Key Learnings</h1><ul><li>Interactive Splitting:<ul><li>Use <code>jj split</code> to separate accidental changes into distinct commits.</li><li>Ensure the original commit message remains identical to avoid altering the Git hash.</li></ul></li><li>Evolution Log (jj evolog):<ul><li>Provides a detailed history of all commits associated with a branch.</li><li>Helps identify which changes were part of the original commit versus newly introduced changes.</li></ul></li><li>Bookmark Indicators:<ul><li>The asterisk (*) next to the bookmark in the log or status output helps identify if the working copy has diverged.</li></ul></li><li>Force-Push Avoidance:<ul><li>Keeping the original commit message and content unchanged ensures compatibility with the remote history.</li></ul></li></ul><h1>Conclusion</h1><p>Recovering clean history in Jujutsu is straightforward with tools like <code>jj split</code>, <code>jj evolog</code>, and bookmark indicators. By carefully managing commit messages and using interactive splitting, you can recover from accidental amendments without needing a force-push.</p><p><em>yes, part of this blog post is authored by ChatGPT, in case you were wondering 😄</em></p></div>
+  </div>
+  <hr>
+  <div id="prev-next">
+    <span>
+      <a href="/blog/jj-one-week-in/">←
+        <span>Jujutsu (version control) - one week in</span></a>
+    </span>
+    <span></span>
+    <span></span>
+    <small>&nbsp; or &nbsp;</small>
+    <small>
+      <a href="/">Back to the Homepage</a>
+    </small>
+  </div>
+
+    </div>
+    <footer id="footer">
+      
+    </footer>
+  </body>
+</html>
