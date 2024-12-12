@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+  <head id="head">
+    <meta charset="UTF-8">
+    <meta name="description" content="@renerocksai - personal website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@renerocksai">
+    <meta name="twitter:author" content="@renerocksai">
+    <meta name="twitter:description" content="@renerocksai - personal website">
+    <meta name="twitter:title" content="Syncing a local Jujutsu repo with remote changes | @renerocksai">
+    <meta name="twitter:image" content="https://renerocks.ai/reneglasses.png">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Syncing a local Jujutsu repo with remote changes | @renerocksai">
+    <meta property="og:image" content="https://renerocks.ai/reneglasses.png">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title id="title">
+      Syncing a local Jujutsu repo with remote changes
+      - @renerocksai
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/main.css">
+    <link rel="stylesheet" type="text/css" href="/highlight.css">
+    
+  <link type="text/css" rel="stylesheet" href="/term-highlight.css">
+  <style>
+    #docs {
+        h1, h2, h3, h4 {
+            text-align: left;
+            a {
+                color: black;
+                text-decoration: none;
+            }
+        }
+        @media (prefers-color-scheme:dark) {
+          h1, h2, h3, h4 {
+            a {
+              color: white;
+            }
+          }
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            border-bottom: 1px dashed #aaa;
+            margin-top: 2em;
+            a:hover::after {
+                content: ' #';
+            }
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            a:hover::after {
+                content: ' ##';
+            }
+        }
+
+        h4 {
+            font-size: 1rem;
+            a:hover::after {
+                content: ' ###';
+            }
+        }
+
+    }
+
+    table {
+        font-size: 0.9em;
+    }
+    table th {
+        font-size: 1em;
+    }
+    table td {
+        white-space: nowrap;
+    }
+  </style>
+
+  </head>
+  <body>
+    <div id="content">
+      
+  <div style="display:flex; flex-direction:column; align-items:center;">
+    <h1 id="header" class="noupper" style="color: #606060"><a class="reset-a" href="/">@renerocksai</a></h1>
+    <div class="menu-small" style="display:flex; justify-content:center; font-size:small;">
+      <a href="/">Home</a>
+      •
+      <a href="/blog/">Blog</a>
+      •
+      <a href="/projects/">Projects</a>
+      •
+      <a href="/about/">About</a>
+      •
+      <a href="https://github.com/renerocksai" target="_blank">
+        GitHub
+      </a>
+    </div>
+  </div>
+  <h1>Syncing a local Jujutsu repo with remote changes</h1>
+  <p class="post-byline">
+    <span>December 12, 2024</span>
+    •
+    <span>4</span>
+    min read • by
+    <b>renerocksai</b>
+    <span></span>
+  </p>
+  <div id="post-description"></div>
+  <div>
+    <div class="toc block info">
+      <h1>&nbsp;Table of Contents</h1>
+      <div><ul>
+<li>Pull in changes of remote branches</li><li>Pulling in and rebasing on remote changes</ul></div>
+    </div>
+  </div>
+  <div id="docs">
+    <div id="post-body"><p>This is an easy one, but I still wanted to write it down for reference. How do you <em>pull</em> changes from a Git remote in jj?</p><p>And what if the remote branch has received pushes while you were working on it locally (requiring a <code>git pull --rebase</code>)?</p><h1>Pull in changes of remote branches</h1><p>The first case is easy:</p><pre><code class="bash"><span class="constant">jj</span> <span class="constant">git</span> <span class="constant">fetch</span>
+</code></pre>
+<p>This will fetch all changes from the remote and update tracked bookmarks:</p><pre><code class="bash"><span class="constant">$ jj</span> <span class="constant">git</span> <span class="constant">fetch</span>
+<span class="constant">bookmark:</span> <span class="constant">some_new_branch@origin</span>    <span class="constant">[new]</span> <span class="constant">untracked</span>
+<span class="constant">bookmark:</span> <span class="constant">master@origin</span>             <span class="constant">[updated]</span> <span class="constant">tracked</span>
+</code></pre>
+<p>That's all very nice, but what if you're working on <code>master</code>, want to push, only to find out that the master branch has been updated remotely. How do you bring it up-to-date?</p><h1>Pulling in and rebasing on remote changes</h1><p>The equivalent of <code>git pull --rebase</code> is a two-step process in jj: <code>jj fetch</code>, followed by <code>jj rebase</code>.</p><p>Let's say you have finished your current change and want to push to master, but what you get is:</p><pre><code class="bash"><span class="constant">$ jj</span> <span class="constant">bookmark</span> <span class="constant">set</span> <span class="constant">master</span>   <span class="comment"># prepare to push master</span>
+<span class="constant">$ jj</span> <span class="constant">git</span> <span class="constant">push</span>
+<span class="constant">Changes</span> <span class="constant">to</span> <span class="constant">push</span> <span class="constant">to</span> <span class="constant">origin:</span>
+  <span class="constant">Move</span> <span class="constant">forward</span> <span class="constant">bookmark</span> <span class="constant">master</span> <span class="constant">from</span> <span class="constant">a4df9e84fb0b</span> <span class="constant">to</span> <span class="constant">abc1252a00c7</span>
+<span class="constant">Error:</span> <span class="constant">Refusing</span> <span class="constant">to</span> <span class="constant">push</span> <span class="constant">a</span> <span class="constant">bookmark</span> <span class="constant">that</span> <span class="constant">unexpectedly</span> <span class="constant">moved</span> <span class="constant">on</span> <span class="constant">the</span> <span class="constant">remote.</span> <span class="constant">Affected</span> <span class="constant">refs:</span> <span class="constant">refs/heads/master</span>
+<span class="constant">Hint:</span> <span class="constant">Try</span> <span class="constant">fetching</span> <span class="constant">from</span> <span class="constant">the</span> <span class="constant">remote,</span> <span class="constant">then</span> <span class="constant">make</span> <span class="constant">the</span> <span class="constant">bookmark</span> <span class="constant">point</span> <span class="constant">to</span> <span class="constant">where</span> <span class="constant">you</span> <span class="constant">want</span> <span class="constant">it</span> <span class="constant">to</span> <span class="constant">be,</span> <span class="constant">and</span> <span class="constant">push</span> <span class="constant">again.</span>
+</code></pre>
+<p>That is a clear sign that we need to pull in the remote changes.</p><pre><code class="bash"><span class="constant">$ jj</span> <span class="constant">git</span> <span class="constant">fetch</span>
+<span class="constant">bookmark:</span> <span class="constant">some_new_branch@origin</span>    <span class="constant">[new]</span> <span class="constant">untracked</span>
+<span class="constant">bookmark:</span> <span class="constant">master@origin</span>             <span class="constant">[updated]</span> <span class="constant">tracked</span>
+
+<span class="constant">$ PAGER=cat</span> <span class="constant">jj</span>
+<span class="constant">◆</span>  <span class="constant">wnnwzoyz</span> <span class="constant">boss@zml.ai</span> <span class="constant">2024-12-11</span> <span class="constant">19:16:19</span> <span class="constant">master??</span> <span class="constant">master@origin</span> <span class="constant">38f76fe0</span>
+<span class="constant">│</span>  <span class="constant">changes</span> <span class="constant">straight</span> <span class="constant">from</span> <span class="constant">the</span> <span class="constant">boss</span>
+<span class="constant">│</span> <span class="constant">@</span>  <span class="constant">ptykulms</span> <span class="constant">rene@zml.ai</span> <span class="constant">2024-12-12</span> <span class="constant">10:07:17</span> <span class="constant">master??</span> <span class="constant">master@git</span> <span class="constant">abc1252a</span>
+<span class="constant">├─╯</span>  <span class="constant">my</span> <span class="constant">great</span> <span class="constant">change</span> <span class="constant">that</span> <span class="constant">I</span> <span class="constant">want</span> <span class="constant">to</span> <span class="constant">push</span>
+<span class="constant">◆</span>  <span class="constant">pqoollns</span> <span class="constant">rene@zml.ai</span> <span class="constant">2024-12-11</span> <span class="constant">15:18:59</span> <span class="constant">git_head</span>() <span class="constant">a4df9e84</span>
+<span class="constant">│</span>  <span class="constant">the</span> <span class="constant">change</span> <span class="constant">that</span> <span class="constant">I</span> <span class="constant">had</span> <span class="constant">based</span> <span class="constant">my</span> <span class="constant">change</span> <span class="constant">on</span> (<span class="constant">e.g.</span> <span class="constant">previous</span> <span class="constant">master</span>)
+</code></pre>
+<p>There are quite a few things to observe here: first, two commits now have the <code>master??</code> attribute. That makes sense because:</p><ul><li>I set the master bookmark to my latest change <code>@</code> (change <code>ptykulms</code>) before trying to push.</li><li>The remote also advanced its master "bookmark", so the bookmark tracking wants to set the local master bookmark to the change <code>wnnwzoyz</code>, at commit <code>38f76ge0</code> with bookmark <code>master@origin</code>.</li></ul><p>We also see that the commit that I had based my commit on, change <code>pqoollns</code>, is now the parent of those two commits.</p><p>My change, marked by the <code>@</code>, is now like the beginning of an anonymous branch.</p><p>The plan now is: rebase the master branch so that my change (<strong><code>pt</code></strong><code>ykulms</code>) sits on top of the pulled-in change (<strong><code>w</code></strong><code>nnwzoyz</code>).</p><pre><code class="bash"><span class="constant">$ jj</span> <span class="constant">rebase</span> <span class="constant">-b</span> <span class="constant">pt</span> <span class="constant">-d</span> <span class="constant">w</span>
+<span class="constant">Rebased</span> <span class="constant">1</span> <span class="constant">commits</span>
+<span class="constant">Working</span> <span class="constant">copy</span> <span class="constant">now</span> <span class="constant">at:</span> <span class="constant">ptykulms</span> <span class="constant">8d41b825</span> <span class="constant">master*</span> <span class="operator">|</span> <span class="constant">my</span> <span class="constant">great</span> <span class="constant">changes</span> <span class="constant">that</span> <span class="constant">I</span> <span class="constant">want</span> <span class="constant">to</span> <span class="constant">push</span>
+<span class="constant">Parent</span> <span class="constant">commit</span>      <span class="constant">:</span> <span class="constant">wnnwzoyz</span> <span class="constant">38f76fe0</span> <span class="constant">master@origin</span> <span class="operator">|</span> <span class="constant">changes</span> <span class="constant">right</span> <span class="constant">from</span> <span class="constant">the</span> <span class="constant">boss</span>
+<span class="constant">Added</span> <span class="constant">0</span> <span class="constant">files,</span> <span class="constant">modified</span> <span class="constant">1</span> <span class="constant">files,</span> <span class="constant">removed</span> <span class="constant">0</span> <span class="constant">files</span>
+
+</code></pre>
+<p>Nice! That worked like a charm. But it was more specific than it needed to be: We could have written it like this:</p><pre><code class="bash"><span class="constant">$ jj</span> <span class="constant">rebase</span> <span class="constant">-b</span> <span class="constant">pt</span> <span class="constant">-d</span> <span class="constant">w</span>   <span class="comment"># how we did it</span>
+<span class="constant">$ jj</span> <span class="constant">rebase</span> <span class="constant">-b</span> <span class="constant">@</span>  <span class="constant">-d</span> <span class="constant">w</span>   <span class="comment"># how we could have done it</span>
+<span class="constant">$ jj</span> <span class="constant">rebase</span>       <span class="constant">-d</span> <span class="constant">w</span>   <span class="comment"># how we should have done it</span>
+</code></pre>
+<p><code>jj rebase</code> defaults to <code>-b @</code></p><p>So, let's look at our new, flat, linear change hierarchy:</p><pre><code class="bash"><span class="constant">$ PAGER=cat</span> <span class="constant">jj</span>
+<span class="constant">@</span>  <span class="constant">ptykulms</span> <span class="constant">rene@zml.ai</span> <span class="constant">2024-12-12</span> <span class="constant">10:08:36</span> <span class="constant">master*</span> <span class="constant">8d41b825</span>
+<span class="constant">│</span>  <span class="constant">my</span> <span class="constant">great</span> <span class="constant">changes</span> <span class="constant">that</span> <span class="constant">I</span> <span class="constant">want</span> <span class="constant">to</span> <span class="constant">push</span>
+<span class="constant">◆</span>  <span class="constant">wnnwzoyz</span> <span class="constant">boss@zml.ai</span> <span class="constant">2024-12-11</span> <span class="constant">19:16:19</span> <span class="constant">master@origin</span> <span class="constant">git_head</span>() <span class="constant">38f76fe0</span>
+<span class="constant">│</span>  <span class="constant">changes</span> <span class="constant">right</span> <span class="constant">from</span> <span class="constant">the</span> <span class="constant">boss</span>
+</code></pre>
+<p>Also note how the ambiguity around the local <code>master</code> bookmark is resolved by the rebase. There are no more <code>master??</code> annotations!</p><p>Since the bookmark is on the correct change (and commit), we can push straight after the rebase:</p><pre><code class="bash"><span class="constant">$ jj</span> <span class="constant">git</span> <span class="constant">push</span>
+<span class="constant">Changes</span> <span class="constant">to</span> <span class="constant">push</span> <span class="constant">to</span> <span class="constant">origin:</span>
+  <span class="constant">Move</span> <span class="constant">forward</span> <span class="constant">bookmark</span> <span class="constant">master</span> <span class="constant">from</span> <span class="constant">38f76fe05494</span> <span class="constant">to</span> <span class="constant">8d41b8254c89</span>
+<span class="constant">Warning:</span> <span class="constant">The</span> <span class="constant">working-copy</span> <span class="constant">commit</span> <span class="constant">in</span> <span class="constant">workspace</span> <span class="constant">&apos;default&apos;</span> <span class="constant">became</span> <span class="constant">immutable,</span> <span class="constant">so</span> <span class="constant">a</span> <span class="constant">new</span> <span class="constant">commit</span> <span class="constant">has</span> <span class="constant">been</span> <span class="constant">created</span> <span class="constant">on</span> <span class="constant">top</span> <span class="constant">of</span> <span class="constant">it.</span>
+<span class="constant">Working</span> <span class="constant">copy</span> <span class="constant">now</span> <span class="constant">at:</span> <span class="constant">nrzommpq</span> <span class="constant">0faf1bde</span> (<span class="constant">empty</span>) (<span class="constant">no</span> <span class="constant">description</span> <span class="constant">set</span>)
+<span class="constant">Parent</span> <span class="constant">commit</span>      <span class="constant">:</span> <span class="constant">ptykulms</span> <span class="constant">8d41b825</span> <span class="constant">master</span> <span class="operator">|</span> <span class="constant">my</span> <span class="constant">great</span> <span class="constant">changes</span> <span class="constant">that</span> <span class="constant">I</span> <span class="constant">want</span> <span class="constant">to</span> <span class="constant">push</span>
+</code></pre>
+<p>Also note how jj wisely created a new commit right after the push. So there's no chance we accidentally change "immutable" (already pushed) history, like I did <a href="/blog/jj-clean-history/">a while ago</a>.</p></div>
+  </div>
+  <hr>
+  <div id="prev-next">
+    <span>
+      <a href="/blog/jj-clean-history/">←
+        <span>Recovering Clean History in Jujutsu (jj)</span></a>
+    </span>
+    <span></span>
+    <span></span>
+    <small>&nbsp; or &nbsp;</small>
+    <small>
+      <a href="/">Back to the Homepage</a>
+    </small>
+  </div>
+
+    </div>
+    <footer id="footer">
+      
+    </footer>
+  </body>
+</html>
