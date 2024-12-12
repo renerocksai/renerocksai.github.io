@@ -1,0 +1,117 @@
+---
+.title = "Syncing a local Jujutsu repo with remote changes",
+.date = @date("2024-12-12:00:00"),
+.author = "renerocksai",
+.layout = "post.shtml",
+.draft = false,
+.tags = [ "JJ", "jujutsu", "version-control", "git", "GitHub"],
+.custom = {"toc": false},
+---
+
+This is an easy one, but I still wanted to write it down for reference. How do you _pull_ changes from a Git remote in jj?
+
+And what if the remote branch has received pushes while you were working on it locally (requiring a `git pull --rebase`)?
+
+# Pull in changes of remote branches
+
+The first case is easy:
+
+```bash
+jj git fetch
+```
+
+This will fetch all changes from the remote and update tracked bookmarks:
+
+```bash
+$ jj git fetch
+bookmark: some_new_branch@origin    [new] untracked
+bookmark: master@origin             [updated] tracked
+```
+
+That's all very nice, but what if you're working on `master`, want to push, only to find out that the master branch has been updated remotely. How do you bring it up-to-date?
+
+# Pulling in and rebasing on remote changes
+
+The equivalent of `git pull --rebase` is a two-step process in jj: `jj fetch`, followed by `jj rebase`.
+
+Let's say you have finished your current change and want to push to master, but what you get is:
+
+```bash
+$ jj bookmark set master   # prepare to push master
+$ jj git push
+Changes to push to origin:
+  Move forward bookmark master from a4df9e84fb0b to abc1252a00c7
+Error: Refusing to push a bookmark that unexpectedly moved on the remote. Affected refs: refs/heads/master
+Hint: Try fetching from the remote, then make the bookmark point to where you want it to be, and push again.
+```
+
+That is a clear sign that we need to pull in the remote changes.
+
+```bash
+$ jj git fetch
+bookmark: some_new_branch@origin    [new] untracked
+bookmark: master@origin             [updated] tracked
+
+$ PAGER=cat jj
+◆  wnnwzoyz boss@zml.ai 2024-12-11 19:16:19 master?? master@origin 38f76fe0
+│  changes straight from the boss
+│ @  ptykulms rene@zml.ai 2024-12-12 10:07:17 master?? master@git abc1252a
+├─╯  my great change that I want to push
+◆  pqoollns rene@zml.ai 2024-12-11 15:18:59 git_head() a4df9e84
+│  the change that I had based my change on (e.g. previous master)
+```
+
+There are quite a few things to observe here: first, two commits now have the `master??` attribute. That makes sense because:
+
+- I set the master bookmark to my latest change `@` (change `ptykulms`) before trying to push.
+- The remote also advanced its master "bookmark", so the bookmark tracking wants to set the local master bookmark to the change `wnnwzoyz`, at commit `38f76ge0` with bookmark `master@origin`.
+
+We also see that the commit that I had based my commit on, change `pqoollns`, is now the parent of those two commits.
+
+My change, marked by the `@`, is now like the beginning of an anonymous branch.
+
+The plan now is: rebase the master branch so that my change (**`pt`**`ykulms`) sits on top of the pulled-in change (**`w`**`nnwzoyz`).
+
+```bash
+$ jj rebase -b pt -d w
+Rebased 1 commits
+Working copy now at: ptykulms 8d41b825 master* | my great changes that I want to push
+Parent commit      : wnnwzoyz 38f76fe0 master@origin | changes right from the boss
+Added 0 files, modified 1 files, removed 0 files
+
+```
+
+Nice! That worked like a charm. But it was more specific than it needed to be: We could have written it like this:
+
+```bash
+$ jj rebase -b pt -d w   # how we did it
+$ jj rebase -b @  -d w   # how we could have done it
+$ jj rebase       -d w   # how we should have done it
+```
+
+`jj rebase` defaults to `-b @`
+
+So, let's look at our new, flat, linear change hierarchy:
+
+```bash
+$ PAGER=cat jj
+@  ptykulms rene@zml.ai 2024-12-12 10:08:36 master* 8d41b825
+│  my great changes that I want to push
+◆  wnnwzoyz boss@zml.ai 2024-12-11 19:16:19 master@origin git_head() 38f76fe0
+│  changes right from the boss
+```
+
+Also note how the ambiguity around the local `master` bookmark is resolved by the rebase. There are no more `master??` annotations!
+
+Since the bookmark is on the correct change (and commit), we can push straight after the rebase:
+
+```bash
+$ jj git push
+Changes to push to origin:
+  Move forward bookmark master from 38f76fe05494 to 8d41b8254c89
+Warning: The working-copy commit in workspace 'default' became immutable, so a new commit has been created on top of it.
+Working copy now at: nrzommpq 0faf1bde (empty) (no description set)
+Parent commit      : ptykulms 8d41b825 master | my great changes that I want to push
+```
+
+Also note how jj wisely created a new commit right after the push. So there's no chance we accidentally change "immutable" (already pushed) history, like I did [a while ago](/blog/jj-clean-history).
