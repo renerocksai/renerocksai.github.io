@@ -170,7 +170,7 @@ Since the Git hash matches the original state (`33ea9c76`), no force-push is req
 Finally, push the corrected history:
 
 ```bash
-jj bookmark feature-A set -r @
+jj bookmark set feature-A    # -r @
 jj git push
 ```
 
