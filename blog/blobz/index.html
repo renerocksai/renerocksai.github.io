@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+  <head id="head">
+    <meta charset="UTF-8">
+    <meta name="description" content="@renerocksai - personal website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@renerocksai">
+    <meta name="twitter:author" content="@renerocksai">
+    <meta name="twitter:description" content="@renerocksai - personal website">
+    <meta name="twitter:title" content="Blobz : Your wobbly Garbage Persistor | @renerocksai">
+    <meta name="twitter:image" content="https://renerocks.ai/reneglasses.png">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Blobz : Your wobbly Garbage Persistor | @renerocksai">
+    <meta property="og:image" content="https://renerocks.ai/reneglasses.png">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title id="title">
+      Blobz : Your wobbly Garbage Persistor
+      - @renerocksai
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/main.css">
+    <link rel="stylesheet" type="text/css" href="/highlight.css">
+    
+  <link type="text/css" rel="stylesheet" href="/term-highlight.css">
+  <style>
+    #docs {
+        h1, h2, h3, h4 {
+            text-align: left;
+            a {
+                color: black;
+                text-decoration: none;
+            }
+        }
+        @media (prefers-color-scheme:dark) {
+          h1, h2, h3, h4 {
+            a {
+              color: white;
+            }
+          }
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            border-bottom: 1px dashed #aaa;
+            margin-top: 2em;
+            a:hover::after {
+                content: ' #';
+            }
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            a:hover::after {
+                content: ' ##';
+            }
+        }
+
+        h4 {
+            font-size: 1rem;
+            a:hover::after {
+                content: ' ###';
+            }
+        }
+
+    }
+
+    table {
+        font-size: 0.9em;
+    }
+    table th {
+        font-size: 1em;
+    }
+    table td {
+        white-space: nowrap;
+    }
+  </style>
+
+  </head>
+  <body>
+    <div id="content">
+      
+  <div style="display:flex; flex-direction:column; align-items:center;">
+    <h1 id="header" class="noupper" style="color: #606060"><a class="reset-a" href="/">@renerocksai</a></h1>
+    <div class="menu-small" style="display:flex; justify-content:center; font-size:small;">
+      <a href="/">Home</a>
+      •
+      <a href="/blog/">Blog</a>
+      •
+      <a href="/projects/">Projects</a>
+      •
+      <a href="/about/">About</a>
+      •
+      <a href="https://github.com/renerocksai" target="_blank">
+        GitHub
+      </a>
+    </div>
+  </div>
+  <h1>Blobz : Your wobbly Garbage Persistor</h1>
+  <p class="post-byline">
+    <span>March 17, 2025</span>
+    •
+    <span>7</span>
+    min read • by
+    <b>renerocksai</b>
+    <span></span>
+  </p>
+  <div id="post-description"></div>
+  <div>
+    <div class="toc block info">
+      <h1>&nbsp;Table of Contents</h1>
+      <div><ul>
+<li>This is Vaporware!<ul><li>
+Intro : Garbage Collection Style Persistence</li><li>Why or when might this be useful?<ul><li>
+In-process</li></ul></li><li>Locking and jsonifying</li><li>How should the persistence ACTUALLY work?</li><li>The big flaw(s)</li><li>Room for improvement<ul><li>
+No JSON</li></ul></li><li>Where to go from here.</li></ul></ul></div>
+    </div>
+  </div>
+  <div id="docs">
+    <div id="post-body"><h1>This is Vaporware!</h1><p>Yet I’ve wanted to build it for a while now. I’m probably going to build it gradually, one step at a time. While also having fun trying!</p><p>I know hardly anyone is ever going to read this piece, but: if you do, and you have opinions, please share them with me on <a href="https://x.com/renerocksai" target="_blank">X</a> or hop onto the <a href="https://discord.gg/jQAAN6Ubyj" target="_blank">Zap Discord Server</a> and tell me why my approach sucks, if you have better ideas, what <strong>existing</strong> solution I should use instead, etc.</p><p>Heads up: it’s going to be <a href="https://ziglang.org" target="_blank">Zig</a>.</p><p>By the time you read this, there might be something to look at on <a href="https://github.com/renerocksai/blobz" target="_blank">GitHub</a>.</p><h2>Intro : Garbage Collection Style Persistence</h2><p>What I have in mind: An in-process Key/Value store with the following characteristics:</p><ul><li>it is meant for multithreaded environments, like <a href="https://github.com/zigzap/zap" target="_blank">Zap</a> apps.</li><li>you define key and value types<ul><li><em>I actually think of a specialization where the key is just an index into an array.</em></li></ul></li><li>you can iterate through it fast if you need to (ArrayHashMap)</li><li>it has an <code>upsert</code> method : you can insert/update the value under a key</li><li>it marks timestamps of upserts as <code>dirty_time</code>.</li><li>it runs a “garbage persistor” in its own thread:<ul><li>iterates through all objects</li><li>it knows when it last ran (<code>last_garbage_run</code>).</li><li>all objects whose <code>dirty_time &gt; last_garbage_run</code> will be snapshotted into JSON (for now)</li><li>the collected JSONs are persisted to disk</li></ul></li><li>you can bootstrap it from persisted JSON.</li></ul><h2>Why or when might this be useful?</h2><p>Consider the following (“my”) scenario: You run an online experiment. The moment you take it live, hundreds or even thousands of users waiting for a new challenge might storm to your site. With every action they take, they change user state. Per-user state changes can be quite frequent - maybe even automated by some JavaScript that hits an API endpoint every half a second or so, to keep track of some very important, granular progress.</p><p>The frequent updates to the server are meant to ensure: accurate information on some dashboard you might create, and, more importantly, also that users can close their browsers and resume to almost exactly the previous state, even on a different computer, ie not relying on client-side storage.</p><p>While my scenario happens in the context of online experiments, I think similar characteristics might apply to other web apps. If not, well, then I guess Blobz will be just for me. 😊</p><h3>In-process</h3><p>I love <a href="https://www.sqlite.org" target="_blank">sqlite</a>. An in-process database. Simple to deploy, battle-tested in the millions of millions (probably). No database connections, no shit. You link to it and that’s it. Now your app can database. Actually, now your app <em>IS</em> database.</p><p>What I don’t love about sqlite is: its SQLiness. I often don’t want schemas, tables, columns, etc. I’d rather like to have a persistent copy of an array or HashMap. I don’t want to translate zig structs to SQL tables.</p><p>Having such persistence in-process is valuable to me, as it simplifies building and also deployment. Just <code>zig buid</code> to build. True, that can also be achieved with sqlite, but I hope you get the idea. And to deploy: just start the one and only process. No need to spin up a docker-compose with a <a href="https://redis.io" target="_blank">Redis</a>.</p><h2>Locking and jsonifying</h2><p>Locking the entire HashMap of users to iterate over its KV pairs and persisting them, is the first approach to get to a working solution. It’s also not the most performant. Conversion to JSON is not super-efficient. This approach slows down your entire experiment app for all users until all JSON conversions are done.</p><p>Well, we could take a COPY of each value, essentially creating a snapshot of the entire HashMap (via many individual value snapshots), then slowly converting to JSON and persisting it. That seems like a sensible approach. But what if user objects might be large-ish, and constantly growing? It seems like a waste of memory to convert them all in one go. So we iterate, then copy, and jsonify individual user objects.</p><p>We need to talk about object consistency here. What if the object changes while we’re taking the copy? The copy might be an object of inconsistent state. We can mitigate that by introducing read/write locks to the user objects.</p><p>Now that we can briefly lock objects, we don’t want to hold the locks for too long, as that might slow down our app. So you might think: let’s take copies, it’s OK to waste a bit of memory, and then jsonify all the copies in one go.</p><p>But what is a copy? How deep or shallow is it? If a user object holds a few slices of data, only their <code>.ptr</code> and <code>.len</code> fields are copied. That’s a problem. If the app deletes the user object and frees its associated memory after we’ve taken the copy but before we were able to jsonify it, our copy holds slices with invalidated pointers.</p><p>This is where we abandon the idea of copying. Sure, we could impose on our app to never delete and destroy any user objects. We could also try to deep-copy all slices and the slices they might contain, etc. Or we could impose on user objects that they must not hold slices that point outside their memory. E.g. contain fixed buffers for every slice, so the slices only ever point to memory that is part of the object itself. Of course, we would then need to correct the pointers in the copies. That seems complicated. So we could impose on the user struct to have a <code>clone(alloc)</code> method — and now I hope you understand why we abandon the idea of copying. None of the just mentioned approaches seem right. I might revisit that thought later if performance of Blobz turns out to be terrible. 😊</p><p>OK, so let’s put a read/write lock into every user object. Our garbage persistor only locks user objects for the moment of taking a copy and jsonifying. Our app makes sure to make changes in “transactions” by acquiring the write lock. So when we jsonify = read objects, they’ll always be in a valid state. Acquiring the write lock also immediately marks the object as dirty.</p><h2>How should the persistence ACTUALLY work?</h2><p>That’s actually the wrong question. Because nothing is good enough until it has reached <a href="https://tigerbeetle.com" target="_blank">TigerBeetle</a> level.</p><p>So the question should rather be: how can we organize persistence, so we can avoid the most obvious traps we can think of?</p><p>For one, let’s not store everything in one big JSON file. Rather, let’s write objects into individual files. At least in the past, some filesystems (especially on Windows) would not cope well with large directories. So we better create subdirectories and limit the number of files in them. Everybody does it. Even git.</p><p>Here, an interesting question arises: how can we make persistence robust in the sense that a crash while writing does not leave inconsistent state in the file representation? Something like writing into <code>.json.tmp</code> files and renaming them to <code>.json</code> later.</p><p>I guess, once we started writing and testing some code, more inspiration will come automatically.</p><h2>The big flaw(s)</h2><p>Our persistence is naive. It relies on the file system and its surrounding infrastructure (e.g. kernel, <code>fsync</code>). Until I have found a better solution, this will have to do. <a href="https://tigerbeetle.com" target="_blank">TigerBeetle</a> fans will probably stop reading now and that’s OK. We’re close to the end anyway 🤣.</p><p>Oh, and speaking of flaws: the elephant in the room: JSON. I know. But it’s an easy fix for now. Human-readable, too.</p><h2>Room for improvement</h2><p>Improvements I can think of and want to tackle:</p><h3>No JSON</h3><p>Objects implementing a persistence method, analog to <code>pub fn format(...)</code>, could get us out of the JSON hell for those who implement them:</p><pre><code class="zig"><span class="keyword modifier">pub</span> <span class="keyword function">fn</span> <span class="function">toBlobz</span><span class="punctuation bracket">(</span><span class="variable parameter">self</span><span class="punctuation delimiter">:</span> <span class="operator">*</span><span class="keyword">const</span> <span class="function builtin">@This</span><span class="punctuation bracket">(</span><span class="punctuation bracket">)</span><span class="punctuation delimiter">,</span>
+               <span class="variable parameter">alloc</span><span class="punctuation delimiter">:</span> <span class="variable">std</span><span class="punctuation delimiter">.</span><span class="variable member">mem</span><span class="punctuation delimiter">.</span><span class="variable member">Allocator</span><span class="punctuation bracket">)</span> <span class="operator">!</span><span class="punctuation bracket">[</span><span class="punctuation bracket">]</span><span class="keyword">const</span> <span class="type builtin">u8</span><span class="punctuation delimiter">;</span>
+<span class="keyword modifier">pub</span> <span class="keyword function">fn</span> <span class="function">fromBlobz</span><span class="punctuation bracket">(</span><span class="punctuation bracket">[</span><span class="punctuation bracket">]</span><span class="keyword">const</span> <span class="type builtin">u8</span><span class="punctuation bracket">)</span> <span class="operator">!</span><span class="function builtin">@This</span><span class="punctuation bracket">(</span><span class="punctuation bracket">)</span><span class="punctuation delimiter">;</span>
+
+<span class="keyword modifier">pub</span> <span class="keyword function">fn</span> <span class="function">writeBlobz</span><span class="punctuation bracket">(</span><span class="variable parameter">self</span><span class="punctuation delimiter">:</span> <span class="operator">*</span><span class="keyword">const</span> <span class="function builtin">@This</span><span class="punctuation bracket">(</span><span class="punctuation bracket">)</span><span class="punctuation delimiter">,</span> <span class="variable parameter">writer</span><span class="punctuation delimiter">:</span> <span class="variable">std</span><span class="punctuation delimiter">.</span><span class="variable member">io</span><span class="punctuation delimiter">.</span><span class="variable member">Writer</span><span class="punctuation bracket">)</span> <span class="operator">!</span><span class="type builtin">void</span><span class="punctuation delimiter">;</span>
+<span class="keyword modifier">pub</span> <span class="keyword function">fn</span> <span class="function">readBlobz</span><span class="punctuation bracket">(</span><span class="variable parameter">self</span><span class="punctuation delimiter">:</span> <span class="operator">*</span><span class="keyword">const</span> <span class="function builtin">@This</span><span class="punctuation bracket">(</span><span class="punctuation bracket">)</span><span class="punctuation delimiter">,</span> <span class="variable parameter">writer</span><span class="punctuation delimiter">:</span> <span class="variable">std</span><span class="punctuation delimiter">.</span><span class="variable member">io</span><span class="punctuation delimiter">.</span><span class="variable member">Reader</span><span class="punctuation bracket">)</span> <span class="operator">!</span><span class="type builtin">void</span><span class="punctuation delimiter">;</span>
+</code></pre>
+<p>or similar.</p><h2>Where to go from here.</h2><p>I will update this section with links to anything useful related to Blobz, like follow-up articles, until Blobz can stand on its own feet. 🦶 🦶</p></div>
+  </div>
+  <hr>
+  <div id="prev-next">
+    <span>
+      <a href="/blog/jj-sync-remote/">←
+        <span>Syncing a local Jujutsu repo with remote changes</span></a>
+    </span>
+    <span></span>
+    <span></span>
+    <small>&nbsp; or &nbsp;</small>
+    <small>
+      <a href="/">Back to the Homepage</a>
+    </small>
+  </div>
+
+    </div>
+    <footer id="footer">
+      
+    </footer>
+  </body>
+</html>
