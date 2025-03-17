@@ -1,10 +1,11 @@
 .{
-    .name = "Zine Website",
-    .version = "0.0.0",
+    .name = .renerocksai_website,
+    .version = "0.0.1",
+    .fingerprint = 0xc5d019d216f23e4f,
     .dependencies = .{
         .zine = .{
-            .url = "git+https://github.com/kristoff-it/zine?ref=v0.6.3#9d95313c744c2ca7c466b82725a1fe959d81f6e6",
-            .hash = "1220415067dc7d10b6a3ccd1f3c5b35b5af6e2a7675232af55cebd50f711a55fc7e7",
+            .url = "git+https://github.com/kristoff-it/zine?ref=v0.9.0#e918b49937c071187a26b19132f707a5b53e381e",
+            .hash = "zine-0.0.0-ou6nICX3BQAGb2RbXvn5CA5IBzlC_TQ0rXia2VSEltSN",
         },
     },
     .paths = .{"."},
