@@ -1,0 +1,31 @@
+---
+.title = "ZAP - A few years in",
+.date = @date("2025-03-17:00:00"),
+.author = "renerocksai",
+.layout = "post.shtml",
+.draft = true,
+.tags = [ "zap", "zig" ],
+.custom = {"toc": false},
+---
+
+# What Changed -- should go into its own post / text
+
+# You shouldn't use zap
+
+# You might still want to use zap
+
+
+# Why zap.Endpoints?
+
+- Reusable Building Blocks
+
+Since Endpoints are self-contained structs, they can be re-used easily: either in the same project on different slugs, or even in  a different project (with different "App").
+
+- use zig's std.fs.path to split the path -> get /users/id with optional id
+
+# fix those sh.tty URLPARAM FreeMeOrNot thigs
+
+
+# the new zap.App API
+
+have to stop writing, wanna focus on blobz
