@@ -1,0 +1,14 @@
+---
+.title = "Blobz : Your wobbly Garbage Persistor",
+.description = "A Simple In-Process Eventually Persistent Object Store",
+.date = @date("2025-03-17T00:00:00"),
+.author = "renerocksai",
+.layout = "post.shtml",
+.draft = false,
+---
+
+_blobz needs a logo_
+
+- Blobz on [GithHub](https://github.com/renerocksai/blobz)
+- Blobz first mentioned [here](/blog/blobz) (blog post)
+

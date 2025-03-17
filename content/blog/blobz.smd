@@ -1,5 +1,4 @@
 ---
-//.title = "Blobz : Simple In-Process Eventually Persistent Object Store",
 .title = "Blobz : Your wobbly Garbage Persistor",
 .date = @date("2025-03-17:00:00"),
 .author = "renerocksai",
@@ -27,7 +26,7 @@ By the time you read this, there might be something to look at on
 
 ## Intro : Garbage Collection Style Persistence
 
-What I have in mind: An in-process Key/Value store with the following
+What I have in mind: an in-process key/value store with the following
 characteristics:
 
 - it is meant for multithreaded environments, like
@@ -180,5 +179,6 @@ or similar.
 
 ## Where to go from here.
 
-I will update this section with links to anything useful related to Blobz, like
-follow-up articles, until Blobz can stand on its own feet. 🦶 🦶
+I created a [project page for Blobz](/projects/blobz) which I'll populate with
+links to anything useful related to the project, like follow-up articles, until
+Blobz can stand on its own feet. 🦶 🦶
