@@ -13,7 +13,7 @@
 Yet I've wanted to build it for a while now. I'm probably going to build it
 gradually, one step at a time. While also having fun trying!
 
-I know hardly anyone is ever going to read this piece, but: if you do, and you
+I know hardly anyone is ever going to read this piece, but: if you do and you
 have opinions, please share them with me on [X](https://x.com/renerocksai) or
 hop onto the [Zap Discord Server](https://discord.gg/jQAAN6Ubyj) and tell me
 why my approach sucks, if you have better ideas, what **existing** solution I
@@ -21,21 +21,25 @@ should use instead, etc.
 
 Heads up: it's going to be [Zig](https://ziglang.org).
 
-By the time you read this, there might be something to look at on
+What follows is me rambling about a pet project I wanted to start a long time
+ago but never _really_ needed to, because my Zap apps were so robust that I was
+never _forced_ to do it.
+
+When you read this, there might even be something to look at on
 [GitHub](https://github.com/renerocksai/blobz).
 
 ## Intro : Garbage Collection Style Persistence
 
-What I have in mind: an in-process key/value store with the following
-characteristics:
+What I have in mind is an in-process key/value store with the following
+characteristics, vaguely inspired by mark-and-sweep garbage collection:
 
-- it is meant for multithreaded environments, like
+- it is meant for multithreaded environments like
   [Zap](https://github.com/zigzap/zap) apps.
 - you define key and value types
-    - _I actually think of a specialization where the key is just an index
-      into an array._
+    - _I think of a specialization where the key is just an index into an
+      array._
 - you can iterate through it fast if you need to (ArrayHashMap)
-- it has an `upsert` method : you can insert/update the value under a key
+- it has an `upsert` method: you can insert/update the value under a key
 - it marks timestamps of upserts as `dirty_time`.
 - it runs a "garbage persistor" in its own thread:
     - iterates through all objects
@@ -49,104 +53,105 @@ characteristics:
 
 Consider the following ("my") scenario: You run an online experiment. The
 moment you take it live, hundreds or even thousands of users waiting for a new
-challenge might storm to your site. With every action they take, they change
-user state. Per-user state changes can be quite frequent - maybe even automated
-by some JavaScript that hits an API endpoint every half a second or so, to keep
+challenge might storm your site. With every action they take, they change their
+user state. Per-user state changes can be quite frequent—maybe even automated
+by some JavaScript that hits an API endpoint every half a second or so to keep
 track of some very important, granular progress.
 
-The frequent updates to the server are meant to ensure: accurate information on
-some dashboard you might create, and, more importantly, also that users can
-close their browsers and resume to almost exactly the previous state, even on a
-different computer, ie not relying on client-side storage.
+The frequent updates to the server are meant to ensure accurate information on
+a dashboard you might create and, more importantly, that users can close their
+browsers and resume to almost exactly the previous state, even on a different
+computer, i.e., not relying on client-side storage.
 
-While my scenario happens in the context of online experiments, I think similar
-characteristics might apply to other web apps. If not, well, then I guess Blobz
-will be just for me. 😊
+While my scenario happens in the context of online experiments, similar
+characteristics might apply to other web apps. If not, then Blobz will be just
+for me. 😊
 
 ### In-process
 
-I love [sqlite](https://www.sqlite.org). An in-process database. Simple to
+I love [SQLite](https://www.sqlite.org). An in-process database. Simple to
 deploy, battle-tested in the millions of millions (probably). No database
 connections, no shit. You link to it and that's it. Now your app can database.
 Actually, now your app _IS_ database.
 
-What I don't love about sqlite is: its SQLiness. I often don't want schemas,
-tables, columns, etc. I'd rather like to have a persistent copy of an array or
-HashMap. I don't want to translate zig structs to SQL tables.
+What I don't love about SQLite is its SQLiness. I often don't want schemas,
+tables, columns, etc. I'd rather have a persistent copy of an array or HashMap.
+I don't want to translate zig structs to SQL tables.
 
-Having such persistence in-process is valuable to me, as it simplifies building
-and also deployment. Just `zig buid` to build. True, that can also be achieved
-with sqlite, but I hope you get the idea. And to deploy: just start the one and
-only process. No need to spin up a docker-compose with a
-[Redis](https://redis.io).
+Having such persistence _in-process_ is valuable to me, as it simplifies
+building and deployment. Just `zig buid` to build. True, that can also be
+achieved with SQLite, but I hope you get the idea. To deploy, just start the
+one and only process. No need to spin up a docker-compose with a
+[Redis](https://redis.io), for example.
 
 ## Locking and jsonifying
 
-Locking the entire HashMap of users to iterate over its KV pairs and persisting
-them, is the first approach to get to a working solution. It's also not the most
-performant. Conversion to JSON is not super-efficient. This approach slows down
-your entire experiment app for all users until all JSON conversions are done.
+The first approach to getting to a working solution is locking the entire
+HashMap of users to iterate over its KV pairs and persisting them. It's also
+not the most performant. Conversion to JSON is not super-efficient. This
+approach slows down your entire experiment app for all users until all JSON
+conversions are done.
 
 Well, we could take a COPY of each value, essentially creating a snapshot of
-the entire HashMap (via many individual value snapshots), then slowly
-converting to JSON and persisting it. That seems like a sensible approach. But
-what if user objects might be large-ish, and constantly growing? It seems like
-a waste of memory to convert them all in one go. So we iterate, then copy, and
-jsonify individual user objects.
+the entire HashMap (via many individual value snapshots), then slowly convert
+to JSON and persist it. That seems like a sensible approach. But what if user
+objects might be large and constantly growing? It seems like a waste of memory
+to convert them all in one go. So we iterate, then copy, and jsonify individual
+user objects.
 
-We need to talk about object consistency here. What if the object changes while
-we're taking the copy? The copy might be an object of inconsistent state. We
+We need to discuss object consistency here. What if the object changes while
+we're taking the copy? The resulting copy might be in an inconsistent state. We
 can mitigate that by introducing read/write locks to the user objects.
 
 Now that we can briefly lock objects, we don't want to hold the locks for too
-long, as that might slow down our app. So you might think: let's take copies, it's
-OK to waste a bit of memory, and then jsonify all the copies in one go.
+long, as that might slow down our app. You might think, "Let's take copies.
+It's OK to waste a bit of memory and then jsonify all the copies in one go."
 
-But what is a copy? How deep or shallow is it? If a user object holds a few
-slices of data, only their `.ptr` and `.len` fields are copied. That's a problem.
-If the app deletes the user object and frees its associated memory after we've
-taken the copy but before we were able to jsonify it, our copy holds slices
-with invalidated pointers.
+But what is a copy? How deep or shallow is it? Only their `.ptr` and `.len`
+fields are copied if a user object holds data slices. That's a problem. Suppose
+the app deletes the user object and frees its associated memory after we've
+taken the copy but before we could jsonify it. In that case, our copy holds
+slices with invalidated pointers.
 
-This is where we abandon the idea of copying. Sure, we could impose on our app
-to never delete and destroy any user objects. We could also try to deep-copy
-all slices and the slices they might contain, etc. Or we could impose on user
-objects that they must not hold slices that point outside their memory. E.g.
-contain fixed buffers for every slice, so the slices only ever point to memory
-that is part of the object itself. Of course, we would then need to correct the
-pointers in the copies. That seems complicated. So we could impose on the user
-struct to have a `clone(alloc)` method --- and now I hope you understand why we
-abandon the idea of copying. None of the just mentioned approaches seem right.
-I might revisit that thought later if performance of Blobz turns out to be
-terrible. 😊
+This is where we contemplate abandoning the idea of copying. Sure, we could
+impose on our app to never delete and destroy any user objects. We could also
+deep-copy all slices and the slices they might contain, etc. Or we could impose
+on user objects that they must not hold slices that point outside their memory.
+They must contain fixed buffers for every slice, so the slices only ever point
+to memory, which is part of the object itself. Of course, we would then need to
+correct the pointers in the copies. That doesn't seem like a good idea.
+Instead, we could impose on the user struct to have a `clone(alloc)` method.
+Now, I hope you understand why we abandoned the idea of copying. None of the
+approaches mentioned above seem right. However, I might revisit that thought
+later if Blobz's performance turns out to be terrible. 😊
 
-OK, so let's put a read/write lock into every user object. Our garbage persistor
-only locks user objects for the moment of taking a copy and jsonifying. Our
-app makes sure to make changes in "transactions" by acquiring the write lock. So
-when we jsonify = read objects, they'll always be in a valid state. Acquiring the
-write lock also immediately marks the object as dirty.
+OK, let's put a read/write lock into every user object. Our garbage persistor
+only locks user objects when taking a copy and jsonifying. Our app makes sure
+to make changes in "transactions" by acquiring the write lock. So when we
+jsonify = read objects, they'll always be in a valid state. Acquiring the write
+lock also immediately marks the object as dirty.
 
 ## How should the persistence ACTUALLY work?
 
 That's actually the wrong question. Because nothing is good enough until it has
 reached [TigerBeetle](https://tigerbeetle.com) level.
 
-So the question should rather be: how can we organize persistence, so we can
-avoid the most obvious traps we can think of?
+So the question should rather be: How can we organize persistence so we can
+avoid the most obvious traps?
 
-For one, let's not store everything in one big JSON file. Rather, let's write
+For one, let's not store everything in one big JSON file. Instead, let's write
 objects into individual files. At least in the past, some filesystems
-(especially on Windows) would not cope well with large directories. So we
-better create subdirectories and limit the number of files in them. Everybody
-does it. Even git.
+(especially on Windows) did not cope well with large directories. So we better
+create subdirectories and limit the number of files in them. Everybody does it,
+even git.
 
 Here, an interesting question arises: how can we make persistence robust in the
 sense that a crash while writing does not leave inconsistent state in the file
 representation? Something like writing into `.json.tmp` files and renaming them
 to `.json` later.
 
-I guess, once we started writing and testing some code, more inspiration will
-come automatically.
+I guess more inspiration will come automatically once we start writing and
+testing some code.
 
 ## The big flaw(s)
 
@@ -155,8 +160,8 @@ infrastructure (e.g. kernel, `fsync`). Until I have found a better solution,
 this will have to do. [TigerBeetle](https://tigerbeetle.com) fans will probably
 stop reading now and that's OK. We're close to the end anyway 🤣.
 
-Oh, and speaking of flaws: the elephant in the room: JSON. I know. But it's an
-easy fix for now. Human-readable, too.
+Oh, and speaking of flaws, the elephant in the room is JSON. I know. But it's
+an easy fix for now, and it's human-readable, too.
 
 ## Room for improvement
 
@@ -179,6 +184,6 @@ or similar.
 
 ## Where to go from here.
 
-I created a [project page for Blobz](/projects/blobz) which I'll populate with
+I created a [project page for Blobz](/projects/blobz), which I'll populate with
 links to anything useful related to the project, like follow-up articles, until
 Blobz can stand on its own feet. 🦶 🦶
