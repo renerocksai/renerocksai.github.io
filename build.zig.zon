@@ -4,8 +4,8 @@
     .fingerprint = 0xc5d019d216f23e4f,
     .dependencies = .{
         .zine = .{
-            .url = "git+https://github.com/kristoff-it/zine?ref=v0.9.0#e918b49937c071187a26b19132f707a5b53e381e",
-            .hash = "zine-0.0.0-ou6nICX3BQAGb2RbXvn5CA5IBzlC_TQ0rXia2VSEltSN",
+            .url = "https://github.com/renerocksai/zine/archive/refs/tags/v0.9.0-fix-devserver-max-header-size.tar.gz",
+            .hash = "zine-0.0.0-ou6nIHP3BQDpwj7mocKX0VhFcWtx-qmErxjPp6IVy1yE",
         },
     },
     .paths = .{"."},
