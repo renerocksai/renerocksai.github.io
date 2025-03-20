@@ -194,6 +194,16 @@ pub fn readBlobz(self: *const @This(), writer: std.io.Reader) !void;
 ```
 or similar.
 
+
+### Better data partitioning
+
+We might soon abandon the idea of storing one file per object and switch to
+more optimal partitioning of data.
+
+While we're at it, we might want to explore imposing a size limit on persisted
+object state, and working just with memory mapped files.
+
+
 ## Where to go from here.
 
 I created a [project page for Blobz](/projects/blobz), which I'll populate with
