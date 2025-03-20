@@ -11,7 +11,7 @@
 # This is Vaporware! 💨
 
 Yet I've wanted to build it for a while now. I'm probably going to build it
-gradually, one step at a time. While also having fun trying!
+gradually, one step at a time; while also having fun trying!
 
 I know hardly anyone is ever going to read this piece, but: if you do and you
 have opinions, please share them with me on [X](https://x.com/renerocksai) or
@@ -83,6 +83,18 @@ building and deployment. Just `zig buid` to build. True, that can also be
 achieved with SQLite, but I hope you get the idea. To deploy, just start the
 one and only process. No need to spin up a docker-compose with a
 [Redis](https://redis.io), for example.
+
+### Starting simple...
+
+Blobz, with its limited scope, seems like a good candidate to grow from a basic
+proof-of-concept to a basic production-ready version - and then experimenting
+with alternative, even more robust/performant/better implementations.
+
+For a start, if it can provide SQLite-like or better performance and robustness
+as a storage layer, I'd call it a first success.
+
+What follows, is me rambling about some implementation details that came to mind
+before starting to write the first line of code...
 
 ## Locking and jsonifying
 
@@ -170,7 +182,7 @@ Improvements I can think of and want to tackle:
 ### No JSON
 
  Objects implementing a persistence method, analog to `pub fn format(...)`,
- could get us out of the JSON hell for those who implement them:
+ could get us out of the JSON hell for those structures that implement them:
 
 ```zig
 pub fn toBlobz(self: *const @This(),
