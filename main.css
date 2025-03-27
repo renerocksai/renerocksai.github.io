@@ -101,11 +101,24 @@ pre {
 }
 
 code {
-  /*border-radius: 4px;*/
+  border-radius: 4px;
   /*border: 1px solid #d3d3d3;*/
   padding: 3px;
   /*font-size: 1.1em;*/
   background-color: #1E1E1E !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+ul,
+li {
+  code {
+    background-color: #6e6e6e00 !important;
+    /*color: white;*/
+  }
 }
 
 blockquote {
@@ -148,6 +161,10 @@ blockquote p {
 }
 
 @media (prefers-color-scheme:dark) {
+  pre {
+    color: white;
+  }
+
   code {
     color: white;
   }
