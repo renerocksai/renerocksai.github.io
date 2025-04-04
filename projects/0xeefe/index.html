@@ -80,24 +80,28 @@
 
   </head>
   <body>
+    <nav>
+      <div class="navleft noupper">
+        @renerocksai
+      </div>
+      <div class="spacer"></div>
+      <button class="hamburger" aria-label="Toggle menu">
+         &#9776;
+        <!-- Unicode for hamburger icon (☰) -->
+      </button>
+      <div class="menu">
+        <a href="/">Home</a>
+        <a href="/blog/">Blog</a>
+        <a href="/projects/">Projects</a>
+        <a href="/about/">About</a>
+        <a href="https://github.com/renerocksai" target="_blank">
+          GitHub
+        </a>
+      </div>
+      <div class="spacer"></div>
+    </nav>
     <div id="content">
       
-  <div style="display:flex; flex-direction:column; align-items:center;">
-    <h1 id="header" class="noupper" style="color: #606060"><a class="reset-a" href="/">@renerocksai</a></h1>
-    <div class="menu-small" style="display:flex; justify-content:center; font-size:small;">
-      <a href="/">Home</a>
-      •
-      <a href="/blog/">Blog</a>
-      •
-      <a href="/projects/">Projects</a>
-      •
-      <a href="/about/">About</a>
-      •
-      <a href="https://github.com/renerocksai" target="_blank">
-        GitHub
-      </a>
-    </div>
-  </div>
   <h1>0xeefe</h1>
   <p class="post-byline">
     <span>January 16, 2021</span>
@@ -133,5 +137,11 @@
     <footer id="footer">
       
     </footer>
+    <script>
+      document.querySelector('.hamburger').addEventListener('click', function() {
+        document.querySelector('.menu').classList.toggle('active');
+        console.log("CLICK");
+    });
+    </script>
   </body>
 </html>

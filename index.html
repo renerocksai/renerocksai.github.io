@@ -28,6 +28,26 @@
 
   </head>
   <body>
+    <nav>
+      <div class="navleft noupper">
+        @renerocksai
+      </div>
+      <div class="spacer"></div>
+      <button class="hamburger" aria-label="Toggle menu">
+         &#9776;
+        <!-- Unicode for hamburger icon (☰) -->
+      </button>
+      <div class="menu">
+        <a href="/">Home</a>
+        <a href="/blog/">Blog</a>
+        <a href="/projects/">Projects</a>
+        <a href="/about/">About</a>
+        <a href="https://github.com/renerocksai" target="_blank">
+          GitHub
+        </a>
+      </div>
+      <div class="spacer"></div>
+    </nav>
     <div id="content">
       
   <style>
@@ -40,30 +60,12 @@
     .profile-pic {
       border-radius: 50%;
       border: 5px solid lightblue;
-      margin-top: 1rem;
+      margin-bottom: 1rem;
     }
   </style>
-  <div style="display:flex; flex-direction:column; align-items:center;">
-    <h1 id="header" class="noupper" style="margin-bottom:0;">
-      @renerocksai
-    </h1>
-    <div class="menu" style="display:flex; justify-content:center; ">
-      <a href="/">Home</a>
-      •
-      <a href="/blog/">Blog</a>
-      •
-      <a href="/projects/">Projects</a>
-      •
-      <a href="/about/">About</a>
-      •
-      <a href="https://github.com/renerocksai" target="_blank">
-        GitHub
-      </a>
-    </div>
-    <h3 style="margin-top:0;"><br>
-      <img src="/reneglasses.png" height="200 " class="profile-pic"></h3>
-    <div id="page"><p>Hi, my name is Rene Schallner.</p><div class="block warning"><h1>Socials</h1><ul><li><a href="https://twitter.com/renerocksai" target="_blank">renerocksai@𝕏</a></li><li><a href="https://github.com/renerocksai" target="_blank">renerocksai@github</a></li><li><a href="https://linkedin.com/in/rene-schallner" target="_blank">renerocksai@LinkedIn</a></li></ul></div><p>I am a software engineer, programmer, researcher with a strong background in computer science and electronics. My areas of interest are manifold but tend to center around science and technology.</p><p>I love programming, mostly in <a href="https://ziglang.org" target="_blank">Zig</a> and <a href="https://python.org" target="_blank">Python</a>, artificial intelligence, and I might <a href="/blog/">blog</a> occasionally.</p><p>My most well-known open source projects are:</p><ul><li><strong>⚡ZAP⚡:</strong> <a href="https://zigzap.org" target="_blank">blazingly fast backends in zig</a></li><li><strong>Telekasten.nvim:</strong> <a href="https://github.com/nvim-telekasten/telekasten.nvim" target="_blank">Note-taking in Neovim</a></li></ul><p>My professional background spans over more than two decades in the telecommunications, medical technology, market research, and artificial intelligence industries.</p><p>Feel free to reach out to me on <a href="https://twitter.com/renerocksai" target="_blank">X</a> or check out my <a href="https://github.com/renerocksai" target="_blank">GitHub</a>.</p></div>
-  </div>
+  <h3 style="margin-top:0;"><br>
+    <img src="/reneglasses.png" height="200 " class="profile-pic"></h3>
+  <div id="page"><p>Hi, my name is Rene Schallner.</p><div class="block warning"><h1>Socials</h1><ul><li><a href="https://twitter.com/renerocksai" target="_blank">renerocksai@𝕏</a></li><li><a href="https://github.com/renerocksai" target="_blank">renerocksai@github</a></li><li><a href="https://linkedin.com/in/rene-schallner" target="_blank">renerocksai@LinkedIn</a></li></ul></div><p>I am a software engineer, programmer, researcher with a strong background in computer science and electronics. My areas of interest are manifold but tend to center around science and technology.</p><p>I love programming, mostly in <a href="https://ziglang.org" target="_blank">Zig</a> and <a href="https://python.org" target="_blank">Python</a>, artificial intelligence, and I might <a href="/blog/">blog</a> occasionally.</p><p>My most well-known open source projects are:</p><ul><li><strong>⚡ZAP⚡:</strong> <a href="https://zigzap.org" target="_blank">blazingly fast backends in zig</a></li><li><strong>Telekasten.nvim:</strong> <a href="https://github.com/nvim-telekasten/telekasten.nvim" target="_blank">Note-taking in Neovim</a></li></ul><p>My professional background spans over more than two decades in the telecommunications, medical technology, market research, and artificial intelligence industries.</p><p>Feel free to reach out to me on <a href="https://twitter.com/renerocksai" target="_blank">X</a> or check out my <a href="https://github.com/renerocksai" target="_blank">GitHub</a>.</p></div>
 
     </div>
     <footer id="footer">
@@ -79,5 +81,11 @@
   </small>
 
     </footer>
+    <script>
+      document.querySelector('.hamburger').addEventListener('click', function() {
+        document.querySelector('.menu').classList.toggle('active');
+        console.log("CLICK");
+    });
+    </script>
   </body>
 </html>
