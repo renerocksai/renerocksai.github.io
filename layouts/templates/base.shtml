@@ -26,11 +26,37 @@
     <super>
   </head>
   <body>
+    <nav>
+      <div class="navleft noupper">
+        <span>@</span><a href="https://renerocks.ai/">renerocksai</a>
+      </div>
+      <div class="spacer"></div>
+      <button class="hamburger" aria-label="Toggle menu">
+         &#9776;
+        <!-- Unicode for hamburger icon (☰) -->
+      </button>
+      <div class="menu">
+        <a href="/">Home</a>
+        <a href="$site.page('blog').link()">Blog</a>
+        <a href="$site.page('projects').link()">Projects</a>
+        <a href="$site.page('about').link()">About</a>
+        <a href="https://github.com/renerocksai" target="_blank">
+          GitHub
+        </a>
+      </div>
+      <div class="spacer"></div>
+    </nav>
     <div id="content">
       <super>
     </div>
     <footer id="footer">
       <super>
     </footer>
+    <script>
+      document.querySelector('.hamburger').addEventListener('click', function() {
+        document.querySelector('.menu').classList.toggle('active');
+        console.log("CLICK");
+    });
+    </script>
   </body>
 </html>
