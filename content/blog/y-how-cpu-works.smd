@@ -65,8 +65,7 @@ floating point arithmetics.
 
 Now, if this feels cyclic or like cheating to you, defining a component that
 does all the work inside the description of the component that is supposed to do
-all the work, [further down](#from-combinatorial-logic-to-control-unit) the
-road, this will be resolved.
+all the work, [further down](#from-to) the road, this will be resolved.
 
 So the way a CPU operates, simply speaking, is to load instructions and values
 from memory into registers, operate on them and then store the result into

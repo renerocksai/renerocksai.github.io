@@ -198,7 +198,7 @@ This is a tricky one since the plugin gives you no clear indication that it happ
 **Any time a push fails, either pull from the command line or pay extra attention to the size of the pull notification! It will be large in case of a failed merge!**
 {: .notice--danger :}
 
-When you pull, the Obsidian git plugin will not warn you but your files will end up containing conflict markers with both conflicting version and original version.  See [Appendix A: Testing merge](#appendix-a-testing-merge) for more information.
+When you pull, the Obsidian git plugin will not warn you but your files will end up containing conflict markers with both conflicting version and original version.  See [Appendix A: Testing merge]($link.ref('appendix-a')) for more information.
 
 To actively search for conflict markers, just search for `<<<<<<<` in your vault.
 
@@ -238,8 +238,7 @@ git tells you exactly which files contain conflicts. Now you just need to hunt f
 
 And that's it. You see, the worst that can happen now, is: conflict markers in your notes that are easy to find. You will never loose any of your changes.
 
-
-## Appendix A: Testing merge
+## [Appendix A: Testing merge]($section.id('appendix-a'))
 
 First, we create a new branch in our Zettelkasten, so we can play around without causing permanent damage:
 
@@ -443,7 +442,8 @@ On our Android home screen we remove `log.sh`, and add `log` via the termux widg
 
 We repeat the same procedure for `pull.sh` and `push.sh`.
 
-### How and why this works
+### [How and why this works]($section.id('how-and-why-this-works'))
+
 The source of the solution is: [termux-exec](https://github.com/termux/termux-exec).
 
 According to [the termux wiki](https://wiki.termux.com/wiki/Termux-exec), `termux-exec` is already installed on current versions of termux.
