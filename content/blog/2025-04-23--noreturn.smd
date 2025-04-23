@@ -1,0 +1,156 @@
+---
+.title = "Zig's noreturn is awesome!",
+.date = @date("2025-04-23:00:00"),
+.author = "renerocksai",
+.layout = "post.shtml",
+.draft = false,
+.tags = [ "zap", "zig", "noreturn" ],
+---
+
+## Easy error handling for a CLI tool
+
+While building a CLI tool in Zig, I quickly grew fond of how elegantly it handles errors—especially with the help of [`std.process.fatal()`](https://ziglang.org/documentation/0.14.0/std/#std.process.fatal):
+
+```zig
+pub fn fatal(comptime format: []const u8, format_arguments: anytype) noreturn {
+    std.log.err(format, format_arguments);
+    exit(1);
+}
+```
+
+Note the return type: `noreturn`. We’ll get back to that in a moment.
+
+`fatal()` logs an error message using Zig’s logging facilities and exits the program immediately. Consider this small example:
+
+```zig
+fn expandHomeDir(arena: std.mem.Allocator, p: []const u8) []const u8 {
+    if (std.process.getEnvVarOwned(self.arena, "HOME")) |v| {
+        return std.mem.replaceOwned(u8, self.arena, p, "~", v) catch |err| {
+            std.process.fatal("Cannot expand {s}: {}", .{ p, err });
+        };
+    } else |err| {
+        std.process.fatal("Cannot get $HOME: {}", .{err});
+    }
+    unreachable;
+}
+
+fn fictionalFoo(arena: std.mem.Allocator, path: []const u8) void {
+    const expanded = expandHomeDir(arena, path);
+    std.log.info("Using directory {s}", .{ expanded });
+
+    // ... and the show goes on
+}
+```
+
+Some things to notice:
+
+- In `expandHomeDir()`, we don’t return an error union. Just the result.
+    - If something goes wrong, we call `fatal()` to log the error, and exit.
+    - No `try`, no `return`. No error bubbling up.
+    - And `unreachable` is indeed unreachable.
+- In `fictionalFoo()`, we assign the result of `expandHomeDir()` as if nothing could go wrong.
+    - Because, effectively, nothing *can* go wrong from the caller’s perspective.
+- The error is fully handled—just not in the usual Zig way.
+
+That’s the beauty of `noreturn`: it tells the compiler that `fatal()` will never come back, so any code after it is skipped. Even assignments are fine—they’re never executed if `fatal()` is called.
+
+For CLI tools, this is incredibly handy. I started using `fatal()` to handle all unrecoverable errors directly where they occur. It’s clean and it's simple.
+
+## Until I added a web server...
+
+Then I had the idea to also expose a web interface. Suddenly, my error strategy fell apart.
+
+When a user sends a request, and something goes wrong—say, the home directory can't be expanded—the server shouldn't just exit. It should return a proper error response to the browser.
+
+So I thought: why not create a configurable version of `fatal()`? In CLI mode, it should exit as before. In server mode, it should return an error instead.
+
+I wrote a module mimicking the interface of `std.process.fatal()`, but made a **fatal** _:-)_ mistake:
+
+```zig
+//! Fatal.zig
+const std = @import("std");
+
+pub const Mode = enum { cli, server };
+pub var mode: Mode = .cli;
+pub var errormsg: []const u8 = "";
+pub var errormsg_buffer: [2048]u8 = undefined;
+
+pub fn fatal(comptime fmt: []const u8, args: anytype, err: anyerror) !void {
+    switch (mode) {
+        .cli => std.process.fatal(fmt, args),
+        .server => {
+            errormsg = std.fmt.bufPrint(&errormsg_buffer, fmt, args) catch |bp_err| {
+                switch (bp_err) {
+                    error.NoSpaceLeft => {
+                        // buffer is completely full, but something useful was written
+                        errormsg = errormsg_buffer[0..];
+                        return err;
+                    },
+                }
+            };
+            return err; // so the server can propagate it
+        },
+    }
+}
+```
+
+Intended usage:
+
+```zig
+const Fatal = @import("fatal.zig");
+const fatal = Fatal.fatal;
+
+pub fn main() !void {
+    Fatal.mode = .server; // or .cli, depending on context
+    try fatal("There was no error.", .{}, error.Oops);
+}
+```
+
+Looks fine, right? In CLI mode, `fatal()` logs and exits. In server mode, it captures the message and returns the error.
+
+But then I ran into this:
+
+```zig
+fn fictionalFoo(arena: std.mem.Allocator, path: []const u8) !void {
+    const expanded = try expandHomeDir(arena, path);
+    std.log.info("Using directory {s}", .{ expanded });
+}
+```
+
+The compiler complained. Why? Because in CLI mode, `fatal()` has a return type of `!void`. And `void` can’t be assigned to `expanded`. In server mode, everything works fine—but in CLI mode, we’re back to square one.
+
+And that’s when I rediscovered the magic of `noreturn`.
+
+## The fix: unify with `!noreturn`
+
+Here’s the corrected version of `fatal()`:
+
+```zig
+pub fn fatal(comptime fmt: []const u8, args: anytype, err: anyerror) !noreturn {
+    switch (mode) {
+        .cli => std.process.fatal(fmt, args),
+        .server => {
+            errormsg = std.fmt.bufPrint(&errormsg_buffer, fmt, args) catch |bp_err| {
+                switch (bp_err) {
+                    error.NoSpaceLeft => {
+                        errormsg = errormsg_buffer[0..];
+                        return err;
+                    },
+                }
+            };
+            return err;
+        },
+    }
+}
+```
+
+Now, in CLI mode, the behavior is exactly as before: we log and exit. But crucially, the return type `!noreturn` lets us use `fatal()` seamlessly in assignment contexts—because `noreturn` satisfies any expected type. And in server mode, we return a proper error, ready to be handled.
+
+## Final thoughts
+
+Zig’s `noreturn` might seem like a small feature, but it enables some really elegant error handling patterns—especially when toggling between hard exits and recoverable errors.
+
+What started as a CLI-only tool with blunt error handling grew into something more flexible, thanks to one powerful little keyword.
+
+And that’s why I think Zig’s `noreturn`… is genuinely awesome. ⚡
+

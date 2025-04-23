@@ -6,8 +6,3 @@
 .draft = false,
 ---
 
-># [Please note]($block.attrs('info'))
->_I filtered my old blog posts and only kept a few._<br>
->_I hope I'll find more time to blog when the zine-migration is finished._
-
-
