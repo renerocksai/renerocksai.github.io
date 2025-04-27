@@ -1,0 +1,160 @@
+---
+.title = "Using build.zig.zon to Report Your Zig Package Version at Runtime",
+.date = @date("2025-04-27:00:00"),
+.author = "renerocksai",
+.layout = "post.shtml",
+.draft = true,
+.tags = [ "zig", "build" , "build.zig.zon" ],
+---
+
+![](/import_zig_build_zon.png)
+
+> How to embed `build.zig.zon` into your Zig build process, and make your package version accessible at runtime.
+
+## How hard can it be for a program to print its own version?
+
+That's the problem I encountered today.
+
+I wanted to add a `version` command to my command-line tool.
+There are typically three ways to do this:
+
+1. Maintain a version string in the source code (and keep it in sync with the
+   others)
+2. Generate the version from version control (git tag, jj bookmark, Mercurial
+   tag,    ...)
+3. Use information from the package manager
+
+
+The first approach is problematic: it means maintaining the version in multiple
+places — the source code and `build.zig.zon`. And if you forget to update one of
+them, they can easily drift apart.
+
+Even if you do manage to keep everything in sync, another question comes up:
+**How should the self-reported version inside the program relate to the version
+control tag?** Let's tackle that quickly: my approach is going to be to postfix
+the self-reported version with a suffix until it's ready. Let's say I've
+released `v0.1.0` and am working on `v0.1.1`. The program could report
+`v0.1.1-devel` until `v0.1.1` is ready.
+
+Using a git tag (option 2) for the self-reported version isn’t ideal, though —
+because only one commit can have the `v0.1.1-devel` tag. That makes it
+difficult to handle development versions cleanly. To make it work with git,
+another option would be to just report the commit hash as the version for every
+version that doesn't have a tag. I don't like that because the information
+about order gets lost. Is version `8325f46` older or newer than `v0.1.0`? Not
+easy to answer.
+
+A hybrid approach like `v0.1.1-devel (8325f46)` would leave no questions open.
+
+BUT: In Zig projects, there’s another potential source of truth: the version
+field in `build.zig.zon`. I admit having forgotten to update this version field
+when releasing software in the past. The Zig package manager doesn't really use
+it (yet), so missing updates often went unnoticed.
+
+## How *not* to access the version from `build.zig.zon`
+
+The version field in `build.zig.zon` isn't really used by the package manager.
+While that might change in the future, for now it’s effectively write-only.
+
+I want to change that: I want to use a package's version inside the package for
+version reporting. My program should use it when printing its version.
+Actually, every dependency could also just have a `version` field that can be
+queried at runtime! Wouldn't that be nice?
+
+So, how would we access the `build.zig.zon` version? If we try, we encounter
+the following two problems:
+
+1. It isn't in the `src/` directory.
+2. It cannot be ZON-parsed.
+
+Zig comes with a ZON parser and supports `@import`-ing `.zon` files. However,
+since `build.zig.zon` is typically outside of the recommended `src/` directory,
+it cannot be imported from your source files.
+
+OK, so let's import it in `build.zig`, which is in the same directory. Nope —
+the variable-length `dependencies` field causes `@import`-ing `build.zig.zon`
+to fail.
+
+It's like we're just not meant to access the version of our own package!
+
+## How to *actually* access the version from `build.zig.zon`
+
+After trying all of the above, I just refused to give up 😊.
+And after studying the standard library for a while, I discovered:
+
+```zig
+/// Converts a set of key-value pairs into a Zig source file, and then inserts it into
+/// the Module's import table with the specified name. This makes the options importable
+/// via `@import("module_name")`.
+pub fn addOptions(m: *Module, module_name: []const u8, options: *Step.Options) void {
+```
+
+Sooooo...
+In `build.zig`, we can create artificial modules out of thin air, with key-value pairs!
+
+And just because we cannot `@import` the `build.zig.zon` file doesn't mean we cannot `@embedFile` it!
+
+Here’s what we're going to do:
+
+1. In `build.zig`, embed `build.zig.zon` as a `[]const u8`.
+2. Create a `std.Build.Step.Options` container using the embedded file as `contents`.
+3. Via `addOptions()`, add the options as an importable module.
+4. In our code, `@import` that module and parse the `contents`!
+
+Here’s how that looks in practice:
+
+```zig
+// in build.zig:
+
+const build_zig_zon = @embedFile("build.zig.zon");
+
+pub fn build(b: *std.Build) void {
+    // ...
+
+    const exe = b.addExecutable(.{
+        .name = "myproject",
+        .root_module = exe_mod,
+    });
+
+    // Make build.zig.zon accessible in the exe module
+    var my_options = std.Build.Step.Options.create(b);
+    my_options.addOption([]const u8, "contents", build_zig_zon);
+    exe.root_module.addOptions("build.zig.zon", my_options);
+}
+```
+
+And then, we just parse it:
+
+```zig
+//! This is version.zig
+//!
+
+// Import our artificial module
+const build_zig_zon = @import("build.zig.zon");
+
+pub fn print_version() void {
+    std.debug.print("version is `{s}`\n", .{version() orelse "(unknown version)"});
+}
+
+pub fn version() ?[]const u8 {
+    var it = std.mem.splitScalar(u8, build_zig_zon.contents, '\n');
+    while (it.next()) |line_untrimmed| {
+        const line = std.mem.trim(u8, line_untrimmed, " \t\n\r");
+        if (std.mem.startsWith(u8, line, ".version")) {
+            var tokenizer = std.mem.tokenizeAny(u8, line[".version".len..], " \"=");
+            return tokenizer.next();
+        }
+    }
+    return null;
+}
+```
+
+Now, in the project, we can simply `@import("version.zig")` and ask for the
+`version()`! 🤠
+
+## Ideas for later
+
+- Running an external or built-in (zig) tool directly in `build.zig`, e.g., to
+  update a version string in the README.
+- In `build.zig`, adding versions of all dependencies for a project.
+
