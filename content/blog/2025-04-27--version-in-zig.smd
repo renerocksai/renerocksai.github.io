@@ -3,13 +3,15 @@
 .date = @date("2025-04-27:00:00"),
 .author = "renerocksai",
 .layout = "post.shtml",
-.draft = true,
+.draft = false,
 .tags = [ "zig", "build" , "build.zig.zon" ],
 ---
 
 ![](/import_zig_build_zon.png)
 
 > How to embed `build.zig.zon` into your Zig build process, and make your package version accessible at runtime.
+
+**Update: Thanks to [Mason for letting me know](https://x.com/masonremaley/status/1916904300015661205), none of the below is necessary with current Zig master. On Zig `master`, you can now access `@import("build.zig.zon").version` directly! The below applies to the current  0.14.0 release of Zig only.**
 
 ## How hard can it be for a program to print its own version?
 
