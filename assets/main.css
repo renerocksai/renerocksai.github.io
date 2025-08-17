@@ -57,6 +57,7 @@ nav {
 
 }
 
+
 nav .menu a {
   text-decoration: none;
   color: black;
@@ -715,4 +716,15 @@ video {
 .menu-small a {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
+}
+
+.menu-item-with-rss {
+  display: flex;
+  flex-direction: row;
+  gap: 0;
+  a {
+    padding-left: 4px;
+    padding: 0;
+    margin-left: 4px;
+  }
 }

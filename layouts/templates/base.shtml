@@ -37,8 +37,18 @@
       </button>
       <div class="menu">
         <a href="/">Home</a>
-        <a href="$site.page('blog').link()">Blog</a>
-        <a href="$site.page('projects').link()">Projects</a>
+        <div class="menu-item-with-rss">
+          <a href="$site.page('blog').link()">Blog</a>
+          <a href="$site.page('blog').alternative('rss').link()" type="$site.page('blog').alternative('rss').type">
+            <img src="$site.asset('Feed-icon.svg').link()" height=14  >
+          </a>
+        </div>
+        <div class="menu-item-with-rss">
+          <a href="$site.page('projects').link()">Projects</a>
+          <a href="$site.page('projects').alternative('rss').link()" type="$site.page('projects').alternative('rss').type">
+            <img src="$site.asset('Feed-icon.svg').link()" height=14  >
+          </a>
+        </div>
         <a href="$site.page('about').link()">About</a>
         <a href="https://github.com/renerocksai" target="_blank">
           GitHub

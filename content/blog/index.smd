@@ -4,5 +4,11 @@
 .author = "renerocksai",
 .layout = "collection.shtml",
 .draft = false,
+.alternatives = [{
+  .name = "rss",
+  .type = "application/rss+xml",
+  .layout = "rss.xml",
+  .output = "index.xml",
+}],
 ---
 
