@@ -4,7 +4,6 @@ on:
   # Runs on pushes targeting the default branch
   push:
     branches: ["master"]
-  # also, allow manual deployment
   workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
@@ -33,7 +32,7 @@ jobs:
       - name: Setup Zine
         uses: kristoff-it/setup-zine@v1
         with:
-          version: v0.10.1
+          version: v0.11.1
 
       - name: Build
         run: zine release
