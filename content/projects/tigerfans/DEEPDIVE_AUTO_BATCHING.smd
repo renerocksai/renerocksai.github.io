@@ -1,0 +1,250 @@
+---
+.title = "TigerFans: The Interface Impedance Mismatch — Auto-Batching",
+.date = @date("2025-11-02:19:20"),
+.author = "renerocksai",
+.layout = "post.shtml",
+.draft = false,
+.tags = [ "tigerbeetle", "tigerfans" ],
+---
+
+**The most fascinating technical challenge in TigerFans**
+
+---
+
+## TL;DR
+
+FastAPI's request-oriented design + TigerBeetle = interface impedance mismatch. TigerBeetle processes up to 8,190 transfers per batch. We hoped the TigerBeetle Python client would batch operations internally, but with AsyncIO's single-threaded event loop sending each `await` immediately, the client had no opportunity to collect concurrent operations. We were sending transfers one-by-one.
+
+**Solution**: LiveBatcher queues requests while batches are in flight, continuously chaining batch processing.
+
+**Result**: 5x better batch utilization (from 1-2 to 5-6 transfers/batch), reaching 977 ops/s. Note: The major throughput improvement came from hot/cold path separation (achieving ~900 ops/s). LiveBatcher optimized batch efficiency for the final 8% gain to 977 ops/s.
+
+---
+
+## The Problem: Interface Impedance Mismatch
+
+**TigerBeetle** is built for batching—processes up to 8,190 transfers per request with minimal overhead. Single batch operation is nearly as fast as a single transfer.
+
+**AsyncIO** provides concurrency through cooperative multitasking with a single-threaded event loop. Tasks yield control with `await`. No parallelism, just interleaved execution.
+
+**Expected behavior:**
+
+![](/DEEPDIVE_AUTO_BATCHING_1.png)
+
+**Actual behavior:**
+
+![](/DEEPDIVE_AUTO_BATCHING_2.png)
+
+### Why It Happens
+
+When Request 1 reaches `await client.create_transfers(...)`, it sends immediately and waits for the response. There's no automatic mechanism to say "wait, more might be coming!" By the time Request 2 arrives, Request 1 has already been sent. **Result: Three separate network round-trips** instead of one batched request.
+
+Instrumentation reveals the issue:
+
+```python
+# Added to _tigerbeetle.py
+async def create_transfers(self, transfers):
+    print(f"🔍 Batch size: {len(transfers)}")
+    return await self.client.create_transfers(transfers)
+```
+
+**Output during load test:**
+```
+🔍 Batch size: 1
+🔍 Batch size: 1
+🔍 Batch size: 1
+...
+```
+
+### What We Needed
+
+We needed a component that could accept transfer requests from multiple concurrent requests, queue incoming requests while a batch is in flight, pack them into a single batch, send to TigerBeetle once, and distribute responses back to the original callers. The TigerBeetle client couldn't do this—AsyncIO's `await` sends immediately, giving the client no opportunity to collect operations. We had to build the batching layer ourselves.
+
+
+## Solution Evolution
+
+The obvious first approach was time-based batching—accumulate requests for a fixed duration, then flush. Simple to reason about, but would it work?
+
+### Attempt 1: TimedBatcher
+
+Accumulate transfers in a buffer for up to 100ms, then flush everything to TigerBeetle in one batch. When the batch fills up (8,190 transfers), flush immediately. Map results back to the waiting callers using futures.
+
+It worked—batch sizes reached 5-10 transfers, and throughput improved. But it added 100ms latency to every request. Every single TigerBeetle operation now took at least 100ms, even if it completed in 3ms. Artificial delays hurt responsiveness.
+
+We realized we don't need a timeout. While a batch is being processed by TigerBeetle, concurrent requests naturally queue up. We can collect them without artificial delays.
+
+
+### Attempt 2: LiveBatcher
+
+The better idea was **continuous chain processing**.
+
+Instead of waiting for a timeout, immediately start processing batches. While one batch is being sent to TigerBeetle, collect the next batch. Chain them together continuously.
+
+```python
+class LiveBatcher:
+    """
+    Auto-batcher that continuously checks for new transfer batches.
+    While current transfers are sent to TB, more can be queued up.
+    Each batch completion triggers the next.
+    """
+
+    def __init__(self, client, max_batch_size=8190):
+        self.client = client
+        self.max_batch_size = max_batch_size
+        self._lock = asyncio.Lock()
+        self._submissions = []  # List of {original_transfers, processed, collected_errors, fut}
+        self._next_batch_task = None
+
+    async def submit(self, transfers):
+        if not transfers:
+            return []
+
+        fut = asyncio.Future()
+        async with self._lock:
+            # Add to submission queue
+            self._submissions.append({
+                'original_transfers': transfers[:],
+                'processed': 0,
+                'collected_errors': [],
+                'fut': fut
+            })
+
+            # Kick off the chain if not running
+            if self._next_batch_task is None or self._next_batch_task.done():
+                self._next_batch_task = asyncio.create_task(self._process_next_batch())
+
+        return await fut
+```
+
+**The continuous processing loop:**
+
+```python
+async def _process_next_batch(self):
+    """Process batches continuously, packing as many as possible."""
+
+    while True:
+        # Check if done
+        async with self._lock:
+            if not self._submissions:
+                self._next_batch_task = None
+                return  # Chain complete
+
+        # Build the next batch by packing as many submissions as possible
+        batch = []
+        batch_mappings = []  # Track which parts of batch belong to which submissions
+
+        async with self._lock:
+            i = 0
+            while i < len(self._submissions) and len(batch) < self.max_batch_size:
+                submission = self._submissions[i]
+                remaining = len(submission['original_transfers']) - submission['processed']
+
+                if remaining == 0:
+                    i += 1
+                    continue
+
+                # Take as many as fit
+                take = min(remaining, self.max_batch_size - len(batch))
+                start = submission['processed']
+                batch.extend(submission['original_transfers'][start:start + take])
+                batch_mappings.append((i, start, len(batch) - take, take))
+                submission['processed'] += take
+                i += 1
+
+        if not batch:
+            return
+
+        # Network call to TigerBeetle (releases lock!)
+        error_results = await self.client.create_transfers(batch)
+
+        # Map errors back to submissions
+        full_results = [None] * len(batch)
+        for error_result in error_results:
+            full_results[error_result.index] = error_result
+
+        for (sub_idx, sub_start, batch_start, count) in batch_mappings:
+            submission = self._submissions[sub_idx]
+            for j in range(count):
+                result = full_results[batch_start + j]
+                if result is not None:
+                    submission['collected_errors'].append(result)
+
+        # Resolve completed submissions
+        async with self._lock:
+            i = 0
+            while i < len(self._submissions):
+                submission = self._submissions[i]
+                if submission['processed'] == len(submission['original_transfers']):
+                    if not submission['fut'].done():
+                        submission['fut'].set_result(submission['collected_errors'])
+                    del self._submissions[i]
+                else:
+                    i += 1
+
+        # Loop continues! Process next batch immediately
+```
+
+**New behavior**: When 15 concurrent requests hit the server, LiveBatcher sends the first request immediately (batch size 1). While that's in flight (~1-3ms), the next 5-6 requests queue up and get packed into the second batch. When the first batch completes, the loop immediately packs and sends the second batch—no waiting. This continuous chaining achieves average batch sizes of 5-6 transfers in our setup.
+
+**Why this works better**: While batch N is in flight, batch N+1 is being collected. Zero artificial latency, adaptive batch sizes based on load (high load → large batches, low load → small batches), no configuration needed.
+
+
+## Performance Impact
+
+**Before LiveBatcher** (already using TB+Redis hot/cold path):
+```
+Batch sizes: avg 1-2 transfers/batch
+Throughput: ~900 ops/s
+```
+
+**After LiveBatcher**:
+```
+Batch sizes: avg 5-6 transfers/batch
+Throughput: 977 ops/s
+Latency p90: ~15ms
+```
+
+**Context**: PostgreSQL-only baseline was approximately 150 ops/s. Hot/cold path separation (TB+Redis) achieved the major improvement to ~900 ops/s (6x). LiveBatcher then optimized batch utilization for the final 8% gain to 977 ops/s.
+
+**Impact:**
+- 5x fewer round-trips to TigerBeetle
+- No artificial timeout penalty
+- Less event loop overhead from fewer context switches
+
+
+## Why Batch Sizes Remained Small
+
+LiveBatcher achieved average batch sizes of 5-6 transfers, a significant improvement over 1-2. But why not larger batches?
+
+The answer is Amdahl's Law applied to batching. With Python's serial overhead (~3ms per request) and TigerBeetle's batch processing time (~3ms), we can only accumulate 1-2 additional requests while a batch is in flight. This limits batch sizes regardless of how clever our batching logic is.
+
+The formula: `batch_size ≈ (batch_processing_time / serial_overhead_per_request) + pending`. With 3ms / 3ms = 1, plus whatever's pending when the batch starts, we get 2-6 transfers per batch depending on concurrent load.
+
+Go or Zig with 0.1ms per-request overhead could achieve batch sizes of 30+ with the same TigerBeetle processing time. The batching ceiling is set by the language's serial overhead, not the batching implementation.
+
+For the detailed Amdahl's Law analysis explaining this theoretical limit, see [Amdahl's Law Analysis - The Batching Bottleneck]($link.page('projects/tigerfans/ANALYSIS_AMDAHL_AND_PLANES').ref('batching-bottleneck')).
+
+
+## Conclusion
+
+Interface impedance mismatches are real: when components have different performance models, direct integration underutilizes their capabilities. The lesson applies beyond TigerBeetle—anytime you connect request-oriented systems to batch-oriented systems, consider building an adaptive batching layer.
+
+---
+
+## Related Documents
+
+**Full Story**: [The Journey - Building TigerFans](/blog/2025-11-02--tigerfans)
+
+**Overview**: [Executive Summary](/projects/tigerfans)
+
+**Technical Details**:
+- [Resource Modeling with Double-Entry Accounting](DEEPDIVE_RESOURCE_MODELING)
+- [Hot/Cold Path Architecture](DEEPDIVE_HOT_COLD_PATH)
+- [The Single-Worker Paradox](DEEPDIVE_SINGLE_WORKER_PARADOX)
+- [Amdahl's Law Analysis](ANALYSIS_AMDAHL_AND_PLANES)
+
+**Resources**:
+- [Live Demo](https://tigerfans.io)
+- [TigerBench Visualization](https://tigerfans.io/bench)
+- [Source Code](https://github.com/renerocksai/tigerfans)
+

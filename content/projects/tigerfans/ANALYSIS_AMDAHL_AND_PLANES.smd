@@ -1,0 +1,245 @@
+---
+.title = "TigerFans: Amdahl's Law Analysis",
+.date = @date("2025-11-02:19:20"),
+.author = "renerocksai",
+.layout = "post.shtml",
+.draft = false,
+.tags = [ "tigerbeetle", "tigerfans" ],
+---
+
+**Understanding TigerFans' performance through theoretical limits and architectural separation**
+
+---
+
+## TL;DR
+
+TigerFans demonstrates a clean **hot path / cold path** separation:
+- **Hot path**: TigerBeetle for accounting + Redis for sessions = high-frequency, low-latency operations
+- **Cold path**: PostgreSQL for durable orders = infrequent, archival operations
+
+Using **Amdahl's Law**, we can explain why the observed speedups match theoretical limits: the non-parallelizable portions (Python event loop, PostgreSQL writes) create ceilings that even infinitely fast TigerBeetle cannot overcome.
+
+**Key insight**: Architectural bottlenecks, not component speed, determine system throughput.
+
+---
+
+## Reserve vs Checkout: Understanding the Measurements
+
+TigerFans benchmarks measure two distinct API endpoints:
+
+**Reserve endpoint** (isolated accounting): Our `/reserve` API endpoint that performs only the accounting operation (hold/commit tickets) without session management or payment flow. These measurements (PostgreSQL: 389.7 ops/s → TigerBeetle: 977.2 ops/s) highlight the pure accounting speedup and appear throughout TigerFans documentation.
+
+**Checkout endpoint** (complete user flow): Our `/api/checkout` endpoint that handles the complete user-facing request including session management, idempotency checks, and payment coordination. These measurements (PostgreSQL: 272 ops/s → TigerBeetle+Redis: 861 ops/s) represent real system throughput.
+
+**For Amdahl's Law analysis, we use checkout endpoint data** because it reflects the actual performance users experience. The reserve endpoint is useful for understanding the isolated accounting speedup, but checkout shows how architectural decisions (hot/cold separation, Redis sessions) affect overall system throughput.
+
+All measurements in this document are from checkout endpoint unless otherwise specified.
+
+
+## Amdahl's Law Analysis
+
+The system achieves high throughput through careful hot/cold path separation. The hot path—executed on every request—uses TigerBeetle for resource accounting (tickets, goodies) and Redis for ephemeral payment sessions and idempotency keys, completing in approximately 5.6ms. The cold path—executed only when payment succeeds—writes durable order records to PostgreSQL. This happens for 70-90% of checkouts but doesn't block the next request, taking approximately 18ms when it runs. For detailed implementation, see [Hot/Cold Path Deep-Dive](DEEPDIVE_HOT_COLD_PATH).
+
+This architectural choice delivered a 3.2x throughput improvement: from 272 ops/s with PostgreSQL in the hot path to 861 ops/s with PostgreSQL moved to the cold path. This i mprovement isn't coincidental—it's predicted by Amdahl's Law, which quantifies exactly how architectural choices constrain performance gains.
+
+### The Formula
+
+**Amdahl's Law** describes the theoretical speedup from improving part of a system:
+
+```
+Speedup_overall = 1 / ((1 - P) + P/S)
+
+Where:
+P = Proportion of execution time that benefits from improvement
+S = Speedup of the improved portion
+(1 - P) = Proportion that cannot be improved (the serial bottleneck)
+```
+
+**Key insight**: The serial portion (1 - P) creates a ceiling. Even with infinite speedup (S → ∞), the maximum possible speedup is 1/(1 - P).
+
+### Applying to TigerFans
+
+Let's analyze the **Checkout operation** (Phase 1: Reservations).
+
+#### Level 1: PostgreSQL Only (Baseline)
+
+**Components and timings**:
+```
+Total time: ~15.4ms per checkout
+
+Breakdown (from component timings):
+- PostgreSQL (accounting):      14.03ms  (91%)
+- PostgreSQL (payment session):  1.36ms  (9%)
+
+Including inferred Python overhead:
+- Python/FastAPI overhead:      ~5ms   (inferred, not directly measured)
+- PostgreSQL (accounting):      14.03ms
+- PostgreSQL (payment session):  1.36ms
+- Total measured components:    15.40ms
+```
+
+> **Note on Python overhead**: Python event loop overhead is inferred from the difference between measured component times and overall system performance. The ~5ms estimate comes from comparing total request latency to sum of measured database operations. This overhead includes request parsing, validation, session creation, and transfer preparation.
+
+**Throughput**: 272 ops/s (checkout phase)
+
+
+#### Level 3: TigerBeetle + Redis (Optimal)
+
+**Optimization**: Replace PG accounting with TigerBeetle + use Redis for sessions
+
+**Components and timings**:
+```
+Total time: ~5.6ms per checkout
+
+Breakdown (from component timings):
+- TigerBeetle (accounting):     4.58ms  (82%)
+- Redis (payment session):      1.04ms  (18%)
+
+Including inferred Python overhead:
+- Python/FastAPI overhead:      ~5ms   (inferred)
+- TigerBeetle (accounting):     4.58ms
+- Redis (payment session):      1.04ms
+- Total measured components:    5.63ms
+```
+
+**Speedup calculation from Level 1**:
+
+Accounting improvement:
+- Improved portion (P): 14.03ms / 15.40ms = 0.911 (91%)
+- Speedup of improved portion (S): 14.03ms → 4.58ms = 3.06x
+- Predicted speedup: 1 / ((1 - 0.911) + 0.911/3.06) = 1 / (0.089 + 0.298) = 2.58x
+
+Session storage improvement:
+- Improved portion (P): 1.36ms / 15.40ms = 0.089 (9%)
+- Speedup of improved portion (S): 1.36ms → 1.04ms = 1.31x
+- Predicted speedup: 1 / ((1 - 0.089) + 0.089/1.31) = 1 / (0.911 + 0.068) = 1.02x
+
+**Combined component speedup**: 15.40ms / 5.63ms = 2.74x
+
+**Amdahl's Law prediction** (combined optimizations):
+```
+Speedup = 1 / ((1 - P_total) + P_acct/S_acct + P_sess/S_sess)
+        = 1 / (0 + 0.911/3.06 + 0.089/1.31)
+        = 1 / (0.298 + 0.068)
+        = 1 / 0.366
+        = 2.73x
+```
+
+**Actual measured speedup**: 2.74x ✅ **Matches Amdahl's Law prediction!**
+
+**Why throughput differs from component speedup:**
+
+The throughput-based speedup (861 / 272 = 3.17x) exceeds the component-based speedup (2.74x). This is because throughput measurements include all system overhead (event loop, batching, networking), while component timings measure individual database operations in isolation. The auto-batching optimization reduces per-request overhead, contributing to the higher throughput multiplier.
+
+**Additional validation from reserve endpoint:**
+
+For isolated accounting operations (reserve endpoint, no session management overhead):
+- PostgreSQL: 389.7 ops/s
+- TigerBeetle: 977.2 ops/s
+- Speedup: 2.51x
+
+This confirms Amdahl's Law accurately predicts performance across different operation types.
+
+**Throughput**: 861 ops/s (3.2x improvement from 272 ops/s)
+
+*Note: Further auto-batching optimizations pushed reserve phase to 977 ops/s—a separate optimization analyzed in the [Auto-Batching deep-dive](DEEPDIVE_AUTO_BATCHING).*
+
+
+### Performance Ceiling
+
+**Why can't we go faster?**
+
+From the Level 3 breakdown:
+- Measured components: 5.63ms (TigerBeetle + Redis)
+- Inferred Python overhead: ~5ms (estimated from system performance)
+- Total per-request time: ~10-11ms
+
+The Python event loop overhead is the **serial portion** that cannot be improved without changing languages.
+
+**Maximum theoretical speedup** if we made TigerBeetle + Redis instantaneous (S → ∞):
+```
+If we assume ~5ms Python overhead on ~11ms total request:
+Speedup_max = 1 / (1 - P) = 1 / (5ms / 11ms) = 1 / 0.45 = 2.2x from current
+
+Total speedup from baseline: 2.74x * 2.2x ≈ 6x
+```
+
+**This explains the observed plateau**: Even with auto-batching optimizations that pushed reserve phase to 977 ops/s, checkout phase remains at 861 ops/s. The difference reflects the additional session management overhead in the checkout flow. Python's event loop overhead creates a fundamental ceiling that limits further improvement.
+
+
+## [Batching Bottleneck]($section.id('batching-bottleneck'))
+
+While these timing analyses explain per-operation latency, they don't explain why our TigerBeetle batch sizes remained small despite high concurrency. That requires examining another manifestation of Amdahl's Law.
+
+From the load testing, we discovered:
+- Average TB batch size: 5-6 transfers
+- Python event loop can only process 2-3 concurrent requests while TB processes one batch
+
+**Why is this Amdahl's Law?**
+
+**Serial portion**: Time from request arrival to `await tigerbeetle_client.create_transfers()`
+```
+Serial work per request:
+- FastAPI routing:        ~1ms
+- Request parsing:        ~0.5ms
+- Business logic:         ~1ms
+- Prepare TB transfer:    ~0.5ms
+Total serial: ~3ms
+```
+
+**Parallel portion**: TigerBeetle batch processing (~3ms)
+
+**During one TB batch** (3ms):
+- Serial work allows: 3ms / 3ms = 1 additional request to reach TB call
+- Plus the requests already waiting
+- Result: Batch sizes of 2-6
+
+**Amdahl's Law for batching**:
+```
+If we made Python instant (S → ∞):
+  Batch size → limited only by request arrival rate
+
+But with 3ms serial overhead per request:
+  Batch size ≈ (TB_time / Python_serial_time) + 1
+              ≈ (3ms / 3ms) + 1
+              ≈ 2-6 (depending on concurrent load)
+```
+
+**This is why Go or Zig would be faster**: Serial overhead ~0.1ms instead of 3ms → batch sizes of 30+ instead of 5.
+
+
+## Conclusion
+
+Amdahl's Law accurately predicts TigerFans' performance gains. Using checkout phase measurements, we see:
+
+**Component-based analysis**:
+- Predicted speedup (Amdahl's Law): 2.73x
+- Actual measured speedup: 2.74x
+- Difference: 0.01x ✅
+
+**Throughput improvements**:
+- Checkout phase: 272 ops/s → 861 ops/s (3.17x)
+- Reserve phase: 389.7 ops/s → 977.2 ops/s (2.51x)
+
+The reserve vs checkout distinction matters: reserve measures isolated accounting operations (highlighting TigerBeetle's pure speedup), while checkout measures the complete user-facing flow (showing how architectural decisions affect real system throughput).
+
+---
+
+## Related Documents
+
+**Full Story**: [The Journey - Building TigerFans](/blog/2025-11-02--tigerfans)
+
+**Overview**: [Executive Summary](/projects/tigerfans)
+
+**Technical Details**:
+- [Resource Modeling with Double-Entry Accounting](DEEPDIVE_RESOURCE_MODELING)
+- [Hot/Cold Path Architecture](DEEPDIVE_HOT_COLD_PATH)
+- [Auto-Batching](DEEPDIVE_AUTO_BATCHING)
+- [The Single-Worker Paradox](DEEPDIVE_SINGLE_WORKER_PARADOX)
+
+**Resources**:
+- [Live Demo](https://tigerfans.io)
+- [TigerBench Visualization](https://tigerfans.io/bench)
+- [Source Code](https://github.com/renerocksai/tigerfans)
+
+

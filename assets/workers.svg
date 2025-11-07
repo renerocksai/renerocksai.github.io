@@ -1,0 +1,94 @@
+<svg width="900" height="450" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .box { fill: white; stroke: #333; stroke-width: 2; }
+      .worker { fill: #e8f4fd; stroke: #1a73e8; stroke-width: 2; }
+      .tb { fill: #fce8e6; stroke: #d93025; stroke-width: 2; }
+      .text { font-family: Arial, sans-serif; font-size: 13px; text-anchor: middle; }
+      .title { font-size: 16px; font-weight: bold; }
+      .subtitle { font-size: 13px; fill: #666; }
+      .annotation { font-size: 14px; fill: #666; }
+      .conclusion { font-size: 15px; fill: #333; font-weight: bold; }
+      .arrow { stroke: #333; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#333" />
+    </marker>
+  </defs>
+
+  <!-- White background for dark mode compatibility -->
+  <rect width="900" height="450" fill="white"/>
+
+  <!-- Left side: Single Worker -->
+  <text class="title" x="225" y="30" text-anchor="middle">Single Worker</text>
+  <text class="subtitle" x="225" y="50" text-anchor="middle">135 ops/s, batch sizes: 5-6</text>
+
+  <!-- Requests -->
+  <rect class="box" x="175" y="80" width="100" height="40" rx="5"/>
+  <text class="text" x="225" y="105">Requests</text>
+
+  <!-- Arrow down -->
+  <path class="arrow" d="M 225 120 L 225 160"/>
+
+  <!-- Worker 1 -->
+  <rect class="worker" x="175" y="160" width="100" height="60" rx="5"/>
+  <text class="text" x="225" y="185">Worker 1</text>
+  <text class="text" x="225" y="205">Batcher</text>
+
+  <!-- Arrow down with label -->
+  <path class="arrow" d="M 225 220 L 225 260"/>
+  <text class="annotation" x="295" y="245">Batch-size: 5-6</text>
+
+  <!-- TigerBeetle -->
+  <rect class="tb" x="175" y="260" width="100" height="40" rx="5"/>
+  <text class="text" x="225" y="285">TigerBeetle</text>
+
+  <!-- Right side: Multiple Workers -->
+  <text class="title" x="675" y="30" text-anchor="middle">Multiple Workers</text>
+  <text class="subtitle" x="675" y="50" text-anchor="middle">108 ops/s, batch sizes: 2-3</text>
+
+  <!-- Requests -->
+  <rect class="box" x="625" y="80" width="100" height="40" rx="5"/>
+  <text class="text" x="675" y="105">Requests</text>
+
+  <!-- Arrow down -->
+  <path class="arrow" d="M 675 120 L 675 160"/>
+
+  <!-- Load Balancer -->
+  <rect class="box" x="625" y="160" width="100" height="40" rx="5"/>
+  <text class="text" x="675" y="185">Load Balancer</text>
+
+  <!-- Arrows to workers -->
+  <path class="arrow" d="M 655 200 L 565 230"/>
+  <path class="arrow" d="M 665 200 L 615 230"/>
+  <path class="arrow" d="M 685 200 L 735 230"/>
+  <path class="arrow" d="M 695 200 L 785 230"/>
+
+  <!-- Workers -->
+  <rect class="worker" x="515" y="230" width="60" height="50" rx="5"/>
+  <text class="text" x="545" y="260">W1</text>
+
+  <rect class="worker" x="585" y="230" width="60" height="50" rx="5"/>
+  <text class="text" x="615" y="260">W2</text>
+
+  <rect class="worker" x="705" y="230" width="60" height="50" rx="5"/>
+  <text class="text" x="735" y="260">W3</text>
+
+  <rect class="worker" x="775" y="230" width="60" height="50" rx="5"/>
+  <text class="text" x="805" y="260">W4</text>
+
+  <!-- Arrows from workers to TB -->
+  <path class="arrow" d="M 545 280 L 645 330"/>
+  <path class="arrow" d="M 615 280 L 655 330"/>
+  <path class="arrow" d="M 735 280 L 695 330"/>
+  <path class="arrow" d="M 805 280 L 705 330"/>
+
+  <text class="annotation" x="450" y="310" text-anchor="middle">Batch-sizes: 2-3</text>
+
+  <!-- TigerBeetle -->
+  <rect class="tb" x="625" y="330" width="100" height="40" rx="5"/>
+  <text class="text" x="675" y="355">TigerBeetle</text>
+
+  <!-- Bottom conclusion -->
+  <text class="conclusion" x="450" y="420" text-anchor="middle">Result: Consolidation beats parallelism when batching is critical</text>
+</svg>

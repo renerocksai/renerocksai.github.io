@@ -1,0 +1,81 @@
+---
+.title = "TigerFans: Building a High-Performance Ticketing System with TigerBeetle",
+.date = @date("2025-11-02:19:20"),
+.author = "renerocksai",
+.layout = "post.shtml",
+.draft = false,
+.tags = [ "tigerbeetle", "tigerfans" ],
+---
+
+
+**Building a high-performance ticketing system with TigerBeetle**
+
+
+## How It Started
+
+>
+**"[Too easy: TigerBeetle.](https://x.com/jorandirkgreef/status/1959268005407252929)"** That was Joran Dirk Greef's response when someone on Twitter asked how you'd build a ticketing solution for an Oasis-scale concert[^1]—hundreds of thousands of people flooding your website, where you need to guarantee no ticket gets sold twice and everyone who pays gets a ticket. Joran is the CEO and founder of TigerBeetle.
+
+He was right. Everyone who knows TigerBeetle would give the same advice. But I wanted to understand _how_. Not conceptually—I wanted the concrete implementation. How do you actually model ticket transactions as financial transactions? What would the account structure look like? How do the transfers flow through a realistic booking system with payment providers?
+
+So I built it. Three days later, I had a working demo with SQLite and TigerBeetle, complete with documentation explaining the account model and transfer patterns. It worked. The patterns were solid. Mission accomplished.
+
+## Joran's Challenge
+
+Joran's response was encouraging. But then he turned it into a friendly challenge: he mentioned the Oasis ticket sale had hit roughly 65 tickets per second, then added—_"It would be pretty sweet if you could do better than six hours."_
+
+What started as an educational demo became something different. Now that it was correct and the patterns were proven, a new question emerged: how can we make it not suck? Not in terms of raw Python speed—that's a fundamental limitation—but in terms of the hidden inefficiencies you can actually fix. What bottlenecks were we missing? How well could we actually utilize TigerBeetle?
+
+This became a 19-day exploration of performance optimization that pushed the system to 977 ops/s—15x faster than the Oasis baseline[^1]—revealing patterns applicable far beyond ticketing.
+
+## Optimization Journey
+
+The initial implementation with SQLite hit approximately 50 tickets per second. Switching to PostgreSQL and optimizing carefully pushed it to 115 ops/s—beating the Oasis baseline[^1] of 65 ops/s, but something felt off. TigerBeetle is famous for microsecond-level performance. Why was the whole system so slow?
+
+Analyzing the sequence diagram revealed the problem: PostgreSQL was in the critical path, hit 2-4 times per request. This sparked an experiment: what if we replaced ALL of PostgreSQL with Redis? The results were impressive—930 ops/s for reservations (6x improvement!)—but there was a durability problem: Redis everysec mode could lose up to 1 second of orders on crash.
+
+The breakthrough came from Rafael, a TigerBeetle core developer, who responded to this experiment with the key insight: separate ephemeral data from durable data. Use Redis ONLY for payment sessions (hot path), not for orders. Orders need PostgreSQL for durability (cold path). This was the hot/cold path compromise—a perfect balance between speed and durability.
+
+With the correct hot/cold architecture implemented (Redis for sessions, TigerBeetle for accounting, PostgreSQL for durable orders), throughput jumped to 865 ops/s. Moving PostgreSQL out of the critical path delivered massive performance gains.
+
+But there was more. Instrumentation revealed something surprising: we were sending TigerBeetle batches of size 1. TigerBeetle is batch-oriented and can handle up to 8,190 operations per request. FastAPI's request-oriented design—every `await` sends immediately. We were flying a 747 to deliver individual passengers. Building a custom LiveBatcher to collect concurrent requests and pack them efficiently unlocked another performance tier, pushing throughput past 900 ops/s.
+
+Then came the most counter-intuitive discovery: running with 1 worker on an 8 vCPU machine was faster than running with multiple workers. The reason: batches fragmented across event loops, each worker saw smaller batch sizes, and the serial overhead of batch collection overwhelmed any parallel gains. It was Amdahl's Law in action: when batching is critical to performance, consolidation beats parallelism.
+
+After 19 days of iteration and measurement, the system achieved 977 tickets per second—15x faster than the Oasis baseline[^1], all in Python.
+
+---
+
+## TigerBeetle Ticket Challenge
+
+The recipe is proven. This implementation—in Python, with all its overhead—achieves 977 tickets per second. The architecture is documented, the patterns are explained, the lessons are captured.
+
+Imagine this same architecture in Go, where removing Python's 5ms overhead could yield 10-30x better throughput. Or in Zig, where manual optimization might push it to 50-100x faster. The TTC challenge is simple: build your version, any language, any stack, and share your results. Let's see how fast ticketing can be when TigerBeetle's batch-oriented design meets systems programming languages.
+
+All the resources are available: a live demo, the complete source code, reproducible benchmarks, detailed deep-dives on resource modeling, hot/cold path architecture, auto-batching, and the single-worker paradox. The full journey is documented with all the struggles and breakthroughs.
+
+## Acknowledgments
+
+Thank you to Joran Dirk Greef for creating TigerBeetle, for the "benchmark would be nice" challenge that started the optimization journey, and for being so encouraging throughout. Thank you to Rafael Batiati for refining the data lifecycle separation approach, the deep code reviews, and the batching insights that unlocked the final performance tier. Thank you to the entire TigerBeetle team for building an amazing database and being so generous with their knowledge.
+
+As the final commit message said: **"I had the time of my life working on this 😊!"**
+
+---
+
+## Related Documents
+
+**Full Story**: [The Journey - Building TigerFans](/blog/2025-11-02--tigerfans)
+
+**Technical Details**:
+- [Resource Modeling with Double-Entry Accounting](./DEEPDIVE_RESOURCE_MODELING)
+- [Hot/Cold Path Architecture](./DEEPDIVE_HOT_COLD_PATH)
+- [Auto-Batching](./DEEPDIVE_AUTO_BATCHING)
+- [The Single-Worker Paradox](./DEEPDIVE_SINGLE_WORKER_PARADOX)
+- [Amdahl's Law Analysis](./ANALYSIS_AMDAHL_AND_PLANES)
+
+**Resources**:
+- [Live Demo](https://tigerfans.io)
+- [TigerBench Visualization](https://tigerfans.io/bench)
+- [Source Code](https://github.com/renerocksai/tigerfans)
+
+[^1]: In August 2024, tickets for the Oasis reunion tour sold out rapidly, with approximately 1.4 million tickets sold over six hours during peak demand, establishing a benchmark of approximately 65 tickets per second for high-demand ticket sales.

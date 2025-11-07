@@ -254,9 +254,9 @@ pre>code {
   font-family: monospace, monospace;
   font-size: 0.8em;
   line-height: 1.3em !important;
-  display: inline-block;
+  display: block;  /* ← Use block instead */
   box-sizing: border-box;
-  min-width: 100%;
+  white-space: pre;  /* ← Ensure no wrapping */
 }
 
 pre {
@@ -292,16 +292,16 @@ li {
 }
 
 blockquote {
-  margin-left: -1.75rem;
+  margin-left: -0.5rem;
   margin-right: 1.75rem;
   margin-top: 0;
+  margin-bottom: 0.5rem;
   padding-bottom: 0;
-  padding-left: 1.42188rem;
+  padding-left: 1.5rem;
   padding-right: 0;
   padding-top: 0;
-  margin-bottom: 1.75rem;
-  font-size: 1.20112rem;
-  line-height: 1.75rem;
+  font-size: 1.0rem;
+  line-height: 1.5rem;
   color: hsla(0, 0%, 0%, 0.79);
   font-style: italic;
   border-left: 0.32813rem solid hsla(0, 0%, 0%, 0.9);
@@ -310,6 +310,7 @@ blockquote {
 blockquote p {
   margin: 0;
   margin-bottom: 15px;
+  padding-top: 15px;
 }
 
 

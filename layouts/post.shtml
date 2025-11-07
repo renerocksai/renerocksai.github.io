@@ -2,10 +2,11 @@
 <title id="title" :text="$page.title"></title>
 <head id="head">
   <link
-  type="text/css"
-  rel="stylesheet"
-  href="$site.asset('term-highlight.css').link()"
->
+    type="text/css"
+    rel="stylesheet"
+    href="$site.asset('term-highlight.css').link()"
+  >
+
   <style>
     #docs {
         h1, h2, h3, h4 {
@@ -57,6 +58,12 @@
     table td {
         white-space: nowrap;
     }
+
+    p {
+      /* margin-top: 0.5rem; */
+      /* margin-bottom: 0.5rem; */
+    }
+
   </style>
 </head>
 <div id="content" class="foo">
@@ -85,6 +92,15 @@
     <div id="post-body" :html="$page.content()"></div>
   </div>
   <hr>
+  <div id="footnotes">
+    <ctx :if="$page.footnotes?()">
+      <ol :loop="$if">
+        <li id="$loop.it.def_id">
+          <ctx :html="$loop.it.html()"></ctx>
+        </li>
+      </ol>
+    </ctx>
+  </div>
   <div id="prev-next">
     <span :if="$page.prevPage?()">
       <a href="$if.link()">←

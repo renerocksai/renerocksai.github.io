@@ -1,0 +1,324 @@
+---
+.title = "TigerFans: Modeling Resources with Double-Entry Accounting",
+.date = @date("2025-11-02:19:20"),
+.author = "renerocksai",
+.layout = "post.shtml",
+.draft = false,
+.tags = [ "tigerbeetle", "tigerfans" ],
+---
+
+**How financial accounting principles solve the overselling problem**
+
+---
+
+## TL;DR
+
+Traditional approaches to resource management (tickets, inventory, seats) use row counting in SQL tables: "SELECT COUNT(*) WHERE status='available'". This has inherent race conditions and doesn't scale well.
+
+TigerBeetle applies **double-entry bookkeeping**—a 700-year-old accounting principle—to resource management. Each ticket class becomes a set of **accounts** (Operator, Budget, Spent), and each booking becomes a **transfer** (debit Budget, credit Spent).
+
+With **pending transfers** and the **DEBITS_MUST_NOT_EXCEED_CREDITS** constraint, we achieve:
+- ✅ Zero race conditions (atomic operations)
+- ✅ Time-limited holds (pending transfers with timeout)
+- ✅ Impossible to oversell (constraint enforced by TigerBeetle)
+- ✅ Perfect audit trail (immutable transfer log)
+- ✅ High performance (optimized for financial workloads)
+
+Tickets aren't rows in a table—they're credits and debits in accounts.
+
+---
+
+## Why SQL Row Counting Fails at Scale
+
+When building a ticketing system, the most intuitive approach is to model tickets as rows in a database table. That's a history bug: historically, our only real option was a general purpose database. You create inventory by inserting rows, check availability by counting rows, and reserve tickets by updating status fields. This works perfectly for small-scale systems. But as soon as you need to handle concurrent bookings at scale, this approach reveals fundamental limitations that no amount of optimization can fully solve.
+
+### The Traditional Approach
+
+The standard way to model tickets in SQL:
+
+```sql
+CREATE TABLE tickets (
+    id SERIAL PRIMARY KEY,
+    class VARCHAR(10),  -- 'A' or 'B'
+    status VARCHAR(20),  -- 'available', 'reserved', 'sold'
+    reserved_at TIMESTAMP,
+    reserved_by VARCHAR(255),
+    sold_at TIMESTAMP,
+    sold_to VARCHAR(255)
+);
+
+-- Initialize: Insert 5,000,000 tickets of class A
+INSERT INTO tickets (class, status)
+SELECT 'A', 'available'
+FROM generate_series(1, 5000000);
+```
+
+**To check availability**:
+```sql
+SELECT COUNT(*) FROM tickets WHERE class = 'A' AND status = 'available';
+```
+
+**To reserve a ticket**: Check if available, lock the row with FOR UPDATE, then set status='reserved' with timestamp.
+
+This approach seems reasonable at first glance. But under load, it breaks down in four critical ways that reveal why row-based modeling is fundamentally mismatched to the problem.
+
+### Four Critical Failure Modes
+
+#### Race Conditions (Even With Transactions)
+
+**Scenario**: 2 users trying to book the last ticket simultaneously
+
+![](/DEEPDIVE_RESOURCE_MODELING_1.png)
+
+**Result**: Both users think they have the ticket. Double-booking!
+
+**Fix**: Add application-level logic to re-check after lock acquisition. Complex and error-prone.
+
+#### Timeout Handling is Manual
+
+When a user reserves a ticket but abandons payment, a periodic cleanup job must release the hold. This introduces several problems: the periodic job adds latency (the ticket isn't available until the next run), the job itself becomes a critical dependency that could crash or fall behind, clock skew between servers can cause inconsistencies, and you've added another piece of application logic to maintain and monitor.
+
+#### Poor Performance at Scale
+
+With 5,000,000 rows, counting available tickets is slow even with indexes. Each reservation requires a sequential scan or index scan, row lock acquisition, row update (generates WAL), and index update. Even with careful indexing, updating millions of rows is expensive.
+
+#### No Audit Trail
+
+The database only stores current state—no history of state transitions. To get history, you need a separate audit log table, triggers on INSERT/UPDATE/DELETE, and more storage and complexity. You're building the audit trail as an afterthought, not getting it automatically from the data model itself.
+
+
+## Enter Double-Entry Bookkeeping
+
+So how do we fix this? We need a system designed for exactly this problem—where atomicity and audit trails aren't afterthoughts. Financial accounting provides the answer.
+
+### A Solution Used for Hundreds of Years
+
+Double-entry bookkeeping has been used for hundreds of years because it provides built-in error detection and perfect audit trails. Every transaction affects at least two accounts: one is debited (decreased), another is credited (increased). Debits always equal credits—the system is always balanced, and errors are immediately obvious. The ledger is immutable: transactions are never deleted, corrections are new transactions, providing a perfect audit trail.
+
+### Applying to Tickets
+
+Tickets are a resource we're "spending" from a budget.
+
+**Account structure** (per ticket class):
+
+1. **Operator Account**: Source of funds (tickets)
+2. **Budget Account**: Available tickets
+3. **Spent Account**: Sold tickets
+
+**Flow**:
+
+![](/DEEPDIVE_RESOURCE_MODELING_2.png)
+
+**Initialization**: Transfer 5,000,000 from Operator → Budget. After this transfer, Operator has debits_posted = 5M, Budget has credits_posted = 5M (available!), and Spent has credits_posted = 0.
+
+**Booking a ticket**: Transfer 1 from Budget → Spent. After this transfer, Budget has debits_posted += 1 (now 5M - 1), and Spent has credits_posted += 1 (now 1).
+
+**Checking availability**: `available = account.credits_posted - account.debits_posted` returns 4,999,999.
+
+
+## TigerBeetle Implementation
+
+TigerBeetle fixed the history bug by creating a database for the specific purpose of double-entry accounting. Let's see how it turns these principles into practice.
+
+### Account Definitions
+
+Each ticket class gets three accounts: Operator (source of funds), Budget (available inventory with constraint), and Spent (consumed inventory). Here's how we define them:
+
+```python
+import tigerbeetle as tb
+
+LedgerTickets = 2000
+
+# Class A Tickets (Premium, 65 EUR)
+Class_A_Operator = tb.Account(
+    id=2120,
+    ledger=LedgerTickets,
+    code=20,
+    flags=tb.AccountFlags.NONE,
+)
+
+Class_A_Budget = tb.Account(
+    id=2125,
+    ledger=LedgerTickets,
+    code=20,
+    flags=tb.AccountFlags.DEBITS_MUST_NOT_EXCEED_CREDITS,  # ← THE CONSTRAINT
+)
+
+Class_A_Spent = tb.Account(
+    id=2129,
+    ledger=LedgerTickets,
+    code=20,
+    flags=tb.AccountFlags.NONE,
+)
+
+# Similar structure for Class B tickets and Goodies...
+```
+
+The `DEBITS_MUST_NOT_EXCEED_CREDITS` flag on the Budget account is what makes overselling impossible.
+
+### The Magic Flag: DEBITS_MUST_NOT_EXCEED_CREDITS
+
+This constraint is enforced atomically by TigerBeetle. Let's see what happens when you try to overdraw:
+
+```python
+# Budget account currently has:
+# credits_posted = 5,000,000 (initial funding)
+# debits_posted = 4,999,999 (tickets already sold)
+# Net balance = 1 ticket remaining
+
+# Two users try to buy tickets simultaneously
+transfer_user_a = tb.Transfer(
+    id=tb.id(),
+    debit_account_id=2125,  # Class_A_Budget (has DEBITS_MUST_NOT_EXCEED_CREDITS)
+    credit_account_id=2129,  # Class_A_Spent
+    amount=1,
+    ledger=LedgerTickets,
+    code=20,
+)
+
+transfer_user_b = tb.Transfer(
+    id=tb.id(),
+    debit_account_id=2125,  # Class_A_Budget
+    credit_account_id=2129,  # Class_A_Spent
+    amount=1,
+    ledger=LedgerTickets,
+    code=20,
+)
+
+# Send both transfers
+results = await client.create_transfers([transfer_user_a, transfer_user_b])
+
+# Result: One succeeds, one fails
+# results[0] = []  (success!)
+# results[1] = [CreateTransferError(index=1, result=EXCEEDS_CREDITS)]
+```
+
+TigerBeetle processes transfers in a distributed consensus protocol (Viewstamped Replication). Even with millions of concurrent requests across multiple nodes, the constraint is checked atomically within the replicated state machine. No application-level locking needed. No race conditions possible.
+
+
+## Time-Limited Holds with Pending Transfers
+
+But the real magic happens when we combine this constraint with time-limited holds. This solves the "abandoned cart" problem that required manual cleanup jobs in SQL.
+
+### Handling Time-Limited Reservations
+
+When a user clicks "Buy", we need to:
+1. Reserve the ticket (so others can't buy it)
+2. Redirect to payment provider
+3. Wait for payment (user might take 5 minutes)
+4. **If payment succeeds**: finalize the reservation
+5. **If payment fails or times out**: release the ticket
+
+**Traditional approach**: Set `status='reserved'` with a timestamp, run cleanup jobs.
+
+**TigerBeetle approach**: **Pending transfers with timeout**
+
+### Pending Transfers
+
+A pending transfer is like a two-phase commit. Here's how it works in practice:
+
+```python
+# Phase 1: Create a pending hold when user starts checkout
+pending_transfer = tb.Transfer(
+    id=tb.id(),  # Generate unique transfer ID
+    debit_account_id=2125,  # Class_A_Budget
+    credit_account_id=2129,  # Class_A_Spent
+    amount=1,
+    ledger=LedgerTickets,
+    code=20,
+    flags=tb.TransferFlags.PENDING,  # ← Mark as pending
+    timeout=300,  # ← Auto-void after 5 minutes
+)
+
+result = await client.create_transfers([pending_transfer])
+# Success! Ticket is now held
+```
+
+**What happens**: The transfer is recorded but not posted to the final balances. Instead, TigerBeetle increments `credits_pending` on the Budget account and `debits_pending` on the Spent account. Other concurrent transfers see the reduced availability—this prevents double-booking. Meanwhile, the timeout clock starts ticking.
+
+```python
+# Phase 2A: Payment succeeded - commit the hold
+commit_transfer = tb.Transfer(
+    id=tb.id(),
+    pending_id=pending_transfer.id,  # ← Link to pending transfer
+    flags=tb.TransferFlags.POST_PENDING_TRANSFER,  # ← Commit it
+)
+
+result = await client.create_transfers([commit_transfer])
+# Budget: credits_pending -= 1, debits_posted += 1
+# Spent: debits_pending -= 1, credits_posted += 1
+# Ticket is now permanently sold!
+```
+
+```python
+# Phase 2B: Payment failed - void the hold
+void_transfer = tb.Transfer(
+    id=tb.id(),
+    pending_id=pending_transfer.id,  # ← Link to pending transfer
+    flags=tb.TransferFlags.VOID_PENDING_TRANSFER,  # ← Cancel it
+)
+
+result = await client.create_transfers([void_transfer])
+# Budget: credits_pending -= 1 (released!)
+# Spent: debits_pending -= 1
+# Ticket is available again!
+```
+
+**Automatic Timeout**: If neither POST nor VOID happens within 300 seconds, TigerBeetle automatically voids the transfer and releases the hold. No cleanup job needed—TigerBeetle handles it.
+
+
+
+## Visual Flow Diagrams
+
+### Initialization Flow
+
+![](/DEEPDIVE_RESOURCE_MODELING_3.png)
+
+### Checkout: Pending Transfer
+
+![](/DEEPDIVE_RESOURCE_MODELING_4.png)
+
+### Payment Success: Post Pending
+
+![](/DEEPDIVE_RESOURCE_MODELING_5.png)
+
+
+### Payment Failure: Void Pending
+
+![](/DEEPDIVE_RESOURCE_MODELING_6.png)
+
+## Conclusion
+
+Modeling tickets as TigerBeetle accounts and bookings as transfers is a paradigm shift. Instead of thinking "I have a table of tickets," think "I have a budget of tickets to spend."
+
+This approach eliminates entire classes of bugs:
+- Race conditions (impossible with atomic constraints)
+- Overselling (prevented by DEBITS_MUST_NOT_EXCEED_CREDITS)
+- Timeout handling (automatic with pending transfers)
+- Audit gaps (every transfer logged)
+
+The trade-off is a learning curve. You must embrace financial primitives: debits, credits, ledgers, transfers. But once you do, the elegance and correctness are undeniable.
+
+**TigerBeetle isn't just fast—it's correct by construction.**
+
+And for resource management, correctness matters more than speed. We got both.
+
+---
+
+## Related Documents
+
+**Full Story**: [The Journey - Building TigerFans](/blog/2025-11-02--tigerfans)
+
+**Overview**: [Executive Summary](/projects/tigerfans)
+
+**Technical Details**:
+- [Hot/Cold Path Architecture](DEEPDIVE_HOT_COLD_PATH)
+- [Auto-Batching](DEEPDIVE_AUTO_BATCHING)
+- [The Single-Worker Paradox](DEEPDIVE_SINGLE_WORKER_PARADOX)
+- [Amdahl's Law Analysis](ANALYSIS_AMDAHL_AND_PLANES)
+
+**Resources**:
+- [Live Demo](https://tigerfans.io)
+- [TigerBench Visualization](https://tigerfans.io/bench)
+- [Source Code](https://github.com/renerocksai/tigerfans)
+

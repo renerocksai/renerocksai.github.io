@@ -1,0 +1,52 @@
+<svg width="850" height="320" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .box { fill: white; stroke: #333; stroke-width: 2; }
+      .text { font-family: Arial, sans-serif; font-size: 14px; text-anchor: middle; }
+      .title { font-size: 12px; fill: #666; }
+      .value { font-size: 20px; font-weight: bold; }
+      .arrow { stroke: #333; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+      .label { font-size: 12px; fill: #666; }
+      .highlight { font-size: 18px; font-weight: bold; fill: #d93025; }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#333" />
+    </marker>
+  </defs>
+
+  <!-- White background for dark mode compatibility -->
+  <rect width="850" height="320" fill="white"/>
+
+  <!-- Box 1: PostgreSQL -->
+  <rect class="box" x="50" y="100" width="150" height="100" rx="5"/>
+  <text class="text title" x="125" y="80">PostgreSQL</text>
+  <text class="text title" x="125" y="95">Optimized</text>
+  <text class="text value" x="125" y="140">115</text>
+  <text class="text" x="125" y="165">ops/s</text>
+
+  <!-- Arrow 1 -->
+  <path class="arrow" d="M 200 150 L 270 150"/>
+  <text class="label" x="235" y="140">7.8x</text>
+
+  <!-- Box 2: Hot/Cold Path -->
+  <rect class="box" x="270" y="100" width="150" height="100" rx="5"/>
+  <text class="text title" x="345" y="80">Hot/Cold Path</text>
+  <text class="text title" x="345" y="95">TB + Redis</text>
+  <text class="text value" x="345" y="140">900</text>
+  <text class="text" x="345" y="165">ops/s</text>
+
+  <!-- Arrow 2 -->
+  <path class="arrow" d="M 420 150 L 500 150"/>
+  <text class="label" x="460" y="140">1.1x</text>
+
+  <!-- Box 3: LiveBatcher (wider to accommodate label) -->
+  <rect class="box" x="500" y="100" width="180" height="100" rx="5"/>
+  <text class="text title" x="590" y="80">LiveBatcher</text>
+  <text class="text title" x="590" y="95">Auto-batching</text>
+  <text class="text value" x="590" y="140">977</text>
+  <text class="text" x="590" y="165">ops/s</text>
+
+  <!-- Bottom note - prominent -->
+  <text class="highlight" x="590" y="245" text-anchor="middle">15x vs Oasis</text>
+  <text class="annotation" x="590" y="270" text-anchor="middle">(baseline: 65 ops/s)</text>
+</svg>
