@@ -6,32 +6,17 @@
 .draft = false,
 ---
 
-Hi, my name is Rene Schallner.
+Hi, I'm Rene Schallner.
 
-># [Socials]($block.attrs('warning'))
->- [renerocksai@𝕏](https://twitter.com/renerocksai)
->- [renerocksai@github](https://github.com/renerocksai)
->- [renerocksai@LinkedIn](https://linkedin.com/in/rene-schallner)
+I build things — software, tools, products — at the intersection of AI and research. Currently running [AI Research & Technology Lab](https://technologylab.ai) in Vienna, where I'm building [QualCode](https://qualcode.ai) and [LaBrowser](https://labrowser.technologylab.ai).
 
-I am a software engineer, programmer, researcher with a strong background in
-computer science and electronics. My areas of interest are manifold but tend to
-center around science and technology.
+Before that: Chief Founding Engineer at [ZML](https://zml.ai), 8 years at [NIM](https://nim.org) (Nuremberg Institute for Market Decisions), medical tech, telecom. I've been writing code for a long time and I still find it genuinely interesting.
 
-I love programming, mostly in [Zig](https://ziglang.org) and
-[Python](https://python.org), artificial intelligence, and I might
-[blog](/blog) occasionally.
+># [Open Source]($block.attrs('warning'))
+>- **⚡ZAP⚡:** [blazingly fast backends in zig](https://zigzap.org)
+>- **Telekasten.nvim:** [Note-taking / Zettelkasten in Neovim](https://github.com/nvim-telekasten/telekasten.nvim)
+>- More on the [projects page](/projects)
 
-My most well-known open source projects are:
-- **⚡ZAP⚡:**
-  [blazingly fast backends in zig](https://zigzap.org)
-- **Telekasten.nvim:**
-  [Note-taking in Neovim](https://github.com/nvim-telekasten/telekasten.nvim)
+I [write here](/blog) about what I'm building, thinking about, and occasionally getting wrong.
 
-My professional background spans over more than two decades in the
-telecommunications, medical technology, market research, and artificial
-intelligence industries.
-
-Feel free to reach out to me on [X](https://twitter.com/renerocksai) or
-check out my [GitHub](https://github.com/renerocksai).
-
-
+Feel free to reach out on [X](https://twitter.com/renerocksai) or [LinkedIn](https://linkedin.com/in/rene-schallner), or browse [GitHub](https://github.com/renerocksai).

@@ -1,55 +1,42 @@
 ---
 .title = "About me",
-.date = @date("2018-10-08T00:00:00"),
+.date = @date("2026-02-24T00:00:00"),
 .author = "renerocksai",
 .layout = "post.shtml",
 .draft = false,
 ---
 
-I am a software engineer, programmer, researcher with a strong background in
-computer science and electronics. My areas of interest are manifold but tend to
-center around science and technology.
+I'm a software engineer, researcher, and product builder based in Vienna.
 
+I've spent the last two and a half decades writing software across industries — telecommunications during the GSM boom in Austria, surgical navigation systems in medical tech, eight years at [NIM](https://nim.org) (Nuremberg Institute for Market Decisions), Chief Founding Engineer at [ZML](https://zml.ai) building a Zig-based AI inference framework focused on performance, and now running my own company: [AI Research & Technology Lab GmbH](https://technologylab.ai).
 
-># [News from the past]($block.attrs('warning'))
-> _The below is from 2018_
+## What I'm Building
 
-I enjoy digital electronics, e.g. building a [RRISC CPU](/projects/rrisc/),
-as well as hacking on deep learning models [that detect logos on the
-go](/projects/brille/) or creating native mobile apps, server software, or
-even web apps. Sometimes, I just [take a game engine and turn it into a
-multiplayer slide show](/projects/bullets/). Oh, and did I mention
-blockchains?
+**[QualCode](https://qualcode.ai)** — AI-powered qualitative coding for researchers. It runs two LLMs as independent raters (OpenAI + Anthropic), automatically computes inter-rater reliability (Cohen's kappa, Krippendorff's alpha), and produces audit-ready output. Built for the dual-coding standard that serious qualitative research requires. GDPR-compliant, EU infrastructure.
 
-I am fascinated by creating pieces of enabling technology. Be it free and open
-software as a means of democratization or software that enables research
-otherwise not possible. With a purpose attached, things become meaningful.
+**[LaBrowser](https://labrowser.technologylab.ai)** — A research browser for behavioral studies. Captures structured interaction data — navigation, queries, AI prompts and responses, clicks — from study participants, with a researcher console for study design and analysis. Addresses a gap that screen recording and think-alouds can't fill.
 
-You would typically find me with a maximized Linux console window filling my
-screen, tiled using [tmux](https://github.com/tmux/tmux/wiki), hacking on code
-in [neovim](https://neovim.io/) and saving the world on the commandline in the
-other panes. It's just so productive if you don't have to reach for the mouse.
+## Background
 
-![](/103263490-55568900-49a8-11eb-9b65-84b423a1a7b3.png)
+I've been building things at the edges of disciplines for a long time.
 
-That said, I am also a fan of [Chromebooks](https://www.google.com/chromebook/)
-- as they are super secure, super fast, and also give you a Linux shell for the
-  non GUI part of the day. Not to be misleading, Linux GUI apps work on
-  Chromebooks, too, of course.
+At NIM I spent eight years as a senior researcher and technology lab manager — doing research myself, and building the infrastructure that made otherwise impossible research possible. That included a fully automated GPT-4 market research agent ([SurveySeed](/projects/surveyseed/)), an Arduino-based sensor synchronization device for multi-seat biosignals labs, reaction time measurement tools for behavioral economics, online shop environments for controlled studies (web and native mobile), and a research browser prototype that later inspired LaBrowser — among other things. I also did a significant amount of AI research: image models, voice models, multimodal models, training, fine-tuning — a broad range of applied work.
 
-On my 2015 Pixelbook, I developed a [CPU](/projects/rrisc/) from scratch, a
-[networked presentation software](/projects/bullets/) using the
-[Godot](https://godotengine.org/) engine, [Flutter](https://flutter.dev/) apps
-for Android (native) and web, etc. It has completely replaced my 2016 MacBook
-Pro with a broken keyboard and useless touch bar.
+In open source: I created [⚡ZAP⚡](https://zigzap.org), the first production-ready HTTP web framework for [Zig](https://ziglang.org), which I presented at SYCL 2023. [Telekasten.nvim](https://github.com/nvim-telekasten/telekasten.nvim) started as my own note-taking setup in Neovim and ended up with a few thousand users. Before that, [Sublime_ZK](https://github.com/renerocksai/sublime_zk) did the same for SublimeText — and when people asked for a version that didn't require SublimeText, I built [Sublimeless_ZK](/projects/sublimeless_zk/), a standalone Zettelkasten app.
 
-![pixelbook](/pixelbook.jpg)
+I've also [built a CPU from scratch](/projects/rrisc/), trained convolutional neural networks for logo detection [in 2017](/projects/brille/), and written not one but two presentation systems — first a [Godot game engine-based slideshow](/projects/bullets/), then [Slides](/projects/slides/) in Zig (presented at SYCL), which has since been ported to Raylib as [RaySlides](https://github.com/technologylab-ai/rayslides).
 
-My professional background spans over more than two decades in the
-telecommunications, medical technology, market research, and artificial
-intelligence industries - current stop: my [AI Research & Technology
-Lab](https://technologylab.ai).
+The common thread isn't the domain. It's seeing a gap — usually from being close enough to a real problem to feel it — and then building from first principles rather than just reaching for the obvious tool. I didn't build a Kanban board. I built [OMS](/blog/2025-12-09--oms-1/). I didn't build another slide deck app. I built a [presentation system on a game engine](/projects/bullets/), then [rewrote it in Zig](/projects/slides/), then ported it to Raylib. That's just how it goes.
 
+## How I Work
 
-Feel free to reach out to me on [Twitter](https://twitter.com/renerocksai) or
-check out my [GitHub](https://github.com/renerocksai).
+Almost entirely in the terminal. Neovim, tmux, command line. Zig and Python are my primary languages, though I've written production code in C, C++ and enough others to get into trouble.
+
+Since late 2025 I've been a serious vibe coder — Claude Code fundamentally changed how I work, and the shift is real enough that I've been thinking and writing about it. Running a [one-man company](/blog/2025-12-09--oms-1/) forces you to think carefully about leverage: what compounds, what doesn't, and how to build systems that work for you rather than the other way around. That thinking shows up in the blog too.
+
+## Get in Touch
+
+- [X / Twitter](https://twitter.com/renerocksai)
+- [LinkedIn](https://linkedin.com/in/rene-schallner)
+- [GitHub](https://github.com/renerocksai)
+- [rene@technologylab.ai](mailto:rene@technologylab.ai)
