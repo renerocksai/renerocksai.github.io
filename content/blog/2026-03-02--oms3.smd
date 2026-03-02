@@ -1,0 +1,236 @@
+
+---
+.title = "Strategic CFO: Why I Needed to Automate My Reality Check",
+.date = @date("2026-03-02:15:57"),
+.author = "renerocksai",
+.layout = "post.shtml",
+.draft = false,
+.tags = [ "oms", "ai", "decision support" ],
+---
+
+*(Author's Note: This is the final installment of the OMS Next series. I’ve covered the Work Journal (Part 1) and the AI Partner (Part 2). Now, I build the ultimate layer: Business Intelligence.)*
+
+## Gut Feeling Trap
+
+As solo founders, we wear every hat. We are the CTO, the Product Manager, the Support Rep, and—most dangerously—the CFO.
+
+I say "dangerously" because it is easy to become a complacent CFO. We often don't manage by data; we manage by **Vibe**. We feel like we've been busy, so we assume we are making money. We send a big invoice and assume our cash flow is healthy. We stick with difficult clients because the revenue *seems* worth the headache.
+
+This is **Gut Feeling Management**. It works when we are small, but it breeds uncertainty. We wake up at 3 AM wondering if we can actually afford to take December off. We don't know the answer because the answer is hidden in three different silos: our To-Do list, our PDF invoices, and our bank account.
+
+I built OMS Next to solve this by unifying three layers of truth: **Code**, **Promises**, and **Reality**.
+
+## Layer 1: Work (Intent)
+
+The first layer is what I built in Part 1: my **Activities** and **Logs**. This data told me that I spent 40 hours on "Project Acme." While valuable, the truth level here is **Subjective**. I worked hard, but did that work actually generate value?
+
+## Layer 2: FJ (Promise)
+
+The second layer handles billing. Most invoicing tools are bloated SaaS products, so true to my philosophy, I built **[FJ](https://github.com/technologylab-ai/fj)**—a system that treats financial documents as **Code**. Invoices, Offers, and Client data are JSON metadata files version-controlled in Git, and they link directly to OMS Projects.
+
+When I link Invoice #101 to the `acme-project`, I bridge the gap between Effort and Revenue. Now the system knows what I billed for those 4 days of hard work. However, the truth level here is **Theoretical**. An invoice is just a promise. I haven't been paid yet.
+
+## Layer 3: Bank (Reality)
+
+The third layer is the one that usually remains hidden. I added a **Reality Layer** to FJ that ingests my bank transactions and runs an **Auto-Reconciler**.
+
+It sees an incoming wire transfer, matches it to the Invoice, and marks the Promise as Fulfilled. The data is now: "The money is in the account." The truth level is **Absolute**.
+
+
+### Technical Sidebar: The Hybrid Cloud
+
+For the curious who want to know how this actually works: **Privacy is paramount.**
+
+I run **FJ** (the financial layer) strictly on `localhost`. My bank data never lives on a public server. However, **OMS** runs in the cloud so I can access it from anywhere.
+
+So how does the Cloud AI read the Local Financials? **SSH Remote Port Forwarding.**
+
+When I'm at my desk, I open a secure tunnel that gives the OMS server temporary, encrypted access to the FJ API running on my Mac. The AI can query my bank balance *only* when I am securely connected. When I close my laptop, the bridge closes. It’s the perfect balance of Cloud convenience and Cold Storage security.
+
+## X-Ray Vision
+
+Once these three layers are connected, the AI stops being a simple coding assistant. It gains **360-degree X-Ray Vision** into the health of the business.
+
+I don't just ask "What is my task list?" I run the `/help` command and see a dashboard of strategic capabilities:
+
+> **Available Slash Commands:**
+>
+> *   **Strategic:** `/briefing`, `/priority`, `/runway`, `/economics`, `/client`
+> *   **Financial:** `/cashflow`, `/expenses`, `/invoices`, `/finance`, `/offers`
+> *   **Work:** `/standup`, `/overdue`, `/stats`, `/summary`, `/find`
+
+*[NOT TODO: Insert Screenshot: The chat interface showing the /help output with all slash commands]*
+
+This list represents a shift from **doing work** to **running a business**.
+
+### Scenario 1: The "True Profitability" Check
+I ask: *"/client acme profitability"*
+
+The AI doesn't just look at the billing. It correlates:
+1.  **Effort (OMS):** "You created 47 logs this month, including 12 'High Frustration' entries regarding their API."
+2.  **Revenue (FJ):** "You billed €4,000."
+3.  **Reality (Bank):** "They pay 14 days late on average."
+4.  **Result:** "The **Effort-to-Revenue Ratio** is poor compared to your other clients. **Verdict: High Friction / Low Reward.**"
+
+*[NOT TODO: Insert Screenshot: The AI analysis response]*
+
+This is an insight I would probably *never* have calculated manually.
+
+### Scenario 2: Smart Prioritization
+I ask: *"/priority"*
+
+The AI sees that I have a "Bug Fix" for Client Z (OMS Intent). But it also sees via the Bank Layer that Client Z is 45 days overdue on a previous invoice.
+
+> **Strategic Insight:** Client Z is currently 45 days overdue.
+> **Recommendation:** Before starting this new task, consider sending a friendly check-in regarding the outstanding invoice.
+
+It protects me from working blindly.
+
+### Scenario 3: The Runway Calculation
+I ask: *"what's my runway?"* or *"/runway"*
+
+It ignores the "Vibe" and looks at the math.
+> "Bank Balance: €15k. Avg Monthly Burn: €2k. Pending Invoices: €4k (High confidence)."
+> **Forecast:** You have 9.5 months of runway. You can safely invest in that new hardware or take next month off to build a product.
+
+## Inference Math vs. Real Math
+
+Integrating the FJ API to my existing chatbot proved useful until it didn't: turns out, LLMs are not always the most reliable calculators. Doing math during text inference is error-prone (sometimes it just doesn't get it right) and theoretically also prone to hallucination. When it comes to my company, I cannot risk having my AI provide me with false numbers.
+
+Nothing a programmer cannot fix 😊. So I built an agent that can write code to do the math -- and create beautiful office documents, dashboards, and so much more. In OMS, I can switch between normal AI Chat and Agent mode. Let's compare:
+
+### Chat Mode Tools
+
+The chat assistant responds conversationally and can call tools to query data in real time. It streams responses token-by-token and shows tool calls as they happen.
+
+| Work Management Tool | What It Does |
+|------|--------------|
+| list_projects | Lists all accessible projects with summaries |
+| get_project_details | Full project details including description |
+| list_categories | Lists time-horizon categories (ad-hoc, next-2-weeks, etc.) |
+| list_urgencies | Lists urgency levels (low, normal, urgent) |
+| search_work_history | Searches across both activities and logs by relevance |
+| lookup_activities | Searches pending work (things to do) |
+| lookup_logs | Searches completed work (things done) |
+| get_work_statistics | Counts by project/category/urgency, completion rates |
+| get_overdue_items | Finds overdue activities by deadline or category timeframe |
+
+
+| Financial Tool | What It Does |
+|------|--------------|
+| fj_get_summary | High-level snapshot: total invoices, open amounts, pending offers |
+| fj_get_pending_invoices | Unpaid invoices not yet past due |
+| fj_get_overdue_invoices | Unpaid invoices past their due date |
+| fj_get_active_offers | Pending proposals not yet accepted or declined |
+| fj_get_project_financials | Invoices and offers linked to a specific project |
+| fj_get_all_projects_financials | Financial breakdown across all projects at once |
+| fj_get_clients | Lists all clients from FJ |
+| fj_get_transactions | Bank transactions (incoming/outgoing, amounts in cents) |
+| fj_get_cash_flow | Cash flow summary, optionally grouped by month |
+| fj_get_burn_rate | Average monthly expenses over a given period |
+| fj_get_runway | Months until money runs out (balance + pending / burn) |
+
+
+| External Tool | What It Does |
+|------|--------------|
+| web_search | OpenAI-hosted web search for external information |
+
+---
+
+### Agent Mode
+
+Agent mode goes beyond chat. The agent runs inside a dedicated runtime service with a sandboxed execution environment — it can reason over multiple steps, execute code, and produce artifacts.
+
+#### Code Execution
+
+The agent writes and runs Python and shell code in an isolated Docker container. Each execution gets a fresh sandbox with a full data science stack: pandas, numpy, matplotlib, seaborn, plotly, scipy, statsmodels, openpyxl, and more. Executions are gated behind user approval (if YOLO mode is not engaged), have a 30-minute timeout, and are capped at 50 per job.
+
+#### OMS SDK
+
+A Python module (`oms.py`) is injected into every sandbox, giving the agent programmatic access to OMS data:
+
+| Function | What It Does |
+|----------|--------------|
+| oms.get_activities(...) | Query activities with filters (logged, urgency, project, limit) |
+| oms.get_overdue() | Get all overdue activities |
+| oms.get_projects() | List projects |
+| oms.get_categories() | List categories |
+| oms.count_activities() | Count before fetching (to detect truncation) |
+| oms.link(activity) | Generate a validated share link from an activity record |
+| oms.activity_summary(from, to) | Per-project activity counts for a date range |
+| oms.get_week_boundaries() | Sunday–Saturday boundaries for reporting |
+| oms.summarize(query, focus) | AI-powered summarization (accomplishments, blockers, patterns) |
+| oms.synthesize_briefing(timespec, focus) | Generate narrative briefings from work data |
+| oms.revenue_summary() | Financial summary (when FJ is connected) |
+
+#### Artifact Generation
+
+The agent can create files and save them to an `/output` directory. Any file written there is automatically discovered, hashed, and uploaded to object storage. Reports, spreadsheets, charts, or any other file can be produced and handed back to the user.
+
+#### Data Access
+
+On each run, the sandbox receives a read-only SQLite export of the user's OMS data, plus optional FJ financial data as JSON. The agent can query this directly with SQL or through the SDK.
+
+#### Share Link Validation
+
+Before delivering results, the runtime validates every share link the agent generated against the actual database. This prevents hallucinated links from reaching the user.
+
+#### Session Continuity
+
+Sandboxes are scoped to conversations, not individual jobs. Multiple jobs in the same conversation share their input and output directories, so follow-up requests like "modify the report you just made" work naturally.
+
+## Why give the agent an SDK?
+
+Once, there was the Model Context Protocol (MCP). Then, MCP became uncool because it turned into a waste of context itself. Progressive disclosure of skills seems to be the current standard. [Peter Steinberger](https://x.com/steipete), author of [OpenClaw](https://openclaw.ai), has long argued that CLIs are inherently better than MCPs because a) CLIs are what agents are trained on and b) because good CLIs are discoverable (`--help`), so they have progressive disclosure built in.
+
+CLI output, as any tool output, still needs to go into the agent's context. Usually. If the agent is smart enough to write a python script (e.g. for calculating the runway) that calls a CLI as a sub-process and then directly process the CLI output inside the python script - then no CLI output needs to go into the context. Just the python script's "runway = X" output.
+
+That line of thinking got me to the SDK idea. Instead of providing my agent with OMS and FJ specific CLIs that produce text output which the agent-generated code then has to parse, I provide the agent with an SDK! In python, that's just one `import` away. No parsing needed! The SDK provides the agent directly with structured data (lists, dictionaries, ...).
+
+
+
+## Future: The Autonomous Operator
+
+This is just the beginning. Now that the system understands the relationship between my Time, my Code, and my Money, I can imagine a future where the AI becomes proactive.
+
+Instead of me asking "/runway," the system could nudge me:
+> *"Hey, Invoice #102 was due yesterday. Do you want to upload the latest bank CSV so I can check if it cleared?"*
+
+Or detecting strategic opportunities:
+> *"I noticed you've logged significant breakthroughs in 'Synthetic Respondent Research' this week. The findings in your logs are novel. You should pivot from coding to writing a research article or blog post about this—these insights are too valuable to stay hidden in a log."*
+
+Or spotting anomalies before they hurt:
+> *"Alert: Your AWS bill this month is 80% higher than your 6-month average. Did you leave a GPU instance running?"*
+
+The goal isn't just to answer questions. It's to anticipate them.
+
+## Conclusion: Competitive Advantage
+
+I started this journey looking for a better way to track tasks. I ended up building an agentic Operating System for the **Autonomous One Man Show**.
+
+My philosophy for OMS Next is simple. First, **Protect My Flow** with the fluid workflow. Second, **Augment My Brain** with a context-aware partner. And third, **Face My Reality** with a strategic CFO.
+
+By connecting Code to Cash, I removed the mental overhead of the unknown. I replaced "Gut Feeling" with "Data-Driven Confidence." I stopped being just a freelancer. I became a Founder who knows exactly where I stand.
+
+This isn't a product I'm selling. It's the secret weapon that allows me to outmaneuver teams much greater than just me.
+
+**Welcome to my One Man Show.**
+
+---
+
+### Let’s Connect
+
+I started OMS to scratch my own itch, but the deeper I got, the more I realized the pattern is universal: most organizations already track everything — KPIs, funnels, financial data. What’s missing is the **decision layer** — a system that queries this data on demand, runs structured scenarios, and surfaces recommendations a human can act on.
+
+If you’re building agentic systems for strategic decision-making, or just running your own one-person show and want to compare notes — I’d love to hear from you.
+
+*   **Twitter/X:** [@renerocksai](https://twitter.com/renerocksai)
+*   **LinkedIn:** [Rene Schallner](https://linkedin.com/in/rene-schallner)
+
+---
+
+### P.S.: The Lobster
+
+All the infrastructure (SDK) I built for my OMS Agent, I am now also happily using with [OpenClaw](https://openclaw.ai) 🦞!
+
+
