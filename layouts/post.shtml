@@ -1,120 +1,54 @@
 <extend template="base.shtml">
 <title id="title" :text="$page.title"></title>
 <head id="head">
-  <link
-    type="text/css"
-    rel="stylesheet"
-    href="$site.asset('term-highlight.css').link()"
-  >
-
-  <style>
-    #docs {
-        h1, h2, h3, h4 {
-            text-align: left;
-            a {
-                color: black;
-                text-decoration: none;
-            }
-        }
-        @media (prefers-color-scheme:dark) {
-          h1, h2, h3, h4 {
-            a {
-              color: white;
-            }
-          }
-        }
-
-        h2 {
-            font-size: 1.5rem;
-            border-bottom: 1px dashed #aaa;
-            margin-top: 2em;
-            a:hover::after {
-                content: ' #';
-            }
-        }
-
-        h3 {
-            font-size: 1.5rem;
-            a:hover::after {
-                content: ' ##';
-            }
-        }
-
-        h4 {
-            font-size: 1rem;
-            a:hover::after {
-                content: ' ###';
-            }
-        }
-
-    }
-
-    table {
-        font-size: 0.9em;
-    }
-    table th {
-        font-size: 1em;
-    }
-    table td {
-        white-space: nowrap;
-    }
-
-    p {
-      /* margin-top: 0.5rem; */
-      /* margin-bottom: 0.5rem; */
-    }
-
-  </style>
+  <link type="text/css" rel="stylesheet" href="$site.asset('term-highlight.css').link()">
 </head>
-<div id="content" class="foo">
-  <h1 :text="$page.title"></h1>
-  <p class="post-byline">
-    <span :text="$page.date.format('January 02, 2006')"></span>
-    •
-    <span :text="$page.wordCount().div(220).plus(1)"></span>
-    min read • by
-    <b :text="$page.author"></b>
-    <span :if="$page.custom.get?('coauthor')">
-      and
-      <a href="$page.custom.get('coauthor_link')" target="_blank"><b :text="$if"></b></a>
-    </span>
-  </p>
-  <div id="post-description" :html="$page.description"></div>
-  <div
-    :if="$page.custom.has('toc')"
-  >
-    <div class="toc block info">
-      <h1>&nbsp;Table of Contents</h1>
-      <div :html="$page.toc()"></div>
+<div id="content">
+  <article>
+    <header class="post-header">
+      <h1 :text="$page.title"></h1>
+      <div class="meta">
+        <time :text="$page.date.format('January 02, 2006')"></time>
+        ·
+        <span :text="$page.wordCount().div(220).plus(1)"></span>
+        min read · by
+        <span :text="$page.author"></span>
+        <span :if="$page.custom.get?('coauthor')">
+          and
+          <a href="$page.custom.get('coauthor_link')" target="_blank" :text="$if"></a>
+        </span>
+      </div>
+      <div class="tags" :loop="$page.tags">
+        <span class="tag" :text="$loop.it"></span>
+      </div>
+      <div id="post-description" :html="$page.description"></div>
+    </header>
+    <div :if="$page.custom.getOr('toc', false)">
+      <div class="block toc">
+        <h1>Contents</h1>
+        <div :html="$page.toc()"></div>
+      </div>
     </div>
-  </div>
-  <div id="docs">
     <div id="post-body" :html="$page.content()"></div>
-  </div>
-  <hr>
-  <div id="footnotes">
-    <ctx :if="$page.footnotes?()">
-      <ol :loop="$if">
-        <li id="$loop.it.def_id">
-          <ctx :html="$loop.it.html()"></ctx>
-        </li>
-      </ol>
-    </ctx>
-  </div>
-  <div id="prev-next">
-    <span :if="$page.prevPage?()">
-      <a href="$if.link()">←
-        <span :text="$if.title"></span></a>
-    </span>
-    <span :if="$page.hasPrev().and($page.hasNext())">&nbsp; • &nbsp;</span>
-    <span :if="$page.nextPage?()">
-      <a href="$if.link()"><span :text="$if.title"></span>
-        →</a>
-    </span>
-    <small :if="$page.hasPrev().or($page.hasNext())">&nbsp; or &nbsp;</small>
-    <small>
-      <a href="/">Back to the Homepage</a>
-    </small>
-  </div>
+    <div id="footnotes">
+      <ctx :if="$page.footnotes?()">
+        <hr>
+        <ol :loop="$if">
+          <li id="$loop.it.def_id">
+            <ctx :html="$loop.it.html()"></ctx>
+          </li>
+        </ol>
+      </ctx>
+    </div>
+    <hr>
+    <nav class="prev-next">
+      <ctx :if="$page.prevPage?()">
+        <a class="prev" href="$if.link()"><small>← previous</small><span :text="$if.title"></span></a>
+      </ctx>
+      <ctx :if="$page.nextPage?()">
+        <a class="next" href="$if.link()"><small>next →</small><span :text="$if.title"></span></a>
+      </ctx>
+    </nav>
+  </article>
 </div>
 <footer id="footer"></footer>

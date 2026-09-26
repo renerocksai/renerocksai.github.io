@@ -1,72 +1,70 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head id="head">
     <meta charset="UTF-8">
-    <meta name="description" content="@renerocksai - personal website">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Rene Schallner (@renerocksai): software engineer turned AI researcher and engineer, in Vienna.">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@renerocksai">
     <meta name="twitter:author" content="@renerocksai">
-    <meta name="twitter:description" content="@renerocksai - personal website">
+    <meta name="twitter:description" content="Rene Schallner (@renerocksai): software engineer turned AI researcher and engineer, in Vienna.">
     <meta name="twitter:title" content="$page.title.suffix(' | @renerocksai')">
     <meta name="twitter:image" content="$site.host_url.addPath($site.asset('reneglasses.png').link())">
     <meta property="og:type" content="website">
     <meta property="og:title" content="$page.title.suffix(' | @renerocksai')">
     <meta property="og:image" content="$site.host_url.addPath($site.asset('reneglasses.png').link())">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="alternate" type="application/rss+xml" title="@renerocksai blog" href="$site.page('blog').alternative('rss').link()">
     <title id="title">
       <super>
       - @renerocksai
     </title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="preload" href="$site.asset('fonts/jbm/JetBrainsMono-ExtraBold.woff2').link()" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" type="text/css" href="$site.asset('main.css').link()">
     <link rel="stylesheet" type="text/css" href="$site.asset('highlight.css').link()">
     <super>
   </head>
   <body>
-    <nav>
-      <div class="navleft noupper" style="z-index:10">
-        <span>@</span><a href="https://renerocks.ai/">renerocksai</a>
-      </div>
-      <div class="spacer"></div>
-      <button class="hamburger" aria-label="Toggle menu">
-         &#9776;
-        <!-- Unicode for hamburger icon (☰) -->
-      </button>
-      <div class="menu">
-        <a href="/">Home</a>
-        <div class="menu-item-with-rss">
-          <a href="$site.page('blog').link()">Blog</a>
-          <a href="$site.page('blog').alternative('rss').link()" type="$site.page('blog').alternative('rss').type">
-            <img src="$site.asset('Feed-icon.svg').link()" height=14  >
+    <header class="site-nav">
+      <div class="wrap nav-inner">
+        <a class="brand" href="/"><span class="bolt">⚡</span><span class="at">@</span>renerocksai</a>
+        <button class="hamburger" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+        <nav class="menu">
+          <a href="/">home</a>
+          <a href="$site.page('blog').link()">blog</a>
+          <a href="$site.page('projects').link()">projects</a>
+          <a href="$site.page('about').link()">about</a>
+          <a href="https://github.com/renerocksai" target="_blank">github ↗</a>
+          <a class="rss" href="$site.page('blog').alternative('rss').link()" title="RSS feed of the blog" aria-label="RSS feed of the blog">
+            <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2 2.75A.75.75 0 0 1 2.75 2C8.963 2 14 7.037 14 13.25a.75.75 0 0 1-1.5 0A9.75 9.75 0 0 0 2.75 3.5.75.75 0 0 1 2 2.75Zm0 4.5a.75.75 0 0 1 .75-.75 6.75 6.75 0 0 1 6.75 6.75.75.75 0 0 1-1.5 0C8 10.35 5.65 8 2.75 8A.75.75 0 0 1 2 7.25ZM3 11a2 2 0 1 1 0 4 2 2 0 0 1 0-4Z"/></svg>
           </a>
-        </div>
-        <div class="menu-item-with-rss">
-          <a href="$site.page('projects').link()">Projects</a>
-          <a href="$site.page('projects').alternative('rss').link()" type="$site.page('projects').alternative('rss').type">
-            <img src="$site.asset('Feed-icon.svg').link()" height=14  >
-          </a>
-        </div>
-        <a href="$site.page('about').link()">About</a>
-        <a href="https://github.com/renerocksai" target="_blank">
-          GitHub
-        </a>
+        </nav>
       </div>
-      <div class="spacer"></div>
-    </nav>
-    <div id="content">
+    </header>
+    <div id="content" class="wrap">
       <super>
     </div>
-    <footer id="footer">
+    <footer id="footer" class="wrap site-footer">
       <super>
+      <div>
+        <span class="bolt">⚡</span> zig <span class="bolt">⚡</span> · Vienna ·
+        <a href="https://x.com/renerocksai" target="_blank">@renerocksai</a> ·
+        <a href="https://github.com/renerocksai" target="_blank">github</a> ·
+        <a href="$site.page('blog').alternative('rss').link()">rss</a> ·
+        made with <a href="https://zine-ssg.io" target="_blank">Zine</a>
+      </div>
     </footer>
     <script>
-      document.querySelector('.hamburger').addEventListener('click', function() {
-        document.querySelector('.menu').classList.toggle('active');
-        console.log("CLICK");
-    });
+      const burger = document.querySelector('.hamburger');
+      burger.addEventListener('click', function () {
+        const open = document.querySelector('.menu').classList.toggle('active');
+        burger.setAttribute('aria-expanded', open);
+      });
     </script>
   </body>
 </html>

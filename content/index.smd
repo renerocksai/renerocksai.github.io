@@ -6,17 +6,157 @@
 .draft = false,
 ---
 
-Hi, I'm Rene Schallner.
+[]($section.id('intro'))
+Hi, I'm **Rene Schallner**. I build software, tools and products where AI meets
+research. I run [AI Research & Technology Lab](https://technologylab.ai) in
+Vienna, where I'm building [QualCode](https://qualcode.ai) and
+[LaBrowser](https://labrowser.technologylab.ai). Before that: Chief Founding
+Engineer at [ZML](https://zml.ai), eight years at [NIM](https://nim.org), medical
+tech and telecom.
 
-I build things — software, tools, products — at the intersection of AI and research. Currently running [AI Research & Technology Lab](https://technologylab.ai) in Vienna, where I'm building [QualCode](https://qualcode.ai) and [LaBrowser](https://labrowser.technologylab.ai).
+Most of my side projects start with a question: **can I do _this_ without
+_that_?** I build the thing, use it for real, and write down the verdict. The
+good ones grow up and get a successor. [More about me](/about/).
 
-Before that: Chief Founding Engineer at [ZML](https://zml.ai), 8 years at [NIM](https://nim.org) (Nuremberg Institute for Market Decisions), medical tech, telecom. I've been writing code for a long time and I still find it genuinely interesting.
+[]($section.id('tree'))
+My projects aren't a list. They're a family tree: each line is a lineage, and
+the good ideas keep coming back in the next project.
 
-># [Open Source]($block.attrs('warning'))
->- **⚡ZAP⚡:** [blazingly fast backends in zig](https://zigzap.org)
->- **Telekasten.nvim:** [Note-taking / Zettelkasten in Neovim](https://github.com/nvim-telekasten/telekasten.nvim)
->- More on the [projects page](/projects)
+[]($section.id('lineages'))
+- **Notes:** [sublime_zk](/projects/sublime_zk/) → [sublimeless_zk](/projects/sublimeless_zk/) → [telekasten.nvim](/projects/telekasten/) → [omajop](https://github.com/renerocksai/omajop) → [omajot](https://github.com/renerocksai/omajot). Zettelkasten tools since 2017, one editor at a time.
+- **Web, in Zig:** [zap](/projects/zap/) → [bounded/http](https://github.com/technologylab-ai/bounded-http) → [baz](https://github.com/technologylab-ai/baz). From a C foundation to pure Zig with hard limits.
+- **Slides:** [Bûllets](/projects/bullets/) → [slides](/projects/slides/) → [rayslides](https://github.com/technologylab-ai/rayslides). Plain text in, great talk out. Third attempt, best one.
+- **No cloud:** [dockercr](https://github.com/renerocksai/dockercr) → [omajot](https://github.com/renerocksai/omajot). If SSH or Tailscale can do the job, I don't need somebody's cloud.
 
-I [write here](/blog) about what I'm building, thinking about, and occasionally getting wrong.
+**omajot is where the lines meet:** notes from the green line, a hub served by
+baz from the orange one, and the no-cloud rule from the blue one.
 
-Feel free to reach out on [X](https://twitter.com/renerocksai) or [LinkedIn](https://linkedin.com/in/rene-schallner), or browse [GitHub](https://github.com/renerocksai).
+[]($section.id('omarchy'))
+[Omarchy](https://omarchy.org) is my desktop. When I miss something in the bar,
+I write a plugin for it. There are four so far, and each one installs with a
+single command.
+
+[]($section.id('plugins'))
+># [omajot]($block.attrs('plugin'))
+>
+> [](<$image.siteAsset('profile/omarchy/omajot.webp').alt('The omajot main window on Omarchy')>)
+>
+>My own notes app, synced by my own hub. A dropdown and a main window in the
+>bar, full keyboard control, and the same notes in the terminal and on my
+>phone. [Repo →](https://github.com/renerocksai/omajot)
+
+># [omajop]($block.attrs('plugin'))
+>
+> [](<$image.siteAsset('profile/omarchy/omajop.webp').alt('The omajop panel: folders and tags, notes, and the rendered note')>)
+>
+>A Joplin notes browser: folders and tags, the note list and the rendered
+>note, one click away. omajot's predecessor. When you're ready to move, omajot
+>imports Joplin in one command. [Repo →](https://github.com/renerocksai/omajop)
+
+># [omapress]($block.attrs('plugin'))
+>
+> [](<$image.siteAsset('profile/omarchy/omapress.webp').alt('The omapress panel listing the latest Omarchy news')>)
+>
+>Omarchy news in the bar. The newspaper turns red when there are unread posts,
+>and a keyboard-driven panel reads them without a browser. Works offline.
+>[Repo →](https://github.com/renerocksai/omapress)
+
+># [neomarchy]($block.attrs('plugin'))
+>
+> [](<$image.siteAsset('profile/omarchy/neomarchy.webp').alt('The neomarchy panel with favorite neowake sessions and a player')>)
+>
+>Search, favorite and play [neowake](https://app.neowake.de/) sessions from the
+>bar. Playback runs through mpv with MPRIS, so the media keys just work.
+>[Repo →](https://github.com/renerocksai/neomarchy)
+
+[]($section.id('install'))
+```sh
+omarchy plugin add https://github.com/renerocksai/omajot --enable
+omarchy plugin add https://github.com/renerocksai/omajop --enable
+omarchy plugin add https://github.com/renerocksai/omapress --enable
+omarchy plugin add https://github.com/renerocksai/neomarchy --enable
+```
+
+omajot also needs its hub on an always-on machine: see
+[Get started](https://renerocks.ai/omajot/get-started.html).
+
+[]($section.id('cases'))
+The question, the trade, the verdict.
+
+># [Synced notes with no cloud at all?]($block.attrs('case'))
+>[omajot](https://github.com/renerocksai/omajot) · Zig · CRDT · WASM · Tailscale
+>
+>Apple-Notes-like markdown notes in the Omarchy bar, in the terminal, and on my
+>iPhone. No Dropbox: a small Zig hub syncs every device over Tailscale. The hub
+>runs on my always-on M3 Max, the same box my coding agents already live on.
+>Hub-and-spoke is a pattern I trust, so notes got the same treatment. A CRDT
+>written in Zig merges concurrent edits, and the same Zig core runs natively on
+>the desktop and as `core.wasm` in the phone's web app. The hub is a
+>[baz](https://github.com/technologylab-ai/baz) app.
+>
+>**Trade:** Dropbox's zero-setup sync, for notes that never leave my own
+>machines, work offline, never conflict, and that agents can script.
+>
+>[✓ verdict]($text.attrs('verdict')) **Daily driver.** My notes live there now.
+
+># [A container registry with nothing but SSH?]($block.attrs('case'))
+>[dockercr](https://github.com/renerocksai/dockercr) · Docker · SSH
+>
+>omajot's older sibling in spirit. ghcr.io has download limits. A self-hosted
+>registry wants TLS, a CA and access tokens. dockercr skips all of it: the
+>registry only listens on loopback, and SSH port forwarding does the
+>authentication and the encryption. No Docker Hub, no certificates.
+>
+>[✓ verdict]($text.attrs('verdict')) Push to production like a boss.
+
+># [Fast, and never past its limits?]($block.attrs('case'))
+>[bounded/http](https://github.com/technologylab-ai/bounded-http) + [baz](https://github.com/technologylab-ai/baz) · Zig 0.16 · io_uring · kqueue · IOCP
+>
+>[Zap](/projects/zap/) made Zig backends blazingly fast on top of facil.io, a C
+>library. bounded/http replaces that foundation with pure Zig on `io_uring`,
+>`kqueue` and IOCP, inspired by [TigerStyle](https://tigerstyle.dev):
+>connections, buffers, queues and workers are reserved up front. When capacity
+>runs out, it pushes back instead of growing. On Linux it needs no libc, so a
+>server can be one static binary. Baz (*Bounded Async Zap*) puts Zap's typed
+>endpoints on top, with streaming, SSE, Mustache templates and cookies.
+>
+>[✓ verdict]($text.attrs('verdict')) Good enough to trust with my notes: it runs the omajot hub.
+
+># [Can I build the CPU I drew in the nineties?]($block.attrs('case'))
+>[rrisc](/projects/rrisc/) · VHDL · FPGA
+>
+>In the early nineties I designed a small *Radical RISC* CPU on paper. At
+>Christmas 2020 I finally built it: VHDL, simulated with ghdl and gtkwave from
+>vim and tmux, with its own assembler, running on a Xilinx Spartan-7 FPGA board.
+>[The whole story](https://renerocksai.github.io/rrisc) is written up, from
+>microcode sketches to the first executed instruction.
+>
+>[✓ verdict]($text.attrs('verdict')) Nearly thirty years late, and it runs.
+
+># [Can slides stay plain text and still not suck?]($block.attrs('case'))
+>[rayslides](https://github.com/technologylab-ai/rayslides) · Zig · raylib
+>
+>My third answer to the same question. [Bûllets](/projects/bullets/) (2020)
+>turned the Godot game engine into a slide show: interactive animations, a game
+>in your deck, and a multiplayer mode. [Slides](/projects/slides/) (2021, my
+>first Zig project) went small: one executable, Dear ImGui and OpenGL, a
+>markdown-ish text format, at 10 000 FPS. rayslides, built on raylib, keeps the
+>readable source and adds a visual Studio that stays in sync with it, reveals,
+>transitions and morph animations, and an embedded Neovim. Bûllets' multiplayer
+>grew up, too: it's now a phone remote with speaker notes, plus Crowdplay
+>audience polls.
+>
+>[✓ verdict]($text.attrs('verdict')) Nobody has noticed I'm not using PowerPoint.
+
+># [Can a database built for money sell conference tickets?]($block.attrs('case'))
+>[TigerFans](/projects/tigerfans/) · TigerBeetle · FastAPI · Python
+>
+>A ticket booking system on [TigerBeetle](https://tigerbeetle.com). Tickets and
+>goodies are accounts and transfers. A checkout places a time-limited hold, a
+>pending transfer, and the payment webhook either finalizes or voids it. It
+>uses FastAPI, Redis and PostgreSQL, has load tests, and I wrote an
+>auto-batcher for the async TigerBeetle client along the way. The
+>[write-up](/blog/2025-11-02--tigerfans/) has the details, or
+>[try it live](https://tigerfans.io).
+>
+>[✓ verdict]($text.attrs('verdict')) If you can reserve it or run out of it, TigerBeetle can count it.

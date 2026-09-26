@@ -1,43 +1,24 @@
 <extend template="base.shtml">
-<title :text="$page.title" id="title"></title>
-<head id="head">
-  <link
-  type="text/css"
-  rel="stylesheet"
-  href="$site.asset('term-highlight.css').link()"
->
-</head>
-<div
-  id="content"
->
-  <style>
-    h1,
-    h2,
-    h3 {
-      text-align: center;
-    }
-  </style>
-  <div style="display:flex; flex-direction:column; align-items:center;">
-      <div style="display: flex; flex-direction: row; align-items:center; gap:20px;">
-        <h1
-          :text="$page.title"
-          style="margin-bottom: 1.75rem;"
-        >
-        </h1>
-        <ctx alt="$page.alternative('rss')">
-          <a href="$ctx.alt.link()" type="$ctx.alt.type">
-            <img src="$site.asset('Feed-icon.svg').link()" height=40  >
-          </a>
-        </ctx>
+<title id="title" :text="$page.title"></title>
+<head id="head"></head>
+<div id="content">
+  <header class="page-title">
+    <h1 :text="$page.title"></h1>
+    <ctx alt="$page.alternative('rss')">
+      <a class="rss" href="$ctx.alt.link()" type="$ctx.alt.type" title="RSS feed" aria-label="RSS feed">
+        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2 2.75A.75.75 0 0 1 2.75 2C8.963 2 14 7.037 14 13.25a.75.75 0 0 1-1.5 0A9.75 9.75 0 0 0 2.75 3.5.75.75 0 0 1 2 2.75Zm0 4.5a.75.75 0 0 1 .75-.75 6.75 6.75 0 0 1 6.75 6.75.75.75 0 0 1-1.5 0C8 10.35 5.65 8 2.75 8A.75.75 0 0 1 2 7.25ZM3 11a2 2 0 1 1 0 4 2 2 0 0 1 0-4Z"/></svg>
+      </a>
+    </ctx>
+  </header>
+  <div class="lede" :html="$page.content()"></div>
+  <div class="post-list" :loop="$page.subpages()">
+    <div class="post-item">
+      <time :text="$loop.it.date.format('Jan 02, 2006')"></time>
+      <div>
+        <a class="title" href="$loop.it.link()" :text="$loop.it.title"></a>
+        <p :if="$loop.it.description.len().gt(0)" :text="$loop.it.description"></p>
       </div>
-  </div>
-  <div>
-      <div :html="$page.content()"></div>
-      <div :loop="$page.subpages()">
-        <a href="$loop.it.link()" class="post-link" :text="$loop.it.title"></a>
-        <span :if="$loop.it.description.len().eq(0)" class="post-byline" style="margin-bottom: 1rem;" :text="$loop.it.date.format('January 02, 2006')"></span>
-        <span :if="$loop.it.description.len().gt(0)" class="post-byline" style="margin-bottom: 1rem;" :text="$loop.it.date.format('January 02, 2006').suffix(' - ', $loop.it.description)"></span>
-      </div>
+    </div>
   </div>
 </div>
 <footer id="footer"></footer>

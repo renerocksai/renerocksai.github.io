@@ -1,40 +1,64 @@
 <extend template="base.shtml">
 <title id="title">Home</title>
-<head id="head">
-  <link
-  type="text/css"
-  rel="stylesheet"
-  href="$site.asset('term-highlight.css').link()"
->
-</head>
-<div
-  id="content"
->
-  <style>
-    h1,
-    h2,
-    h3 {
-      text-align: center;
-    }
+<head id="head"></head>
+<div id="content">
+  <section class="hero">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="$site.asset('profile/hero-dark.svg').link()">
+      <img src="$site.asset('profile/hero-light.svg').link()" width="1200" height="360" alt="Rene Schallner: software engineer turned AI researcher and engineer. I build the tools I use every day.">
+    </picture>
+    <div class="links">
+      <a class="primary" href="$site.page('blog').link()">read the blog</a>
+      <a href="https://github.com/renerocksai" target="_blank">github</a>
+      <a href="https://x.com/renerocksai" target="_blank">x</a>
+      <a href="https://www.linkedin.com/in/rene-schallner/" target="_blank">linkedin</a>
+      <a href="https://github.com/sponsors/renerocksai" target="_blank">sponsor</a>
+    </div>
+  </section>
 
-    .profile-pic {
-      border-radius: 50%;
-      border: 5px solid lightblue;
-      margin-bottom: 1rem;
-    }
-  </style>
-  <h3 style="margin-top:0;"><br>
-    <img src="$site.asset('reneglasses.png').link()" height=200  class="profile-pic"></h3>
-  <div id="page" :html="$page.content()"></div>
+  <section class="intro">
+    <img class="avatar" src="$site.asset('reneglasses.png').link()" alt="Rene Schallner">
+    <div :html="$page.contentSection('intro')"></div>
+  </section>
+
+  <section>
+    <h2>Latest writing</h2>
+    <div class="post-list" :loop="$site.page('blog').subpages().slice(0, 5)">
+      <div class="post-item">
+        <time :text="$loop.it.date.format('Jan 02, 2006')"></time>
+        <div>
+          <a class="title" href="$loop.it.link()" :text="$loop.it.title"></a>
+          <p :if="$loop.it.description.len().gt(0)" :text="$loop.it.description"></p>
+        </div>
+      </div>
+    </div>
+    <a class="more" href="$site.page('blog').link()">all posts →</a>
+  </section>
+
+  <section>
+    <h2>The family tree</h2>
+    <div :html="$page.contentSection('tree')"></div>
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="$site.asset('profile/map-dark.svg').link()">
+      <img class="full" src="$site.asset('profile/map-light.svg').link()" width="1000" height="660" alt="A metro map of my projects. Notes line: sublime_zk, sublimeless_zk, telekasten.nvim, omajop, omajot. Web line: zap, bounded/http, baz, which serves the omajot hub. Slides line: Bûllets, slides, rayslides; bullets-server's multiplayer grew into rayslides' phone remote. No-cloud line: dockercr leads to omajot.">
+    </picture>
+    <div :html="$page.contentSection('lineages')"></div>
+  </section>
+
+  <section>
+    <h2>Omarchy</h2>
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="$site.asset('profile/omarchy-dark.svg').link()">
+      <img class="full" src="$site.asset('profile/omarchy-light.svg').link()" width="1200" height="420" alt="The Omarchy wordmark above an Omarchy bar holding my four plugins: omajot, omajop, omapress and neomarchy.">
+    </picture>
+    <div :html="$page.contentSection('omarchy')"></div>
+    <div :html="$page.contentSection('plugins')"></div>
+    <div :html="$page.contentSection('install')"></div>
+  </section>
+
+  <section>
+    <h2>Case studies</h2>
+    <div :html="$page.contentSection('cases')"></div>
+  </section>
 </div>
-<footer id="footer">
-  <small class="noupper" style="color:#606060;font-weight:normal;">
-     &copy; in 2024 by &nbsp;
-    <a href="https://x.com/renerocksai" target="_blank">@renerocksai</a>
-    —
-    <i>made with &nbsp;
-      <a href="https://zine-ssg.io" target="_blank">
-        Zine
-      </a></i>
-  </small>
-</footer>
+<footer id="footer"></footer>

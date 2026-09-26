@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 660" width="1000" height="660" role="img" aria-label="A metro map of Rene's projects. Notes line: sublime_zk, sublimeless_zk, telekasten.nvim, omajop, omajot. Web line: zap, bounded/http, baz, which serves the omajot hub. Slides line: Bullets, slides, rayslides, with bullets-server's multiplayer growing into rayslides' phone remote. No-cloud line: dockercr leads to omajot.">
+<defs>
+  <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse">
+    <circle cx="2" cy="2" r="1.2" fill="#d8dee4"/>
+  </pattern>
+  <clipPath id="frame"><rect width="1000" height="660" rx="18"/></clipPath>
+</defs>
+<g clip-path="url(#frame)">
+<rect width="1000" height="660" fill="#f6f8fa"/>
+<rect width="1000" height="660" fill="url(#dots)"/>
+<text x="40" y="46" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="17" font-weight="400" fill="#59636e" text-anchor="start" >// how my projects are related</text>
+<text x="960" y="46" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="15" font-weight="400" fill="#59636e" text-anchor="end" font-style="italic">stars refresh daily</text>
+<path d="M 200 500 Q 200 590 250 590 L 700 590 Q 800 590 800 500" stroke="#8250df" stroke-width="4" fill="none" stroke-dasharray="2 10" stroke-linecap="round" opacity="0.9"/>
+<text x="560" y="578" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="15" font-weight="400" fill="#8250df" text-anchor="middle" font-style="italic">multiplayer → phone remote + Crowdplay</text>
+<path id="line-nocloud" d="M 480 100 L 830 100 Q 880 100 880 150 L 880 220" stroke="#0a7f8a" stroke-width="5" fill="none" stroke-linecap="round" stroke-dasharray="1 13"/>
+<rect x="365.2" y="83" width="104.8" height="34" rx="17" fill="#0a7f8a"/>
+<text x="417.6" y="106" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle" >no cloud</text>
+<rect x="-11" y="-3.5" width="22" height="7" rx="3.5" fill="#1f2328" opacity="0.9"><animateMotion dur="7s" repeatCount="indefinite" rotate="auto"><mpath href="#line-nocloud"/></animateMotion></rect>
+<path id="line-notes" d="M 150 220 L 880 220" stroke="#1a7f37" stroke-width="8" fill="none" stroke-linecap="round"/>
+<rect x="64.0" y="203" width="76.0" height="34" rx="17" fill="#1a7f37"/>
+<text x="102.0" y="226" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle" >notes</text>
+<rect x="-11" y="-3.5" width="22" height="7" rx="3.5" fill="#1f2328" opacity="0.9"><animateMotion dur="11s" repeatCount="indefinite" rotate="auto"><mpath href="#line-notes"/></animateMotion></rect>
+<path id="line-web" d="M 480 370 L 830 370 Q 880 370 880 320 L 880 220" stroke="#bc6c00" stroke-width="8" fill="none" stroke-linecap="round"/>
+<rect x="355.6" y="353" width="114.39999999999999" height="34" rx="17" fill="#bc6c00"/>
+<text x="412.8" y="376" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle" >web · zig</text>
+<rect x="-11" y="-3.5" width="22" height="7" rx="3.5" fill="#1f2328" opacity="0.9"><animateMotion dur="6s" repeatCount="indefinite" rotate="auto"><mpath href="#line-web"/></animateMotion></rect>
+<path id="line-slides" d="M 150 500 L 800 500" stroke="#8250df" stroke-width="8" fill="none" stroke-linecap="round"/>
+<rect x="54.400000000000006" y="483" width="85.6" height="34" rx="17" fill="#8250df"/>
+<text x="97.2" y="506" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle" >slides</text>
+<rect x="-11" y="-3.5" width="22" height="7" rx="3.5" fill="#1f2328" opacity="0.9"><animateMotion dur="9s" repeatCount="indefinite" rotate="auto"><mpath href="#line-slides"/></animateMotion></rect>
+<text x="578" y="86" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="15" font-weight="400" fill="#0a7f8a" text-anchor="start" font-style="italic">ssh / tailscale, not somebody's cloud</text>
+<text x="866" y="312" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="15" font-weight="400" fill="#bc6c00" text-anchor="end" font-style="italic">baz serves the hub</text>
+<circle cx="545" cy="100" r="10" fill="#ffffff" stroke="#0a7f8a" stroke-width="4"/>
+<text x="545" y="136" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="19" font-weight="700" fill="#1f2328" text-anchor="middle" >dockercr</text>
+<text x="545" y="158" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="15" font-weight="400" fill="#59636e" text-anchor="middle" >2022</text>
+<circle cx="190" cy="220" r="10" fill="#ffffff" stroke="#1a7f37" stroke-width="4"/>
+<text x="190" y="256" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="19" font-weight="700" fill="#1f2328" text-anchor="middle" >sublime_zk</text>
+<text x="190" y="278" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="15" font-weight="400" fill="#59636e" text-anchor="middle" >2017 · ★ 505</text>
+<circle cx="350" cy="220" r="10" fill="#ffffff" stroke="#1a7f37" stroke-width="4"/>
+<text x="350" y="256" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="19" font-weight="700" fill="#1f2328" text-anchor="middle" >sublimeless_zk</text>
+<text x="350" y="278" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="15" font-weight="400" fill="#59636e" text-anchor="middle" >2018 · ★ 203</text>
+<circle cx="545" cy="220" r="10" fill="#ffffff" stroke="#1a7f37" stroke-width="4"/>
+<text x="545" y="256" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="19" font-weight="700" fill="#1f2328" text-anchor="middle" >telekasten.nvim</text>
+<text x="545" y="278" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="15" font-weight="400" fill="#59636e" text-anchor="middle" >2021 · ★ 1.7k</text>
+<circle cx="720" cy="220" r="10" fill="#ffffff" stroke="#1a7f37" stroke-width="4"/>
+<text x="720" y="256" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="19" font-weight="700" fill="#1f2328" text-anchor="middle" >omajop</text>
+<text x="720" y="278" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="15" font-weight="400" fill="#59636e" text-anchor="middle" >2026</text>
+<circle cx="545" cy="370" r="10" fill="#ffffff" stroke="#bc6c00" stroke-width="4"/>
+<text x="545" y="406" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="19" font-weight="700" fill="#1f2328" text-anchor="middle" >zap</text>
+<text x="545" y="428" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="15" font-weight="400" fill="#59636e" text-anchor="middle" >2023 · ★ 3.4k</text>
+<circle cx="670" cy="370" r="10" fill="#ffffff" stroke="#bc6c00" stroke-width="4"/>
+<text x="670" y="406" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="19" font-weight="700" fill="#1f2328" text-anchor="middle" >bounded/http</text>
+<text x="670" y="428" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="15" font-weight="400" fill="#59636e" text-anchor="middle" >2026 · ★ 9</text>
+<circle cx="800" cy="370" r="10" fill="#ffffff" stroke="#bc6c00" stroke-width="4"/>
+<text x="800" y="406" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="19" font-weight="700" fill="#1f2328" text-anchor="middle" >baz</text>
+<text x="800" y="428" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="15" font-weight="400" fill="#59636e" text-anchor="middle" >2026 · ★ 26</text>
+<circle cx="200" cy="500" r="10" fill="#ffffff" stroke="#8250df" stroke-width="4"/>
+<text x="200" y="456" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="19" font-weight="700" fill="#1f2328" text-anchor="middle" >Bûllets</text>
+<text x="200" y="478" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="15" font-weight="400" fill="#59636e" text-anchor="middle" >2020 · ★ 19</text>
+<circle cx="545" cy="500" r="10" fill="#ffffff" stroke="#8250df" stroke-width="4"/>
+<text x="545" y="456" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="19" font-weight="700" fill="#1f2328" text-anchor="middle" >slides</text>
+<text x="545" y="478" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="15" font-weight="400" fill="#59636e" text-anchor="middle" >2021 · ★ 60</text>
+<circle cx="800" cy="500" r="10" fill="#ffffff" stroke="#8250df" stroke-width="4"/>
+<text x="800" y="456" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="19" font-weight="700" fill="#1f2328" text-anchor="middle" >rayslides</text>
+<text x="800" y="478" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="15" font-weight="400" fill="#59636e" text-anchor="middle" >2025 · ★ 8</text>
+<circle cx="380" cy="590" r="7" fill="#ffffff" stroke="#8250df" stroke-width="4"/>
+<text x="380" y="626" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="19" font-weight="700" fill="#1f2328" text-anchor="middle" >bullets-server</text>
+<text x="380" y="648" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="15" font-weight="400" fill="#59636e" text-anchor="middle" >2020</text>
+<circle cx="880" cy="220" r="18" fill="none" stroke="#1a7f37" stroke-width="3"><animate attributeName="r" values="18;38" dur="2.4s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.7;0" dur="2.4s" repeatCount="indefinite"/></circle>
+<circle cx="880" cy="220" r="18" fill="#ffffff" stroke="#1f2328" stroke-width="6"/>
+<circle cx="880" cy="220" r="7" fill="#1a7f37"/>
+<text x="908" y="218" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="21" font-weight="800" fill="#1f2328" text-anchor="start" >omajot</text>
+<text x="908" y="239" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="15" font-weight="400" fill="#59636e" text-anchor="start" >2026</text>
+</g>
+<rect x="0.5" y="0.5" width="999" height="659" rx="18" fill="none" stroke="#d0d7de"/>
+</svg>

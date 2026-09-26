@@ -5,6 +5,9 @@ on:
   push:
     branches: ["master"]
   workflow_dispatch:
+  # Weekly, to pick up fresh star counts in the project map
+  schedule:
+    - cron: "37 5 * * 1"
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
@@ -33,6 +36,13 @@ jobs:
         uses: kristoff-it/setup-zine@v1
         with:
           version: v0.11.1
+
+      - name: Refresh artwork from github.com/renerocksai/renerocksai
+        run: |
+          base=https://raw.githubusercontent.com/renerocksai/renerocksai/main/assets
+          for f in hero-dark hero-light map-dark map-light omarchy-dark omarchy-light; do
+            curl -fsSL "$base/$f.svg" -o "assets/profile/$f.svg" || echo "keeping committed $f.svg"
+          done
 
       - name: Build
         run: zine release

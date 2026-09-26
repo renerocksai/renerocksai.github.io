@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" width="1200" height="360" role="img" aria-label="Rene Schallner: software engineer turned AI researcher and engineer. I build the tools I use every day.">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#161b22"/><stop offset="1" stop-color="#0d1117"/>
+  </linearGradient>
+  <linearGradient id="boltfill" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#ffd33d"/><stop offset="1" stop-color="#f7a41d"/>
+  </linearGradient>
+  <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse">
+    <circle cx="2" cy="2" r="1.4" fill="#21262d"/>
+  </pattern>
+  <linearGradient id="fade" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#fff" stop-opacity="0.15"/><stop offset="1" stop-color="#fff" stop-opacity="1"/>
+  </linearGradient>
+  <mask id="fademask"><rect width="1200" height="360" fill="url(#fade)"/></mask>
+  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+    <feGaussianBlur stdDeviation="14" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <radialGradient id="halo" cx="0.5" cy="0.5" r="0.5">
+    <stop offset="0" stop-color="#f7a41d" stop-opacity="0.28"/><stop offset="1" stop-color="#f7a41d" stop-opacity="0"/>
+  </radialGradient>
+  <clipPath id="frame"><rect width="1200" height="360" rx="18"/></clipPath>
+  <clipPath id="typed"><rect x="102" y="284" height="40" width="0">
+    <animate attributeName="width" begin="0.8s" dur="2.6s" fill="freeze" calcMode="discrete" values="0.0;12.0;24.0;36.0;48.0;60.0;72.0;84.0;96.0;108.0;120.0;132.0;144.0;156.0;168.0;180.0;192.0;204.0;216.0;228.0;240.0;252.0;264.0;276.0;288.0;300.0;312.0;324.0;336.0;348.0;360.0;372.0;384.0;396.0" keyTimes="0.0000;0.0303;0.0606;0.0909;0.1212;0.1515;0.1818;0.2121;0.2424;0.2727;0.3030;0.3333;0.3636;0.3939;0.4242;0.4545;0.4848;0.5152;0.5455;0.5758;0.6061;0.6364;0.6667;0.6970;0.7273;0.7576;0.7879;0.8182;0.8485;0.8788;0.9091;0.9394;0.9697;1.0000"/>
+  </rect></clipPath>
+  <style>
+    .flow { animation: flow 3.2s linear infinite; }
+    @keyframes flow { from { stroke-dashoffset: 234; } to { stroke-dashoffset: 0; } }
+    .bolt { animation: flicker 6s ease-in-out infinite; }
+    @keyframes flicker { 0%, 100% { opacity: 1; } 46% { opacity: 1; } 48% { opacity: .55; } 50% { opacity: 1; } 52% { opacity: .75; } 54% { opacity: 1; } }
+    @media (prefers-reduced-motion: reduce) { .flow, .bolt { animation: none; } }
+  </style>
+</defs>
+<g clip-path="url(#frame)">
+  <rect width="1200" height="360" fill="url(#bg)"/>
+  <rect width="1200" height="360" fill="url(#dots)" mask="url(#fademask)"/>
+  <circle cx="1030" cy="180" r="230" fill="url(#halo)"/>
+  <path d="M 954 198 L 910 198 L 890 218 L 850 218" stroke="#30363d" stroke-width="3" fill="none" stroke-linejoin="round"/><path class="flow" d="M 954 198 L 910 198 L 890 218 L 850 218" stroke="#f7a41d" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="14 220" style="animation-delay:-0.0s"/><path d="M 992 120 L 950 120 L 925 95 L 870 95" stroke="#30363d" stroke-width="3" fill="none" stroke-linejoin="round"/><path class="flow" d="M 992 120 L 950 120 L 925 95 L 870 95" stroke="#f7a41d" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="14 220" style="animation-delay:-0.7s"/><path d="M 978 290 L 940 290 L 915 315 L 860 315" stroke="#30363d" stroke-width="3" fill="none" stroke-linejoin="round"/><path class="flow" d="M 978 290 L 940 290 L 915 315 L 860 315" stroke="#f7a41d" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="14 220" style="animation-delay:-1.4s"/><path d="M 1092 160 L 1130 160 L 1150 140 L 1180 140" stroke="#30363d" stroke-width="3" fill="none" stroke-linejoin="round"/><path class="flow" d="M 1092 160 L 1130 160 L 1150 140 L 1180 140" stroke="#f7a41d" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="14 220" style="animation-delay:-2.1s"/><path d="M 1070 60 L 1100 60 L 1125 35" stroke="#30363d" stroke-width="3" fill="none" stroke-linejoin="round"/><path class="flow" d="M 1070 60 L 1100 60 L 1125 35" stroke="#f7a41d" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="14 220" style="animation-delay:-2.8s"/><path d="M 1030 250 L 1090 250 L 1110 270 L 1180 270" stroke="#30363d" stroke-width="3" fill="none" stroke-linejoin="round"/><path class="flow" d="M 1030 250 L 1090 250 L 1110 270 L 1180 270" stroke="#f7a41d" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="14 220" style="animation-delay:-3.5s"/><circle cx="850" cy="218" r="6" fill="#161b22" stroke="#30363d" stroke-width="3"/><circle cx="870" cy="95" r="6" fill="#161b22" stroke="#30363d" stroke-width="3"/><circle cx="860" cy="315" r="6" fill="#161b22" stroke="#30363d" stroke-width="3"/><circle cx="1180" cy="140" r="6" fill="#161b22" stroke="#30363d" stroke-width="3"/><circle cx="1125" cy="35" r="6" fill="#161b22" stroke="#30363d" stroke-width="3"/><circle cx="1180" cy="270" r="6" fill="#161b22" stroke="#30363d" stroke-width="3"/>
+  <polygon class="bolt" points="1062,48 954,198 1016,198 978,314 1104,150 1040,150 1080,48" fill="url(#boltfill)" filter="url(#glow)"/>
+
+  <text x="64" y="76" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="20" font-weight="600" fill="#3fb950" text-anchor="start" >rene@vienna</text><text x="196" y="76" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="20" font-weight="400" fill="#8b949e" text-anchor="start" >:</text><text x="208" y="76" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="20" font-weight="600" fill="#d2a8ff" text-anchor="start" >~/code</text><text x="292" y="76" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="20" font-weight="400" fill="#8b949e" text-anchor="start" >$ whoami</text>
+  <text x="60" y="158" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="78" font-weight="800" fill="#e6edf3" text-anchor="start" letter-spacing="-1">Rene Schallner</text>
+  <text x="64" y="208" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="27" font-weight="400" fill="#8b949e" text-anchor="start" >software engineer → AI researcher &amp; engineer</text>
+  <text x="64" y="250" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="28" font-weight="400" fill="#e6edf3" text-anchor="start" >I build the tools I use</text><text x="467.20000000000005" y="250" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="28" font-weight="800" fill="#f7a41d" text-anchor="start" >every day.</text>
+
+  <text x="64" y="312" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="20" font-weight="700" fill="#3fb950" text-anchor="start" >$</text>
+  <g clip-path="url(#typed)"><text x="102" y="312" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="20" font-weight="400" fill="#e6edf3" text-anchor="start" >./case-study "without the cloud?"</text></g>
+  <rect x="102" y="294" width="11" height="23" fill="#f7a41d">
+    <animate attributeName="x" begin="0.8s" dur="2.6s" fill="freeze" calcMode="discrete" values="102.0;114.0;126.0;138.0;150.0;162.0;174.0;186.0;198.0;210.0;222.0;234.0;246.0;258.0;270.0;282.0;294.0;306.0;318.0;330.0;342.0;354.0;366.0;378.0;390.0;402.0;414.0;426.0;438.0;450.0;462.0;474.0;486.0;498.0" keyTimes="0.0000;0.0303;0.0606;0.0909;0.1212;0.1515;0.1818;0.2121;0.2424;0.2727;0.3030;0.3333;0.3636;0.3939;0.4242;0.4545;0.4848;0.5152;0.5455;0.5758;0.6061;0.6364;0.6667;0.6970;0.7273;0.7576;0.7879;0.8182;0.8485;0.8788;0.9091;0.9394;0.9697;1.0000"/>
+    <animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.5;0.5;1" dur="1s" repeatCount="indefinite"/>
+  </rect>
+  <g opacity="0">
+    <animate attributeName="opacity" begin="3.8s" dur="0.4s" to="1" fill="freeze"/>
+    <text x="522.0" y="312" font-family="ui-monospace, SFMono-Regular, 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="20" font-weight="700" fill="#3fb950" text-anchor="start" >✓ daily driver</text>
+  </g>
+</g>
+<rect x="0.5" y="0.5" width="1199" height="359" rx="18" fill="none" stroke="#30363d"/>
+</svg>

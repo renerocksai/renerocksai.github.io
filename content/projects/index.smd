@@ -12,7 +12,9 @@
 }],
 ---
 
-># [Please note]($block.attrs('info'))
->_This is just a selection of mostly older projects, I hope to catch up adding a few more recent and noteworthy ones, soon._
+Longer write-ups, mostly of older projects. For what I'm building now (omajot,
+baz and bounded/http, rayslides, my Omarchy plugins), see the
+[family tree and case studies](/) on the home page, or
+[GitHub](https://github.com/renerocksai).
 
 
