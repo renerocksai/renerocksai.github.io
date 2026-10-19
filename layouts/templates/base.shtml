@@ -9,10 +9,15 @@
     <meta name="twitter:author" content="@renerocksai">
     <meta name="twitter:description" content="Rene Schallner (@renerocksai): software engineer turned AI researcher and engineer, in Vienna.">
     <meta name="twitter:title" content="$page.title.suffix(' | @renerocksai')">
-    <meta name="twitter:image" content="$site.host_url.addPath($site.asset('reneglasses.png').link())">
+    <meta name="twitter:image" content="$site.host_url.addPath($site.asset('social.png').link())">
+    <meta name="twitter:image:alt" content="Rene Schallner: software engineer turned AI researcher and engineer. I build the tools I use every day. renerocks.ai">
     <meta property="og:type" content="website">
     <meta property="og:title" content="$page.title.suffix(' | @renerocksai')">
-    <meta property="og:image" content="$site.host_url.addPath($site.asset('reneglasses.png').link())">
+    <meta property="og:description" content="Rene Schallner (@renerocksai): software engineer turned AI researcher and engineer, in Vienna.">
+    <meta property="og:image" content="$site.host_url.addPath($site.asset('social.png').link())">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Rene Schallner: software engineer turned AI researcher and engineer. I build the tools I use every day. renerocks.ai">
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
