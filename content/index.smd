@@ -33,10 +33,18 @@ baz from the orange one, and the no-cloud rule from the blue one.
 
 []($section.id('omarchy'))
 [Omarchy](https://omarchy.org) is my desktop. When I miss something in the bar,
-I write a plugin for it. There are four so far, and each one installs with a
-single command.
+I write a plugin for it. There are five so far.
 
 []($section.id('plugins'))
+># [omagma]($block.attrs('plugin'))
+>
+> [](<$image.siteAsset('profile/omarchy/omagma.webp').alt('The omagma dropdown in the Omarchy bar: three separate Gmail accounts with unread counts and recent mail')>)
+>
+>Gmail in the bar, without a 2 GB browser tab. Up to three accounts stay
+>separate, each opening in its own Chrome profile, and the bar holds all three
+>in about 31 MB. Plus a terminal client and an agent CLI for Linux and Mac.
+>[Website →](https://technologylab-ai.github.io/omagma/)
+
 ># [omajot]($block.attrs('plugin'))
 >
 > [](<$image.siteAsset('profile/omarchy/omajot.webp').alt('The omajot main window on Omarchy')>)
@@ -69,19 +77,42 @@ single command.
 >bar. Playback runs through mpv with MPRIS, so the media keys just work.
 >[Repo →](https://github.com/renerocksai/neomarchy)
 
-[]($section.id('install'))
-```sh
-omarchy plugin add https://github.com/renerocksai/omajot --enable
-omarchy plugin add https://github.com/renerocksai/omajop --enable
-omarchy plugin add https://github.com/renerocksai/omapress --enable
-omarchy plugin add https://github.com/renerocksai/neomarchy --enable
-```
-
-omajot also needs its hub on an always-on machine: see
-[Get started](https://renerocks.ai/omajot/get-started.html).
+># [Install]($block.attrs('plugin','install'))
+>
+>Four of them are one command each:
+>
+> ```sh
+> u=https://github.com/renerocksai
+> for p in omajot omajop \
+>          omapress neomarchy; do
+>   omarchy plugin add $u/$p --enable
+> done
+> ```
+>
+>omagma ships as a verified release bundle: give your coding agent its
+>[website](https://technologylab-ai.github.io/omagma/) and let it walk you
+>through the Google setup. omajot also needs its hub: see
+>[Get started](https://renerocks.ai/omajot/get-started.html).
 
 []($section.id('cases'))
 The question, the trade, the verdict.
+
+># [Gmail without a 2 GB browser tab?]($block.attrs('case'))
+>[omagma](https://github.com/technologylab-ai/omagma) · Zig · Omarchy · TUI · agent CLI
+>
+>One Gmail tab was using roughly 2 GB of RAM on my desktop. omagma moves Gmail
+>into the Omarchy bar instead: up to three accounts, kept apart, each opening in
+>its own Chrome profile. The bar is read-only and keeps mail in memory only.
+>Behind it sits a Zig backend, a static musl binary on Linux, plus an
+>experimental terminal client for Linux and Mac: full threads, Vim keys,
+>search, Markdown compose with a cancellable send countdown, and Calendar. A
+>JSONL CLI lets agents work the inbox, but only with the per-account grants I
+>approve. The same TUI controller can even run in the browser as WebAssembly.
+>
+>**Trade:** an always-open Gmail tab, for a bar, a terminal and an agent
+>interface that each get exactly the permissions I grant them.
+>
+>[✓ verdict]($text.attrs('verdict')) About 31 MB for three accounts in the bar, against a 2 GB tab.
 
 ># [Synced notes with no cloud at all?]($block.attrs('case'))
 >[omajot](https://github.com/renerocksai/omajot) · Zig · CRDT · WASM · Tailscale

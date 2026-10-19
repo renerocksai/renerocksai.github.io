@@ -49,11 +49,10 @@
     <h2>Omarchy</h2>
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="$site.asset('profile/omarchy-dark.svg').link()">
-      <img class="full" src="$site.asset('profile/omarchy-light.svg').link()" width="1200" height="420" alt="The Omarchy wordmark above an Omarchy bar holding my four plugins: omajot, omajop, omapress and neomarchy.">
+      <img class="full" src="$site.asset('profile/omarchy-light.svg').link()" width="1200" height="420" alt="The Omarchy wordmark above an Omarchy bar holding my five plugins: omagma, omajot, omajop, omapress and neomarchy.">
     </picture>
     <div :html="$page.contentSection('omarchy')"></div>
     <div :html="$page.contentSection('plugins')"></div>
-    <div :html="$page.contentSection('install')"></div>
   </section>
 
   <section>
